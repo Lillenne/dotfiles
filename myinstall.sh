@@ -523,3 +523,7 @@ git clone https://github.com/casouri/tree-sitter-module.git
 sudo dnf install libtree-sitter-devel -y
 ./configure --with-json --with-pgtk --with-tree-sitter --with-mailutils --with-native-compilation=aot --with-imagemagick --with-xwidgets --with-modules
 
+# install ollama
+curl https://ollama.ai/install.sh | sh
+# https://ollama.ai/library/codellama
+# ollama run codellama:13b

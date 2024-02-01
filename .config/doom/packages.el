@@ -55,3 +55,4 @@
 (package! evil-snipe)
 (package! evil-quickscope)
 (package! company-quickhelp)
+(package! ellama) ; requires ollama and zephyr
