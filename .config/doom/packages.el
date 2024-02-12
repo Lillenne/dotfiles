@@ -56,3 +56,9 @@
 (package! evil-quickscope)
 (package! company-quickhelp)
 (package! ellama) ; requires ollama and zephyr
+(package! evil-visual-mark-mode
+  :recipe (:host github :repo "roman/evil-visual-mark-mode"
+           :files ("evil-visual-mark-mode.el")))
+(package! evil-ReplaceWithRegister
+  :recipe (:host github :repo "Dewdrops/evil-ReplaceWithRegister"
+           :files ("evil-replace-with-register.el")))

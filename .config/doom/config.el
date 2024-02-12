@@ -24,6 +24,10 @@
 (setq org-roam-directory "~/org/")
 (org-roam-db-autosync-mode)
 (setq find-file-visit-truename t)
+;;(defun ak/todo-is-done () )
+;;(defun ak/tdd () (interactive) (print (ak/todo-is-done)))
+
+;;(add-hook 'org-after-todo-state-change-hook (ak/todo-is-done))
 (defun my/org-roam-copy-todo-to-today ()
   (interactive)
   (let ((org-refile-keep t) ;; Set this to nil to delete the original!
@@ -41,18 +45,34 @@
     ;; Only refile if the target file is different than the current file
     (unless (equal (file-truename today-file)
                    (file-truename (buffer-file-name)))
-      (org-refile nil nil (list "Tasks" today-file nil pos)))))
+      (org-refile nil nil (list "Tasks" today-file nil pos))) ())
+        ;;(call-interactively #'org-archive-to-archive-sibling)
+        )
 
-(add-to-list 'org-after-todo-state-change-hook
+(setq org-after-todo-state-change-hook nil)
+
+(add-hook 'org-after-todo-state-change-hook
              (lambda ()
                (when (or (equal org-state "[X]") (equal org-state "DONE"))
                  (my/org-roam-copy-todo-to-today))))
+;; (add-to-list 'org-after-todo-state-change-hook
+;;              (lambda ()
+;;                (when (or (equal org-state "[X]") (equal org-state "DONE"))
+;;                  (my/org-roam-copy-todo-to-today))))
+;; Set depth to 95 (high, max 100), as it deletes the note & stuff shouldn't be coming after
+(add-hook 'org-after-todo-state-change-hook
+          (lambda ()
+            (when (and (or (equal org-state "[X]") (equal org-state "DONE"))
+                       (equal (+org-capture-todo-file) (buffer-file-name)))
+                       (call-interactively #'org-archive-to-archive-sibling))
+                       (save-buffer))
+          95 nil)
 
 ;; replace the todo template
 ;; complete w/ rest of templates
-(setq org-capture-templates (cons
-                             '("t" "Personal todo" entry (file+headline +org-capture-todo-file "Inbox") "* TODO %?\n%i\n%a" :prepend t)
-                             (cdr org-capture-templates)))
+(setq org-capture-templates (cons '("t" "Personal todo" entry (file+headline +org-capture-todo-file "Inbox") "* TODO %?\n%i\n%a" :prepend t)
+                             (cons '("i" "Personal todo w/o link" entry (file+headline +org-capture-todo-file "Inbox") "* TODO %?" :prepend t)
+                                (cdr org-capture-templates))))
 
 ;;start fullscreen
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
@@ -148,7 +168,7 @@
   (mu4e t)
   )
 
-(company-quickhelp-mode)
+;;(company-quickhelp-mode)
 ;;(setq company-frontends '(company-pseudo-tooltip-frontend company-preview-frontend))
 ;;(setq company-selection-wrap-around t)
 (setq company-minimum-prefix-length 1)
@@ -204,6 +224,8 @@
 (map! :leader "f o" 'consult-recent-file)
 (map! "C-/" 'comment-dwim)
 (map! :leader "f O" 'find-file-other-window)
+(defun ak/goto-todo () (interactive) (find-file (+org-capture-todo-file)))
+(map! :leader "f t" 'ak/goto-todo)
 
 (require 'evil-owl)
 (setq evil-owl-max-string-length 500)
@@ -218,6 +240,7 @@
   :config
   (evil-snipe-mode +1)
   (evil-snipe-override-mode +1)
+  (setq evil-snipe-use-vim-sneak-bindings t)
   (setq evil-snipe-scope 'buffer)
   (setq evil-snipe-auto-scroll t)
   (setq evil-snipe-use-vim-sneak-bindings t))
@@ -233,3 +256,42 @@
   '(define-key company-active-map (kbd "C-c h") #'company-quickhelp-manual-begin))
 
 (setq org-link-descriptive nil)
+
+(evil-visual-mark-mode)
+
+(require 'evil-replace-with-register)
+;; change default key bindings (if you want) HERE
+;; (setq evil-replace-with-register-key (kbd "gr"))
+(evil-replace-with-register-install)
+
+
+(defun ak/current-time-min-sec ()
+  "Insert string for the current time formatted like '7:27 AM'."
+  (interactive)                 ; permit invocation in minibuffer
+  (insert (format-time-string "%-I:%M %p")))
+(map! :leader "i t" 'ak/current-time-min-sec)
+
+(defun ak/today-time ()
+  "Insert string for the current time formatted like '02/09/24 7:27 AM'."
+  (interactive)                 ; permit invocation in minibuffer
+  (insert (format-time-string "%D %-I:%M %p")))
+(map! :leader "i T" 'ak/today-time)
+
+(defun ak/today-date ()
+  "Insert string for today's date nicely formatted in American style,
+e.g. Sunday, September 17, 2000."
+  (interactive)                 ; permit invocation in minibuffer
+  (insert (format-time-string "%A, %B %e, %Y")))
+
+(map! :leader "i d" 'ak/today-date)
+
+(defun ak/today-date-time ()
+  "Insert string for today's date nicely formatted in American style,
+e.g. Friday, February  9, 2024 | 7:29 AM "
+  (interactive)                 ; permit invocation in minibuffer
+  (insert (format-time-string "%A, %B %e, %Y | %-I:%M %p")))
+
+(map! :leader "i D" 'ak/today-date-time)
+
+(setq org-roam-dailies-capture-templates '(("d" "default" entry "* %<%-I:%M %p>: %?" :target
+  (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n"))))
