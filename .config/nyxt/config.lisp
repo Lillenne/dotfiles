@@ -15,54 +15,54 @@
 (define-configuration :prompt-buffer
     ((default-modes (append (list :vi-insert-mode) %slot-value%))))
 
-(define-configuration (web-buffer nosave-buffer)
-    ((default-modes (append
-                     '(auto-mode
-                       blocker-mode
-                       force-https-mode
-                       noimage-mode
-                       noscript-mode
-                       proxy-mode
-                       reduce-tracking-mode)
-                     %slot-default%))))
+;; (define-configuration (web-buffer nosave-buffer)
+;;     ((default-modes (append
+;;                      '(auto-mode
+;;                        blocker-mode
+;;                        force-https-mode
+;;                        noimage-mode
+;;                        noscript-mode
+;;                        proxy-mode
+;;                        reduce-tracking-mode)
+;;                      %slot-default%))))
 
 ;;(in-package #:nyxt-user)
 
-(define-configuration nx-dark-reader:dark-reader-mode
-    ((nxdr:selection-color "#CD5C5C")
-     (nxdr:background-color "black")
-     (nxdr:text-color "white")
-     (nxdr:grayscale 50)
-     (nxdr:contrast 100)
-     (nxdr:brightness 100)))
+;; (define-configuration nx-dark-reader:dark-reader-mode
+;;     ((nxdr:selection-color "#CD5C5C")
+;;      (nxdr:background-color "black")
+;;      (nxdr:text-color "white")
+;;      (nxdr:grayscale 50)
+;;      (nxdr:contrast 100)
+;;      (nxdr:brightness 100)))
 
-(define-configuration :web-buffer
-    ((default-modes `(nx-dark-reader:dark-reader-mode ,@%slot-value%))))
+;; (define-configuration :web-buffer
+;;     ((default-modes `(nx-dark-reader:dark-reader-mode ,@%slot-value%))))
 
-(define-configuration browser
-    ;; Enable --remote --eval code evaluation.
-    ((remote-execution-p t)
-     (external-editor-program
-      (list "emacsclient" "-cn" "-a" "emacs" ))))
+;; (define-configuration browser
+;;     ;; Enable --remote --eval code evaluation.
+;;     ((remote-execution-p t)
+;;      (external-editor-program
+;;       (list "emacsclient" "-cn" "-a" "emacs" ))))
 
-(define-configuration :browser
-    "Set new buffer URL (a.k.a. start page, new tab page)."
-  ((default-new-buffer-url (quri:uri "nyxt:nyxt/mode/repl:repl"))))
+;; (define-configuration :browser
+;;     "Set new buffer URL (a.k.a. start page, new tab page)."
+;;   ((default-new-buffer-url (quri:uri "nyxt:nyxt/mode/repl:repl"))))
 
-(define-configuration :nosave-buffer
-    "Enable proxy in nosave (private, incognito) buffers."
-  ((default-modes `(:proxy-mode ,@*web-buffer-modes* ,@%slot-value%))))
+;; (define-configuration :nosave-buffer
+;;     "Enable proxy in nosave (private, incognito) buffers."
+;;   ((default-modes `(:proxy-mode ,@*web-buffer-modes* ,@%slot-value%))))
 
-(define-command-global open-in-nosave-buffer ()
-  "Make a new nosave buffer with URL at point."
-  (let ((url (url-at-point (current-buffer))))
-    (make-nosave-buffer :url url)))
+;; (define-command-global open-in-nosave-buffer ()
+;;   "Make a new nosave buffer with URL at point."
+;;   (let ((url (url-at-point (current-buffer))))
+;;     (make-nosave-buffer :url url)))
 
-(ffi-add-context-menu-command
- (lambda ()
-   (when (url-at-point (current-buffer))
-     (make-nosave-buffer :url (url-at-point (current-buffer)))))
- "Open Link in New Nosave Buffer")
+;; (ffi-add-context-menu-command
+;;  (lambda ()
+;;    (when (url-at-point (current-buffer))
+;;      (make-nosave-buffer :url (url-at-point (current-buffer)))))
+;;  "Open Link in New Nosave Buffer")
 
 ;; (define-configuration :document-mode
 ;;     "Add basic keybindings."

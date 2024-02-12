@@ -55,7 +55,7 @@
                              (cdr org-capture-templates)))
 
 ;;start fullscreen
-;;(add-to-list 'default-frame-alist '(fullscreen . maximized))
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
 
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
@@ -95,6 +95,8 @@
  '((emacs-lisp . nil)
    (python . t)
    (csharp . t)
+   (shell . t)
+   (bash . t)
    ;;(mermaid . t)
    ))
 ;;(setq ob-mermaid-cli-path "/usr/local/bin/mmdc")

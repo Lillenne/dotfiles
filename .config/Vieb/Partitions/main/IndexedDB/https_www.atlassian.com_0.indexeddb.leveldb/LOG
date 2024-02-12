@@ -1,0 +1,7 @@
+2024/02/01-10:49:03.818 6b9 Reusing MANIFEST /home/aus/.config/Vieb/Partitions/main/IndexedDB/https_www.atlassian.com_0.indexeddb.leveldb/MANIFEST-000001
+2024/02/01-10:49:03.818 6b9 Recovering log #3
+2024/02/01-10:49:03.819 6b9 Reusing old log /home/aus/.config/Vieb/Partitions/main/IndexedDB/https_www.atlassian.com_0.indexeddb.leveldb/000003.log 
+2024/02/01-11:45:40.895 6bb Level-0 table #5: started
+2024/02/01-11:45:40.898 6bb Level-0 table #5: 34339 bytes OK
+2024/02/01-11:45:40.899 6bb Delete type=0 #3
+2024/02/01-11:45:40.900 6bb Manual compaction at level-0 from (begin) .. (end); will stop at (end)
