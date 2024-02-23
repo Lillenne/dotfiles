@@ -1,5 +1,7 @@
 ;;; debug.el -*- lexical-binding: t; -*-
 
+
+;(setenv "LSP_USE_PLISTS" "true") ; this may be too late to have effect. Supposedly needs to happen in early init
 ;; Set up debugging for c#
 ;; Enabling only some features
 ;; (defvar my-cs-dbg nil)
@@ -80,3 +82,15 @@
 (setq lsp-rust-analyzer-binding-mode-hints t)
 (setq lsp-rust-analyzer-display-chaining-hints t)
 (setq lsp-rust-analyzer-display-reborrow-hints t)
+
+;; (require 'web-mode)
+;; (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+;; (add-to-list 'auto-mode-alist '("\\.razor?\\'" . web-mode))
+;; (add-to-list 'auto-mode-alist '("\\.cshtml?\\'" . web-mode))
+;; (setq web-mode-engines-alist
+;;       '(
+;;         ("razor"    . "\\.cshtml\\'")
+;;         ("razor"    . "\\.razor\\'")
+;;         ("blade"  . "\\.blade\\.")
+;;         )
+;;       )
