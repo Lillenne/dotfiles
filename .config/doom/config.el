@@ -174,11 +174,11 @@
   (mu4e t)
   )
 
-;;(company-quickhelp-mode)
+(company-quickhelp-mode)
 ;;(setq company-frontends '(company-pseudo-tooltip-frontend company-preview-frontend))
 ;;(setq company-selection-wrap-around t)
-(setq company-minimum-prefix-length 1)
-(setq company-idle-delay 0.25)
+(setq company-minimum-prefix-length 0)
+(setq company-idle-delay 0.05)
 ;;(setq company-require-match nil)
 ;;(setq company-require-match t)
 
@@ -226,6 +226,7 @@
        (other-window 1)
        (+vterm/here default-directory))
 (map! :leader "o v" 'vterm-vsplit)
+(map! :leader "o v" 'vterm-vsplit)
 (map! :leader "d" '+workspace/close-window-or-workspace)
 (map! :leader "f o" 'consult-recent-file)
 (map! "C-/" 'comment-dwim)
@@ -256,9 +257,9 @@
 (use-package evil-quickscope
   :config (global-evil-quickscope-always-mode 1))
 
-(defvar my-load-debug nil)
-;;(setq my-load-debug t)
-(when my-load-debug (load! debug.el))
+(defvar my-load-debug t)
+(setq my-load-debug t)
+(when my-load-debug (load! "debug.el"))
 
 (eval-after-load 'company
   '(define-key company-active-map (kbd "C-c h") #'company-quickhelp-manual-begin))
@@ -303,3 +304,38 @@ e.g. Friday, February  9, 2024 | 7:29 AM "
 
 (setq org-roam-dailies-capture-templates '(("d" "default" entry "* %<%-I:%M %p>: %?" :target
   (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n"))))
+
+(use-package ellama
+        :init
+        ;; language you want ellama to translate to
+        (setopt ellama-language "English")
+        ;;(setopt ellama-keymap-prefix "<leader> c g") ;; <leader> doesn't work
+        (setopt ellama-enable-keymap t)
+        ;; could be llm-openai for example
+        (require 'llm-ollama)
+        (setopt ellama-provider
+                        (make-llm-ollama
+                        :chat-model "phind-codellama"
+                        :embedding-model "phind-codellama"))
+        (setopt ellama-naming-scheme 'ellama-generate-name-by-llm)
+        (setopt ellama-providers
+                        '(("phind-codellama" . (make-llm-ollama
+                                        :chat-model "phind-codellama"
+                                        :embedding-model "phind-codellama"))
+                        ("codebooga" . (make-llm-ollama
+                                        :chat-model "codebooga"
+                                        :embedding-model "codebooga"))
+                        ("deepseek-coder" . (make-llm-ollama
+                                        :chat-model "deepseek-coder"
+                                        :embedding-model "deepseek-coder"))
+                        ("phi" . (make-llm-ollama
+                                        :chat-model "phi"
+                                        :embedding-model "phi"))
+                        ("wizardlm-uncensored" . (make-llm-ollama
+                                        :chat-model "wizardlm-uncensored"
+                                        :embedding-model "wizardlm-uncensored"))
+                        ;; ("" . (make-llm-ollama
+                        ;;                 :chat-model ""
+                        ;;                 :embedding-model ""))
+                        ))
+)
