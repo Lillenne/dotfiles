@@ -3,3 +3,5 @@
 	name = Austin Kearns
 [credential]
 	manager = store
+[pull]
+	rebase = true
