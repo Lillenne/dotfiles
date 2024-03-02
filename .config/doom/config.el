@@ -1,14 +1,21 @@
 ;;; init.el -*- lexical-binding: t; -*-
 
-(setq gc-cons-threshold 100000000) ; increase gc threshold to improve performance
+;;TODO check out grip mode +grip flag for md mode https://github.com/seagle0128/grip-mode
+;; lsp-bridge looking in ~/.emacs.d for omnisharp instead of doom's
+;; need to change keybindings to support lsp-bridge
 
-(defvar ak/use-company t)
-(when ak/use-company (load! "company.el"))
+(setq gc-cons-threshold 100000000) ; increase gc threshold to improve performance
 
 (defvar ak/use-mu4e nil)
 (when ak/use-mu4e (load! "mu4e.el"))
-(defvar ak/use-lsp-mode t)
-(when ak/use-lsp-mode (load! "debug.el"))
+(defvar ak/use-lsp-mode nil)
+(when ak/use-lsp-mode (load! "debug.el")(load! "company.el"))
+
+(defvar ak/use-lsp-bridge t)
+(when ak/use-lsp-bridge (load! "lsp-bridge.el"))
+
+(defvar ak/use-ellama t)
+(when ak/use-ellama (load! "ellama.el"))
 
 (load! "org.el")
 (load! "bindings.el")
@@ -37,9 +44,8 @@
 (use-package evil-snipe
   :config
   (evil-snipe-mode +1)
-  (evil-snipe-override-mode +1)
-  (setq evil-snipe-use-vim-sneak-bindings t)
-  (setq evil-snipe-scope 'buffer)
+  ;(evil-snipe-override-mode +1) // overrides default ft etc
+  (setq evil-snipe-scope 'whole-visible)
   (setq evil-snipe-auto-scroll t)
   (setq evil-snipe-use-vim-sneak-bindings t))
 
@@ -49,12 +55,17 @@
 
 (setq org-link-descriptive nil)
 
-(evil-visual-mark-mode)
+;; (evil-visual-mark-mode)
 
-(require 'evil-replace-with-register)
-;; change default key bindings (if you want) HERE
-;; (setq evil-replace-with-register-key (kbd "gr"))
-(evil-replace-with-register-install)
+;; (require 'evil-replace-with-register)
+;; ;; change default key bindings (if you want) HERE
+;; ;; (setq evil-replace-with-register-key (kbd "gr"))
+;; (evil-replace-with-register-install)
+
+(after! projectile (setq projectile-globally-ignored-directories (add-to-list 'projectile-globally-ignored-directories '"/home/aus/.cargo/")))
+
+;; if having trouble with treesitter language grammars, use treesit-install-language-grammar
+
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.

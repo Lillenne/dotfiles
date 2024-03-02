@@ -58,9 +58,19 @@
 (package! ellama
   :recipe (:host github :repo "s-kostyaev/ellama"
                  :files ("ellama.el"))) ; requires ollama and a model, default zephyr
-(package! evil-visual-mark-mode
-  :recipe (:host github :repo "roman/evil-visual-mark-mode"
-           :files ("evil-visual-mark-mode.el")))
-(package! evil-ReplaceWithRegister
-  :recipe (:host github :repo "Dewdrops/evil-ReplaceWithRegister"
-           :files ("evil-replace-with-register.el")))
+;; (package! evil-visual-mark-mode
+;;   :recipe (:host github :repo "roman/evil-visual-mark-mode"
+;;            :files ("evil-visual-mark-mode.el")))
+;; (package! evil-ReplaceWithRegister
+;;   :recipe (:host github :repo "Dewdrops/evil-ReplaceWithRegister"
+;;            :files ("evil-replace-with-register.el")))
+
+(when (package! lsp-bridge
+        :recipe (:host github
+                 :repo "manateelazycat/lsp-bridge"
+                 :branch "master"
+                 :files ("*.el" "*.py" "acm" "core" "langserver" "multiserver" "resources")
+                 ;; do not perform byte compilation or native compilation for lsp-bridge
+                 :build (:not compile)))
+  (package! markdown-mode)
+  (package! yasnippet))
