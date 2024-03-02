@@ -61,8 +61,16 @@
 ;; ;; change default key bindings (if you want) HERE
 ;; ;; (setq evil-replace-with-register-key (kbd "gr"))
 ;; (evil-replace-with-register-install)
+;;
 
-(after! projectile (setq projectile-globally-ignored-directories (add-to-list 'projectile-globally-ignored-directories '"/home/aus/.cargo/")))
+(after! projectile
+  (require 'f)
+  (defun my-projectile-ignore-project (project-root)
+    (or (f-descendant-of? project-root (expand-file-name "/home/aus/.rustup"))
+        (f-descendant-of? project-root "/home/aus/.cargo")
+        (doom-project-ignored-p project-root)))
+
+  (setq projectile-ignored-project-function #'my-projectile-ignore-project))
 
 ;; if having trouble with treesitter language grammars, use treesit-install-language-grammar
 
