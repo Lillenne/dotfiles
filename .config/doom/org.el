@@ -11,6 +11,8 @@
         (let ((fp (if (equal file nil) (expand-file-name "Tabled.org" org-directory) (expand-file-name file org-directory)))
                 (org-refile-keep nil)
                 (org-after-refile-insert-hook #'save-buffer))
+                ;; (when (or (or (equal org-state "KILL") (equal org-state "HOLD")) (equal org-state "WAIT"))
+                ;;   (org-add-note)) ;add note here because the refile otherwise goes first -- nvm still goes first, need to block on the note somehow. For now, just manually take a note first
                 (org-refile nil nil (list heading fp nil (org-find-exact-headline-in-buffer heading (find-file-noselect fp) t))))))
 
 (defun my/org-roam-copy-todo-to-today (&optional archive)
@@ -34,6 +36,12 @@
     (when archive (call-interactively #'org-archive-to-archive-sibling))
     ))
 
+(defun ak/toggle-org-checkbox () (interactive)
+       (let ((time (format "\nCLOSED: [%s]" (format-time-string "%Y-%m-%d %a %H:%M"))))
+         (progn (org-toggle-checkbox) (end-of-line) (insert time))))
+
+(add-hook 'org-mode-hook (lambda () (map! :leader "m x" #'ak/toggle-org-checkbox)))
+
 ;;(setq org-after-todo-state-change-hook nil) ; enable for when testing config
 (add-hook 'org-after-todo-state-change-hook
              (lambda ()
@@ -41,8 +49,9 @@
                (when (equal org-state "[X]") (my/org-roam-copy-todo-to-today))
                (when (equal org-state "HOLD") (ak/move-to-hold "Tabled"))
                (when (equal org-state "WAIT") (ak/move-to-hold "Wait"))
+               (when (equal org-state "KILL") (ak/move-to-hold "Canceled"))
                (when (equal org-state "STRT") (ak/move-to-hold "Started" "in-progress.org"))
-               ))
+               ) 100)
 ;; (add-to-list 'org-after-todo-state-change-hook
 ;;              (lambda ()
 ;;                (when (or (equal org-state "[X]") (equal org-state "DONE"))
@@ -58,9 +67,38 @@
 
 ;; replace the todo template
 ;; complete w/ rest of templates
-(setq org-capture-templates (cons '("t" "Personal todo" entry (file+headline +org-capture-todo-file "Inbox") "* TODO %?\n%i\n%a" :prepend t)
-                             (cons '("i" "Personal todo w/o link" entry (file+headline +org-capture-todo-file "Inbox") "* TODO %?" :prepend t)
-                                (cdr org-capture-templates))))
+
+(setq org-capture-templates
+'(("n" "Personal notes" entry
+(file+headline +org-capture-notes-file "Inbox")
+"* %u %?\n%i\n%a" :prepend t)
+("t" "Personal todo" entry (file+headline +org-capture-todo-file "Inbox") "* TODO %?\n%i\n%a" :prepend t)
+("i" "Personal todo w/o link" entry (file+headline +org-capture-todo-file "Inbox") "* TODO %?" :prepend t)
+("m" "Meetings")
+("mm" "Scheduled Meeting" entry (file+olp+datetree "/home/aus/org/meetings.org")
+        "* %^{What are we discussing?} %^G \nScheduled: %U\nFor: %^{When is the meeting?}t\n- Attendees: %^{Attendees}, Austin\n- Prep/Links: \n  - [ ] %?\n- Notes:"
+        :target (file "meetings.org")
+        :prepend t
+        :clock-in t
+        :clock-resume t
+        :time-prompt t)
+("mn" "Impromptu Meeting" entry (file+olp+datetree "/home/aus/org/meetings.org")
+        "* %^{What are we discussing?} %^G \nScheduled: %U\nFor: %^{When is the meeting?}t\n- Attendees: %^{Attendees}, Austin\n To discuss \n - [ ] %?\n- Notes:"
+        :target (file "meetings.org") :unnarrowed t
+        :prepend t
+        :clock-in t
+        :clock-resume t
+        :time-prompt t)
+("j" "Journal" entry (file+olp+datetree +org-capture-journal-file) "* %U %?\n%i\n%a" :prepend t)
+("p" "Templates for projects")
+("pt" "Project-local todo" entry (file+headline +org-capture-project-todo-file "Inbox") "* TODO %?\n%i\n%a" :prepend t)
+("pn" "Project-local notes" entry (file+headline +org-capture-project-notes-file "Inbox") "* %U %?\n%i\n%a" :prepend t)
+("pc" "Project-local changelog" entry (file+headline +org-capture-project-changelog-file "Unreleased") "* %U %?\n%i\n%a" :prepend t)
+("o" "Centralized templates for projects")
+("ot" "Project todo" entry #'+org-capture-central-project-todo-file "* TODO %?\n %i\n %a" :heading "Tasks" :prepend nil)
+("on" "Project notes" entry #'+org-capture-central-project-notes-file "* %U %?\n %i\n %a" :heading "Notes" :prepend t)
+("oc" "Project changelog" entry #'+org-capture-central-project-changelog-file "* %U %?\n %i\n %a" :heading "Changelog" :prepend t)))
+;how to do tags for meetings? make it a roam capture?
 
 (org-babel-do-load-languages
  'org-babel-load-languages
@@ -73,8 +111,15 @@
    ))
 ;;(setq ob-mermaid-cli-path "/usr/local/bin/mmdc")
 
+; add @ to prompt a note + others
+(setq org-todo-keywords
+'((sequence "TODO(t)" "PROJ(p)" "LOOP(r)" "STRT(s)" "WAIT(w)" "HOLD(h)" "IDEA(i)" "|" "DONE(d)" "KILL(k)")
+ (sequence "[ ](T)" "[-](S)" "[?](W)" "|" "[X](D)")
+ (sequence "|" "OKAY(o)" "YES(y)" "NO(n)")))
+
 (setq org-startup-with-inline-images t) ;set images in org mode inline
 (setq org-log-done 'time)
+(setq org-log-into-drawer t)
 (setq org-roam-v2-ack t)
 (setq org-link-descriptive nil)
 
@@ -108,3 +153,54 @@ e.g. Friday, February  9, 2024 | 7:29 AM "
 
 (setq org-roam-dailies-capture-templates '(("d" "default" entry "* %<%-I:%M %p>: %?" :target
   (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n"))))
+
+(setq org-meetings-file "/home/aus/org/meetings.org")
+
+;; not sure why this doesn't work with variables
+;; (defvar sprint-items-template (expand-file-name "sprint-items/templates/template.org" org-roam-directory))
+;; (defvar sprint-template (expand-file-name "sprints/templates/template.org" org-roam-directory))
+(setq org-roam-capture-templates
+'(
+("i" "sprint-item" plain (file "/home/aus/org/sprint-items/templates/template.org") :target (file "sprint-items/%<%Y%m%d%H%M%S>-${slug}.org") :unnarrowed t)
+("s" "sprint" plain (file "/home/aus/org/sprints/templates/template.org") :target (file "sprints/%<%Y%m%d%H%M%S>-${slug}.org") :unnarrowed t)
+("d" "default" plain "%?" :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n") :unnarrowed t)
+("m" "Meetings")
+("mm" "Scheduled meeting" entry "* ${slug} %^G \nScheduled: %U\nFor: %^{When is the meeting?}T\n- Attendees: %^{Attendees}, Austin\n- Prep/Links: \n  - [ ] %?\n- Notes:"
+        :target (file+datetree "meetings.org") :unnarrowed t :prepend t :clock-in t :clock-resume t :time-prompt t)
+("mn" "Impromptu meeting" entry "* ${slug} %^G \n%T\n- Attendees: %^{Attendees}, Austin\n To discuss \n - [ ] %?\n- Notes:"
+        :target (file+datetree "meetings.org"}) :unnarrowed t :prepend t :clock-in t :clock-resume t)
+;; ("n" "Impromptu Meeting" entry (file+olp+datetree "/home/aus/org/meetings.org")
+
+;;         :if-new (file "%meetings-${slug}.org") :unnarrowed t
+;;         ;:target (file "meetings.org") :unnarrowed t
+;;         :prepend t
+;;         :clock-in t
+;;         :clock-resume t
+;;         :time-prompt t)
+))
+
+; add id to all captures
+(add-hook 'org-capture-mode-hook #'org-id-get-create) ;https://www.reddit.com/r/orgmode/comments/eln9kb/capture_with_automatic_id_creation/
+
+; try (push 'item list)
+; more template ideas https://www.reddit.com/r/orgmode/comments/nmgs2i/hey_orgmode_users_show_us_your_org_capture/
+; company-at-point for roam links?
+
+(defun efs/org-mode-visual-fill ()
+  (setq visual-fill-column-width 100
+        visual-fill-column-center-text t)
+  (visual-fill-column-mode 1))
+
+(use-package visual-fill-column
+  :hook (org-mode . efs/org-mode-visual-fill))
+
+(with-eval-after-load 'org
+  ;; This is needed as of Org 9.2
+  (require 'org-tempo)
+
+  (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+  (add-to-list 'org-structure-template-alist '("ru" . "src rust"))
+  (add-to-list 'org-structure-template-alist '("py" . "src python")))
+
+; todo org-protocol and org-roam-protocol

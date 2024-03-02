@@ -11,3 +11,6 @@
 (map! :leader "f t" 'ak/goto-todo)
 (map! :leader "f g" 'consult-ripgrep)
 (map! :leader "f G" 'consult-git-grep)
+
+(use-package evil-nerd-commenter
+  :bind ("M-/" . evilnc-comment-or-uncomment-lines))
