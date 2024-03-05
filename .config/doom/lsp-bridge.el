@@ -8,6 +8,9 @@
 ; disable lsp-mode + company from init.el
 ; See related statements in packages.el
 ; run lsp-bridge-install-omnisharp for c#. Can do similar for codeium, etc.
+; Will then need to extract and give execute permissions: https://github.com/OmniSharp/omnisharp-roslyn/releases
+; tar -xzf /tmp/omnisharp-mono.zip
+; update .config/emacs/.local/straight/repos/lsp-bridge/langserver/omnisharp-dotnet.json & change omnisharp location
 
 (use-package! lsp-bridge
   :config
@@ -27,8 +30,8 @@
   (define-key evil-normal-state-map (kbd "g b") #'lsp-bridge-find-def-return) ;; "no bride mark set"
   (define-key evil-normal-state-map (kbd "g i") #'lsp-bridge-find-impl)
   (define-key evil-normal-state-map (kbd "g I") #'lsp-bridge-find-impl-other-window)
-  (define-key evil-normal-state-map (kbd "g K") #'lsp-bridge-show-documentation)
-  (define-key evil-normal-state-map (kbd "g k") #'lsp-bridge-popup-documentation)
+  (define-key evil-normal-state-map (kbd "g .") #'lsp-bridge-show-documentation)
+  (define-key evil-normal-state-map (kbd "g ,") #'lsp-bridge-popup-documentation)
   (global-set-key (kbd "C-<down>") nil) ; remove set-mark-command
   (global-set-key (kbd "C-<up>") nil) ; remove set-mark-command
   (define-key evil-normal-state-map (kbd "SPC R") #'lsp-bridge-rename)
@@ -48,7 +51,7 @@
   (setq lsp-bridge-enable-auto-format-code nil)
   (setq lsp-bridge-enable-hover-diagnostic t)
   (setq lsp-bridge-inlay-hint-overlays t)
-  (lsp-bridge-semantic-tokens-mode) ; what does this do?
+  ;; (lsp-bridge-semantic-tokens-mode) ; what does this do?
   (setq lsp-bridge-enable-search-words nil)
   ;; (setq lsp-bridge-enable-debug nil)
   (setq lsp-bridge-enable-org-babel t)
@@ -58,7 +61,7 @@
   (setq lsp-bridge-signature-show-with-frame-position "point")
   (setq acm-enable-search-file-words nil)
   (setq acm-enable-preview t) ;tabngo
-  (setq lsp-bridge-semantic-tokens-delay 0.25)
+  ;(setq lsp-bridge-semantic-tokens-delay 0.25)
   (setq lsp-bridge-code-action-preview-delay 0.35)
   (setq lsp-bridge-enable-signature-help t)
   (setq lsp-bridge-signature-help-fetch-idle 0.2)

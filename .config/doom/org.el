@@ -203,4 +203,6 @@ e.g. Friday, February  9, 2024 | 7:29 AM "
   (add-to-list 'org-structure-template-alist '("ru" . "src rust"))
   (add-to-list 'org-structure-template-alist '("py" . "src python")))
 
+;; (define-key evil-normal-state-map (kbd "g l") #'org-down-element)
+
 ; todo org-protocol and org-roam-protocol
