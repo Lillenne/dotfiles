@@ -78,7 +78,14 @@
 (use-package elpy
   :ensure t
   :init
-  (elpy-enable))
+  (elpy-enable)
+  :config
+  (setq elpy-autodoc-delay 0.1)
+  (require 'pyvenv)
+  (pyvenv-activate "/home/aus/micromamba/envs/ml/")
+  (setq elpy-rpc-virtualenv-path 'current)
+  (set-company-backend! 'elpy-mode 'elpy-company-backend)
+  )
 
 ;; if having trouble with treesitter language grammars, use treesit-install-language-grammar
 
