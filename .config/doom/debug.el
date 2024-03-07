@@ -1,100 +1,71 @@
 ;;; debug.el -*- lexical-binding: t; -*-
 
 
-;(setenv "LSP_USE_PLISTS" "true") ; move this to .config/emacs/early-init.el
-;; Set up debugging for c#
-;; Enabling only some features
-;; (defvar my-cs-dbg nil)
-;; (when (my-cs-dbg) (
-;;         (require 'dap-netcore)
-;;         (setq dap-auto-configure-mode t)
-;;         (setq dap-netcore-install-dir "/home/aus/.local/share/nvim/mason/packages/" )
+;(setenv "LSP_USE_PLISTS" "true") ; remember to add this to .config/emacs/early-init.el
 
-;;         ;; c/c++/objc/swift
-;;                                                 ;(require 'dap-lldb) ; was this already working?
-;;                  ))
-;; (after! dap-mode (require 'dap-cpptools)) ;;need to run dap-cpptools-setup on first time ;; don't think this even needed to be run
-;; dap keymaps
-;; -*- lexical-binding: t -*-
-;; https://github.com/emacs-lsp/dap-mode/blob/master/docs/page/how-to.md
-;; (define-minor-mode +dap-running-session-mode
-;;   "A mode for adding keybindings to running sessions" ;description
-;;   :init-value nil ; init value
-;;   :lighter nil ; ?
-;;   ;; :keymap (let ((map (make-sparse-keymap)))
-;;   ;;           (define-key map (
-;;   ;;               ([f6] . 'dap-continue)
-;;   ;;               ) map))
-;;   (make-sparse-keymap)
-;;   (evil-normalize-keymaps) ;; if you use evil, this is necessary to update the keymaps
-  ;; (
-  ;;       (kbd [f4] . 'dap-next)
-  ;;       (map! [f5] 'dap-continue)
-  ;;       (map! [f8] 'dap-step-in)
-  ;;       (map! [f7] 'dap-step-out)
-  ;;  )
-  ;; The following code adds to the dap-terminated-hook
-  ;; so that this minor mode will be deactivated when the debugger finishes
-  ;; (when +dap-running-session-mode
-  ;;   (let ((session-at-creation (dap--cur-active-session-or-die)))
-  ;;     (add-hook 'dap-terminated-hook
-  ;;               (lambda (session)
-  ;;                 (when (eq session session-at-creation)
-  ;;                   (+dap-running-session-mode -1)))))))
+;; Debugging
+(add-hook 'dap-stopped-hook (lambda (arg) (call-interactively #'dap-hydra)))
+(setq dap-auto-configure-features '(sessions expressions locals controls tooltip))
 
-;; Activate this minor mode when dap is initialized
-;; (add-hook 'dap-session-created-hook '+dap-running-session-mode)
+;; C#
+(require 'dap-netcore)
+;; (setq dap-netcore-install-dir "/home/aus/.local/share/nvim/mason/packages/" )
 
-;; Activate this minor mode when hitting a breakpoint in another file
-;; (add-hook 'dap-stopped-hook '+dap-running-session-mode)
+;; Rust
+(require 'dap-gdb-lldb)
+(dap-gdb-lldb-setup)
+(dap-register-debug-template "Rust::GDB Run Configuration"
+        (list :type "gdb"
+                :request "launch"
+                :name "GDB::Run"
+        :gdbpath "rust-gdb"
+                :target nil
+                :cwd nil))
 
-;; Activate this minor mode when stepping into code in another file
-;; (add-hook 'dap-stack-frame-changed-hook (lambda (session)
-;;                                           (when (dap--session-running session)
-;;                                             (+dap-running-session-mode 1))))
-
-                                        ; https://discourse.doomemacs.org/t/how-to-re-bind-keys/56
-;; (map! [f4] 'dap-next)
-;; (map! [f5] 'dap-debug)
-;; (map! [f7] 'dap-step-out)
-;; (map! [f8] 'dap-step-in)
-;; (map! [f9] 'dap-breakpoint-toggle)
-
-;; (map! :after +dap-running-session-mode
-;;       :map +dap-running-session-mode-map
-;;       [f6] #'dap-continue)
-;;
-
-;; end dap keymap
-                                        ; https://www.reddit.com/r/DoomEmacs/comments/pe20mf/debugging_c_how_do_i_use_dap_mode_cant_find_any/
-
-(setq lsp-inlay-hint-enable t)
-(setq lsp-rust-analyzer-server-display-inlay-hints t)
-(setq lsp-rust-analyzer-display-parameter-hints t)
+;; Python
+(require 'dap-python)
+(setq dap-python-debugger 'debugpy)
 
 ;; LSP testing
 (setq lsp-auto-execute-action nil)
-(setq lsp-idle-delay 0.3)
+(setq lsp-idle-delay 0.15)
 (setq read-process-output-max 1048576) ;; <= cat /proc/sys/fs/pipe-max-size
-(setq lsp-log-io nil) ; if set to true can cause a performance hit
+(setq lsp-log-io nil)
 (setq lsp-signature-cycle t)
+(setq lsp-inlay-hint-enable t)
+
+(setq lsp-rust-analyzer-discriminants-hints t)
+(setq lsp-rust-analyzer-server-display-inlay-hints t)
+(setq lsp-rust-analyzer-display-parameter-hints t)
 (setq lsp-rust-analyzer-diagnostics-enable-experimental t)
+(setq lsp-rust-analyzer-diagnostics-enable t)
 (setq lsp-rust-analyzer-binding-mode-hints t)
 (setq lsp-rust-analyzer-display-chaining-hints t)
 (setq lsp-rust-analyzer-display-reborrow-hints t)
 
-(with-eval-after-load 'lsp-mode
-  (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration))
-; set next error ge gE
+;;(with-eval-after-load 'lsp-mode
+  ;;(add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration))
 
-;; (require 'web-mode)
-;; (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-;; (add-to-list 'auto-mode-alist '("\\.razor?\\'" . web-mode))
-;; (add-to-list 'auto-mode-alist '("\\.cshtml?\\'" . web-mode))
-;; (setq web-mode-engines-alist
-;;       '(
-;;         ("razor"    . "\\.cshtml\\'")
-;;         ("razor"    . "\\.razor\\'")
-;;         ("blade"  . "\\.blade\\.")
-;;         )
-;;       )
+(map! :leader "g e" #'next-error)
+(map! :leader "g E" #'previous-error)
+
+(map! :leader "d d" #'dap-debug)
+(map! :leader "d k" #'dap-disconnect)
+(map! :leader "d K" #'dap-delete-all-sessions)
+(map! :leader "d t" #'dap-debug-edit-template)
+(map! :leader "d r" #'dap-debug-recent)
+(map! :leader "d R" #'dap-debug-restart)
+(map! :leader "d b" #'dap-breakpoint-toggle)
+(map! :leader "d l" #'dap-debug-last)
+(map! :leader "d h" #'dap-hydra)
+(map! :leader "d s" #'dap-ui-sessions)
+(map! :leader "d S" #'dap-delete-session)
+(map! :leader "d D" #'dap-breakpoint-delete-all)
+(map! :leader "d c" #'dap-breakpoint-condition)
+(map! :leader "d C" #'dap-breakpoint-hit-condition)
+(map! :leader "d m" #'dap-breakpoint-log-message)
+(map! :leader "d x" #'dap-ui-expressions-add)
+(map! :leader "d X" #'dap-ui-expressions-remove)
+(map! :leader "d e" #'dap-eval)
+(map! :leader "d E" #'dap-eval-region)
+(map! :leader "d p" #'dap-eval-thing-at-point)

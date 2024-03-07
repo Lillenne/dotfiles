@@ -4,6 +4,8 @@
 (setq org-roam-directory "~/org/")
 (org-roam-db-autosync-mode)
 
+(add-hook 'org-agenda-mode-hook #'olivetti-mode)
+
 ;; note, need to create the headings before they are refiled properly
 (defun ak/move-to-hold (heading &optional file)
         ;; Only refile if the target file is different than the current file
@@ -42,7 +44,6 @@
 
 (add-hook 'org-mode-hook (lambda () (map! :leader "m x" #'ak/toggle-org-checkbox)))
 
-;;(setq org-after-todo-state-change-hook nil) ; enable for when testing config
 (add-hook 'org-after-todo-state-change-hook
              (lambda ()
                (when (equal org-state "DONE") (my/org-roam-copy-todo-to-today t))
@@ -52,21 +53,6 @@
                (when (equal org-state "KILL") (ak/move-to-hold "Canceled"))
                (when (equal org-state "STRT") (ak/move-to-hold "Started" "in-progress.org"))
                ) 100)
-;; (add-to-list 'org-after-todo-state-change-hook
-;;              (lambda ()
-;;                (when (or (equal org-state "[X]") (equal org-state "DONE"))
-;;                  (my/org-roam-copy-todo-to-today))))
-;; Set depth to 95 (high, max 100), as it deletes the note & stuff shouldn't be coming after
-;; (add-hook 'org-after-todo-state-change-hook
-;;           (lambda ()
-;;             (when (and (or (equal org-state "[X]") (equal org-state "DONE"))
-;;                        (equal (+org-capture-todo-file) (buffer-file-name)))
-;;                        (call-interactively #'org-archive-to-archive-sibling))
-;;                        (save-buffer))
-;;           95 nil)
-
-;; replace the todo template
-;; complete w/ rest of templates
 
 (setq org-capture-templates
 '(("n" "Personal notes" entry
@@ -157,8 +143,6 @@ e.g. Friday, February  9, 2024 | 7:29 AM "
 (setq org-meetings-file "/home/aus/org/meetings.org")
 
 ;; not sure why this doesn't work with variables
-;; (defvar sprint-items-template (expand-file-name "sprint-items/templates/template.org" org-roam-directory))
-;; (defvar sprint-template (expand-file-name "sprints/templates/template.org" org-roam-directory))
 (setq org-roam-capture-templates
 '(
 ("i" "sprint-item" plain (file "/home/aus/org/sprint-items/templates/template.org") :target (file "sprint-items/%<%Y%m%d%H%M%S>-${slug}.org") :unnarrowed t)
@@ -169,40 +153,19 @@ e.g. Friday, February  9, 2024 | 7:29 AM "
         :target (file+datetree "meetings.org") :unnarrowed t :prepend t :clock-in t :clock-resume t :time-prompt t)
 ("mn" "Impromptu meeting" entry "* ${slug} %^G \n%T\n- Attendees: %^{Attendees}, Austin\n To discuss \n - [ ] %?\n- Notes:"
         :target (file+datetree "meetings.org"}) :unnarrowed t :prepend t :clock-in t :clock-resume t)
-;; ("n" "Impromptu Meeting" entry (file+olp+datetree "/home/aus/org/meetings.org")
-
-;;         :if-new (file "%meetings-${slug}.org") :unnarrowed t
-;;         ;:target (file "meetings.org") :unnarrowed t
-;;         :prepend t
-;;         :clock-in t
-;;         :clock-resume t
-;;         :time-prompt t)
 ))
 
 ; add id to all captures
 (add-hook 'org-capture-mode-hook #'org-id-get-create) ;https://www.reddit.com/r/orgmode/comments/eln9kb/capture_with_automatic_id_creation/
 
-; try (push 'item list)
-; more template ideas https://www.reddit.com/r/orgmode/comments/nmgs2i/hey_orgmode_users_show_us_your_org_capture/
-; company-at-point for roam links?
+(add-hook 'org-mode-hook (lambda () (when (and (ak/is-only-window) (not (ak/is-minibuf))) (olivetti-mode))) 95)
 
-(defun efs/org-mode-visual-fill ()
-  (setq visual-fill-column-width 100
-        visual-fill-column-center-text t)
-  (visual-fill-column-mode 1))
-
-(use-package visual-fill-column
-  :hook (org-mode . efs/org-mode-visual-fill))
-
+;; <el<tab> etc. snippets -> code blocks
 (with-eval-after-load 'org
-  ;; This is needed as of Org 9.2
-  (require 'org-tempo)
-
+  (require 'org-tempo) ;; This is needed as of Org 9.2
   (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
   (add-to-list 'org-structure-template-alist '("ru" . "src rust"))
   (add-to-list 'org-structure-template-alist '("py" . "src python")))
-
-;; (define-key evil-normal-state-map (kbd "g l") #'org-down-element)
 
 ; todo org-protocol and org-roam-protocol
