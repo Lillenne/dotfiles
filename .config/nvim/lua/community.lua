@@ -1,7 +1,7 @@
 ---@type LazySpec
 return {
   "AstroNvim/astrocommunity",
-  -- { import = "astrocommunity.motion.mini-move" },
+  { import = "astrocommunity.motion.mini-move" },
   { import = "astrocommunity.colorscheme.catppuccin" },
   { import = "astrocommunity.pack.rust" },
   { import = "astrocommunity.pack.lua" },
@@ -27,8 +27,8 @@ return {
   { import = "astrocommunity.git.neogit" },
   { import = "astrocommunity.markdown-and-latex.vimtex" },
   { import = "astrocommunity.markdown-and-latex.markdown-preview-nvim" },
+  -- { import = "astrocommunity.lsp.inc-rename-nvim" }, -- not playing nice without noice
   { import = "astrocommunity.lsp.lsp-signature-nvim" },
-  { import = "astrocommunity.lsp.inc-rename-nvim" },
   { import = "astrocommunity.media.image-nvim" },
   {
     "3rd/image.nvim",
@@ -64,6 +64,7 @@ return {
   { import = "astrocommunity.terminal-integration.flatten-nvim" },
   { import = "astrocommunity.terminal-integration.vim-tmux-yank" },
   { import = "astrocommunity.terminal-integration.vim-tpipeline" },
+  -- { import = "astrocommunity.utility.noice-nvim" },
   -- try these later
   -- { import = "astrocommunity.test.neotest" },
   --https://github.com/jvgrootveld/telescope-zoxide
