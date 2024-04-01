@@ -4,7 +4,7 @@
         :init
         ;; language you want ellama to translate to
         (setopt ellama-language "English")
-        ;;(setopt ellama-keymap-prefix "<leader> c g") ;; <leader> doesn't work
+        (setopt ellama-keymap-prefix "C-S-e")
         (setopt ellama-enable-keymap t)
         ;; could be llm-openai for example
         (require 'llm-ollama)

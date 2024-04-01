@@ -4,6 +4,9 @@
 ;(setenv "LSP_USE_PLISTS" "true") ; remember to add this to .config/emacs/early-init.el
 
 ;; Debugging
+(with-eval-after-load 'dap-mode
+    (setq dap-default-terminal-kind "integrated")
+    (dap-auto-configure-mode +1))
 (add-hook 'dap-stopped-hook (lambda (arg) (call-interactively #'dap-hydra)))
 (setq dap-auto-configure-features '(sessions expressions locals controls tooltip))
 
@@ -13,6 +16,9 @@
 
 ;; Rust
 (require 'dap-gdb-lldb)
+(with-eval-after-load 'lsp-rust (require 'dap-cpptools))
+;; (dap-cpptools-setup) ; only once
+;; yay -S gdb
 (dap-gdb-lldb-setup)
 (dap-register-debug-template "Rust::GDB Run Configuration"
         (list :type "gdb"
@@ -22,16 +28,28 @@
                 :target nil
                 :cwd nil))
 
+;; someone's from the internet
+;; (add-hook 'rustic-mode-hook (lambda ()
+;;    (dap-register-debug-template "Rust LLDB Debug Configuration"
+;; 	  (list :type "cppdbg"
+;; 	      :request "launch"
+;; 	      :name "Rust::Run"
+;; 	      :MIMode "lldb"
+;; 	      :gdbpath "rust-lldb"
+;; 	      :program (concat (projectile-project-root) "target/debug/" (projectile-project-name)) ;; Requires that the rust project is a project in projectile
+;; 	      :environment []
+;; 	      :cwd (projectile-project-root)))))
+
 ;; Python
 (require 'dap-python)
 (setq dap-python-debugger 'debugpy)
 
 ;; LSP testing
 (setq lsp-auto-execute-action nil)
-(setq lsp-idle-delay 0.15)
+(setq lsp-idle-delay 0.3)
 (setq read-process-output-max 1048576) ;; <= cat /proc/sys/fs/pipe-max-size
 (setq lsp-log-io nil)
-(setq lsp-signature-cycle t)
+(setq lsp-signature-cycle nil)
 (setq lsp-inlay-hint-enable t)
 
 (setq lsp-rust-analyzer-discriminants-hints t)
@@ -43,11 +61,10 @@
 (setq lsp-rust-analyzer-display-chaining-hints t)
 (setq lsp-rust-analyzer-display-reborrow-hints t)
 
-;;(with-eval-after-load 'lsp-mode
-  ;;(add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration))
+(with-eval-after-load 'lsp-mode (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration))
 
-(map! :leader "g e" #'next-error)
-(map! :leader "g E" #'previous-error)
+(map! :m "g e" #'next-error)
+(map! :m "g E" #'previous-error)
 
 (map! :leader "d d" #'dap-debug)
 (map! :leader "d k" #'dap-disconnect)
@@ -69,3 +86,52 @@
 (map! :leader "d e" #'dap-eval)
 (map! :leader "d E" #'dap-eval-region)
 (map! :leader "d p" #'dap-eval-thing-at-point)
+
+;ein binding reference
+;; Key             Binding
+;; -------------------------------------------------------------------------------
+;; C-<down>     ein:worksheet-goto-next-input-km
+;; C-<up>               ein:worksheet-goto-prev-input-km
+;; M-S-<return> ein:worksheet-execute-cell-and-insert-below-km
+;; M-<down>     ein:worksheet-not-move-cell-down-km
+;; M-<up>               ein:worksheet-not-move-cell-up-km
+
+;; C-x C-s              ein:notebook-save-notebook-command-km
+;; C-x C-w              ein:notebook-rename-command-km
+
+;; M-RET                ein:worksheet-execute-cell-and-goto-next-km
+;; M-,          ein:pytools-jump-back-command
+;; M-.          ein:pytools-jump-to-source-command
+
+;; C-c C-a              ein:worksheet-insert-cell-above-km
+;; C-c C-b              ein:worksheet-insert-cell-below-km
+;; C-c C-c              ein:worksheet-execute-cell-km
+;; C-u C-c C-c                  ein:worksheet-execute-all-cells
+;; C-c C-e              ein:worksheet-toggle-output-km
+;; C-c C-f              ein:file-open-km
+;; C-c C-k              ein:worksheet-kill-cell-km
+;; C-c C-l              ein:worksheet-clear-output-km
+;; C-c RET              ein:worksheet-merge-cell-km
+;; C-c C-n              ein:worksheet-goto-next-input-km
+;; C-c C-o              ein:notebook-open-km
+;; C-c C-p              ein:worksheet-goto-prev-input-km
+;; C-c C-q              ein:notebook-kill-kernel-then-close-command-km
+;; C-c C-r              ein:notebook-reconnect-session-command-km
+;; C-c C-s              ein:worksheet-split-cell-at-point-km
+;; C-c C-t              ein:worksheet-toggle-cell-type-km
+;; C-c C-u              ein:worksheet-change-cell-type-km
+;; C-c C-v              ein:worksheet-set-output-visibility-all-km
+;; C-c C-w              ein:worksheet-copy-cell-km
+;; C-c C-y              ein:worksheet-yank-cell-km
+;; C-c C-z              ein:notebook-kernel-interrupt-command-km
+;; C-c C-S-l    ein:worksheet-clear-all-output-km
+;; C-c C-#              ein:notebook-close-km
+;; C-c C-$              ein:tb-show-km
+;; C-c C-/              ein:notebook-scratchsheet-open-km
+;; C-c C-;              ein:shared-output-show-code-cell-at-point-km
+;; C-c <down>   ein:worksheet-move-cell-down-km
+;; C-c <up>     ein:worksheet-move-cell-up-km
+
+;; C-c C-x C-r  ein:notebook-restart-session-command-km
+
+;; C-c M-w              ein:worksheet-copy-cell-km

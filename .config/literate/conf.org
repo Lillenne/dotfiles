@@ -6,13 +6,22 @@ yay -S
 * Misc programs
 yay -S alacritty -y
 * Neovim
-yay -S ripgrep findutils lazygit npm neovim -y
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm # setup tpm
+  <C-SPC>I #in tmux
+yay -S ripgrep findutils lazygit npm neovim yarn fd luarocks -y
+sudo luarocks --lua-version=5.1 install magick
+yay -S chafa ueberzugpp viu -y
+yay -S catimg ueberzugpp jp2a chafa viu
 /usr/bin/python3 -m pip install pynvim
 sudo npm install -f neovim
 
 curl -L https://github.com/dundee/gdu/releases/latest/download/gdu_linux_amd64.tgz | tar xz
 chmod +x gdu_linux_amd64
 sudo mv gdu_linux_amd64 /usr/bin/gdu
+
+** notes
+gl for line diagnostics
+spc lS for symbol outline!!
 * Emacs
 TODO emacs file
 

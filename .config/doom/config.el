@@ -4,7 +4,8 @@
 ;; lsp-bridge looking in ~/.emacs.d for omnisharp instead of doom's
 ;; need to change keybindings to support lsp-bridge
 
-(setq gc-cons-threshold 100000000) ; increase gc threshold to improve performance
+;; (setq gc-cons-threshold 100000000) ; increase gc threshold to improve performance
+(setq gc-cons-threshold 1000000) ; increase gc threshold to improve performance
 
 (defvar ak/use-mu4e nil)
 (when ak/use-mu4e (load! "mu4e.el"))
@@ -19,8 +20,8 @@
 
 (defun ak/is-minibuf () (minibuffer-window-active-p (current-buffer)))
 (defun ak/is-only-window () (equal (length (window-list-1)) 1))
-(add-hook 'dired-mode-hook #'olivetti-mode)
-(add-hook 'minibuffer-mode-hook (lambda () (setq-local olivetti-body-width 0.2) (olivetti-mode)))
+;; (add-hook 'dired-mode-hook #'olivetti-mode)
+;; (add-hook 'minibuffer-mode-hook (lambda () (setq-local olivetti-body-width 0.2) (olivetti-mode)))
 
 (load! "evil.el")
 (load! "org.el")
@@ -53,12 +54,22 @@
   :init
   (elpy-enable)
   :config
-  (setq elpy-autodoc-delay 0.1)
+  (setq elpy-autodoc-delay 0.3)
   (require 'pyvenv)
   (pyvenv-activate "/home/aus/micromamba/envs/ml/")
   (setq elpy-rpc-virtualenv-path 'current)
   (set-company-backend! 'elpy-mode 'elpy-company-backend)
   )
+
+(defun ak/copy-full-path-dired () (interactive)
+       (kill-new (expand-file-name (dired-copy-filename-as-kill))))
+(defun ak/copy-full-path () (interactive)
+       (kill-new (expand-file-name (buffer-file-name))))
+(map! "C-M-Y" #'ak/copy-full-path)
+(map! "C-S-Y" #'ak/copy-full-path-dired)
+;; (after! dired (define-key dired-mode-map (kbd "C-S-y") #'ak/copy-full-path-dired))
+;; (after! dired (add-hook 'dired-mode-hook (lambda () (local-set-key (kbd "C-y") #'ak/copy-full-path-dired))))
+
 
 ;; if having trouble with treesitter language grammars, use treesit-install-language-grammar
 
