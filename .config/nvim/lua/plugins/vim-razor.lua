@@ -1,4 +1,5 @@
-return {
-  "jlcrochet/vim-razor",
-  ft = { "cshtml", "razor" }
-}
+return {}
+-- return {
+--   "jlcrochet/vim-razor",
+--   ft = { "cshtml", "razor" }
+-- }
