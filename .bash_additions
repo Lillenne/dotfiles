@@ -1,0 +1,20 @@
+alias cfg='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+alias jp="jupyter-lab --no-browser"
+alias mm=micromamba
+alias mml="mm activate ml"
+alias mj="mml; cd ~/jupyter; jp"
+alias mda="mm deactivate"
+alias mma="mm activate"
+alias mmi="mm install"
+alias nv="nvim"
+alias tn="tmux new -n"
+alias ta="tmux a"
+alias tat="tmux a -t"
+alias tl="tmux ls"
+alias tm="tmux"
+
+export PATH="${PATH:+${PATH}:}~/.local/share/bob/nvim-bin"
+export PATH="${PATH:+${PATH}:}~/.cargo/bin"
+export PATH="${PATH:+${PATH}:}~/.config/emacs/bin"
+
+export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+${LD_LIBRARY_PATH}:}/usr/local/lib64"

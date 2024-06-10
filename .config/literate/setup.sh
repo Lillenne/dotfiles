@@ -1,17 +1,6 @@
-#+title: Conf
-#+PROPERTY: header-args :tangle  "setup.sh"
-
-* Environmental Variables
-Required:
-- NAME
-- EMAIL_ADDRESS
-
-#+begin_src bash
 if [ -n "${NAME+''}" ]; then return 1; fi
 if [ -n "${EMAIL_ADDRESS+''}" ]; then return 1; fi
-#+end_src
-* Setup yay AUR helper & base / git
-#+begin_src bash
+
 pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd ..
 
 install() {
@@ -27,10 +16,7 @@ install_native() {
 
     install $*
 }
-#+end_src
-* Setup WSL
 
-#+begin_src bash
 # setup wsl, if needed
 if [ -f "/etc/wsl.conf" ]; then
     cat <<EOF >> /etc/wsl.conf
@@ -40,48 +26,21 @@ if [ -f "/etc/wsl.conf" ]; then
     appendWindowsPath=false
     EOF
 fi
-#+end_src
 
-* Programming languages
-** Rust
-#+begin_src bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-#+end_src
-** dotnet
-#+begin_src bash
+
 install dotnet-sdk
-#+end_src
-dotnet tool install --global dotnet-ef
-dotnet tool install --global csharp-ls
-** Python
-#+begin_src bash
+
 install micromamba-bin
-#+end_src
-* Terminal emulator (wezterm)
-#+begin_src bash
+
 install_native wezterm ttf-jetbrains-mono ttf-jetbrains-mono-nerd
-#+end_src
-* Tree sitter
-** Core
-#+begin_src bash
+
 git clone https://github.com/tree-sitter/tree-sitter.git
 cd tree-sitter
 make -j$(nproc)
 sudo make install
 sudo ldconfig
-#+end_src
-** CLI
-cargo install tree-sitter-cli
-** Module
-sudo dnf install gnutls-devel jansson-devel -y
-git clone https://github.com/casouri/tree-sitter-module.git
-./tree-sitter-module/batch.sh
-* Neovim
-# setup tpm <C-SPC>I #in tmux
-# yay -S chafa ueberzugpp viu -y
-# yay -S catimg ueberzugpp jp2a chafa viu
 
-#+begin_src bash
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 install ripgrep findutils lazygit npm neovim yarn fd luarocks bottom
 sudo luarocks --lua-version=5.1 install magick
@@ -94,11 +53,7 @@ luarocks config variables.LUA_INCDIR /usr/include/luajit-2.1
 curl -L https://github.com/dundee/gdu/releases/latest/download/gdu_linux_amd64.tgz | tar xz
 chmod +x gdu_linux_amd64
 sudo mv gdu_linux_amd64 /usr/local/bin/gdu
-#+end_src
-* Emacs
-** Build emacs
-Set lsp mode to use plists for optimal perf
-#+begin_src bash
+
 sudo echo LSP_USE_PLISTS=true >> /etc/environment
 export LSP_USE_PLISTS=true
 install libxpm libjpeg libpng libtiff giflib librsvg libxml2 gnutls gtk3 webkit2gtk
@@ -108,27 +63,19 @@ cd emacs
 ./configure --with-native-compilation=aot  --with-xwidgets --with-tree-sitter --with-json --with-imagemagick --with-mailutils
 make -j$(nproc)
 sudo make install
-#+end_src
-** Doom
-#+begin_src bash
+
 git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs
 ~/.config/emacs/bin/doom install
-#+end_src
-** Mail
-#+begin_src bash
+
 if [ -n "${EMAIL_ADDRESS+''}" ]; then
         install isync
         mbsync --all
         mu init --maildir ~/.mail --my-address $EMAIL_ADDRESS
 fi
-#+end_src
-** Autostart
-#+begin_src bash
+
 systemctl enable --user --now emacs
 sed -i s/EDITOR=.*/EDITOR=\"emacsclient\ -c\"/g test
-#+end_src
-* Clone dotfiles
-#+begin_src bash
+
 cat <<EOF> ~/.gitconfig
 [user]
 	email = $EMAIL_ADDRESS
@@ -143,38 +90,19 @@ echo ".dotfiles" >> .gitignore
 git clone --bare https://github.com/Lillenne/dotfiles.git $HOME/.dotfiles
 alias cfg='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 config reset --hard
-#+end_src
-* Sync .bashrc
-#+begin_src bash
+
 echo "source ~./.bash_additions" >> ~/.bashrc
 source ~./bashrc
-#+end_src
-* Sync doom emacs
-#+begin_src bash
-doom sync
-#+end_src
-* OpenCV
-yay -S opencv-cuda
-* Docker registry
-#+begin_src bash
-install podman podman-docker podman-compose
-#+end_src
 
-* Ollama
-#+begin_src bash
+doom sync
+
+install podman podman-docker podman-compose
+
 curl https://ollama.ai/install.sh | sh
-#+end_src
-* other programs
-czkawka
-darktable
-vial
-micromamba
-* Local shares
-#+begin_src bash
+
 sudo mkdir /shares
 sudo mkdir /shares/nfs
 sudo chown nobody:nogroup /shares/nfs
 sudo chown nobody:nobody /shares -R
 sudo chmod 777 /shares -R
 echo "nas.pixalyzer.com:/mnt/wd/nfs /shares/nfs nfs defaults 0 0" >> /etc/fstab
-#+end_src

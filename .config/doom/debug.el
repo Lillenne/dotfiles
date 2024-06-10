@@ -1,7 +1,7 @@
 ;;; debug.el -*- lexical-binding: t; -*-
 
 
-;(setenv "LSP_USE_PLISTS" "true") ; remember to add this to .config/emacs/early-init.el
+(setenv "LSP_USE_PLISTS" "true") ; remember to add this to .config/emacs/early-init.el
 
 ;; Debugging
 (with-eval-after-load 'dap-mode
@@ -63,8 +63,13 @@
 
 (with-eval-after-load 'lsp-mode (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration))
 
-(map! :m "g e" #'next-error)
-(map! :m "g E" #'previous-error)
+(map! :m "g e" #'flymake-goto-next-error)
+(map! :m "g E" #'flymake-goto-previous-error)
+(map! :m "] e" #'flymake-goto-next-error)
+(map! :m "[ E" #'flymake-goto-previous-error)
+
+(map! "<C-.>" #'lsp-execute-code-action)
+(map! :leader "l a" #'lsp-execute-code-action)
 
 (map! :leader "d d" #'dap-debug)
 (map! :leader "d k" #'dap-disconnect)
