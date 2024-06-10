@@ -1,5 +1,13 @@
 if [ -n "${NAME+''}" ]; then return 1; fi
 if [ -n "${EMAIL_ADDRESS+''}" ]; then return 1; fi
+if [ -n "${SMB_USERNAME+''}" ]; then return 1; fi
+if [ -n "${SMB_PASSWORD+''}" ]; then return 1; fi
+
+if [ -f "/etc/wsl.conf" ]; then
+    IS_WSL=1
+else
+    IS_WSL=0
+fi
 
 pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd ..
 
@@ -9,7 +17,7 @@ install() {
 }
 
 install_native() {
-    if [ -f "/etc/wsl.conf" ];
+    if [ $IS_WSL -eq 1 ];
        echo "ERR: On WSL. Did not install $($*)\n" >> ~/install.log
        then return 1;
     fi
@@ -17,8 +25,7 @@ install_native() {
     install $*
 }
 
-# setup wsl, if needed
-if [ -f "/etc/wsl.conf" ]; then
+if [ $IS_WSL -eq 1 ]; then
     cat <<EOF >> /etc/wsl.conf
 
     [interop]
@@ -60,7 +67,7 @@ install libxpm libjpeg libpng libtiff giflib librsvg libxml2 gnutls gtk3 webkit2
 git clone git://git.sv.gnu.org/emacs.git --depth=1
 cd emacs
 ./autogen
-./configure --with-native-compilation=aot  --with-xwidgets --with-tree-sitter --with-json --with-imagemagick --with-mailutils
+./configure --with-native-compilation=aot  --with-xwidgets --with-tree-sitter --with-json --with-imagemagick --with-pgtk --with-mailutils CFLAGS="-O2 -pipe -march=native -fomit-frame-pointer"
 make -j$(nproc)
 sudo make install
 
@@ -100,9 +107,15 @@ install podman podman-docker podman-compose
 
 curl https://ollama.ai/install.sh | sh
 
-sudo mkdir /shares
-sudo mkdir /shares/nfs
+install cifs-utils nfs-utils
+sudo mkdir /mnt
+sudo mkdir /mnt/nfs
+sudo mkdir /mnt/smb
 sudo chown nobody:nogroup /shares/nfs
 sudo chown nobody:nobody /shares -R
 sudo chmod 777 /shares -R
-echo "nas.pixalyzer.com:/mnt/wd/nfs /shares/nfs nfs defaults 0 0" >> /etc/fstab
+echo "nas.pixalyzer.com:/mnt/wd/nfs /shares/nfs nfs defaults 0 0" | sudo tee -a /etc/fstab > /dev/null
+echo "//nas.pixalyzer.com/smb /mnt/mountpoint cifs _netdev,nofail,username=aus 0 0" | sudo tee -a /etc/fstab > /dev/null
+sudo systemctl daemon-reload
+mount /mnt/nfs
+mount /mnt/smb
