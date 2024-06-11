@@ -10,27 +10,15 @@
         (require 'llm-ollama)
         (setopt ellama-provider
                         (make-llm-ollama
-                        :chat-model "phind-codellama"
-                        :embedding-model "phind-codellama"))
+                        :chat-model "llama3"
+                        :embedding-model "llama3"))
         (setopt ellama-naming-scheme 'ellama-generate-name-by-llm)
         (setopt ellama-providers
-                        '(("phind-codellama" . (make-llm-ollama
-                                        :chat-model "phind-codellama"
-                                        :embedding-model "phind-codellama"))
-                        ("codebooga" . (make-llm-ollama
-                                        :chat-model "codebooga"
-                                        :embedding-model "codebooga"))
-                        ("deepseek-coder" . (make-llm-ollama
-                                        :chat-model "deepseek-coder"
-                                        :embedding-model "deepseek-coder"))
-                        ("phi" . (make-llm-ollama
-                                        :chat-model "phi"
-                                        :embedding-model "phi"))
-                        ("wizardlm-uncensored" . (make-llm-ollama
-                                        :chat-model "wizardlm-uncensored"
-                                        :embedding-model "wizardlm-uncensored"))
-                        ;; ("" . (make-llm-ollama
-                        ;;                 :chat-model ""
-                        ;;                 :embedding-model ""))
+                        '(("deepseek-coder:33b" . (make-llm-ollama
+                                        :chat-model "deepseek-coder:33b"
+                                        :embedding-model "deepseek-coder:33b"))
+                        ("llama3" . (make-llm-ollama
+                                        :chat-model "llama3"
+                                        :embedding-model "llama3"))
                         ))
 )
