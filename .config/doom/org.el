@@ -2,6 +2,7 @@
 
 (setq org-directory "~/org/")
 (setq org-roam-directory "~/org/roam")
+(setq +org-capture-todo-file "~/org/todos.org")
 (org-roam-db-autosync-mode)
 
 ;; (add-hook 'org-agenda-mode-hook #'olivetti-mode)
@@ -156,7 +157,7 @@ e.g. Friday, February  9, 2024 | 7:29 AM "
 ))
 
 ; add id to all captures
-(add-hook 'org-capture-mode-hook #'org-id-get-create) ;https://www.reddit.com/r/orgmode/comments/eln9kb/capture_with_automatic_id_creation/
+;; (add-hook 'org-capture-mode-hook #'org-id-get-create) ;https://www.reddit.com/r/orgmode/comments/eln9kb/capture_with_automatic_id_creation/
 
 ;; (add-hook 'org-mode-hook (lambda () (when (and (ak/is-only-window) (not (ak/is-minibuf))) (olivetti-mode))) 95)
 
