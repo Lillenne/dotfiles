@@ -1,5 +1,6 @@
 ;;; ellama.el -*- lexical-binding: t; -*-
 
+;; must call ollama pull {models}
 (use-package ellama
         :init
         ;; language you want ellama to translate to

@@ -1,7 +1,6 @@
 ;;; debug.el -*- lexical-binding: t; -*-
 
-
-(setenv "LSP_USE_PLISTS" "true") ; remember to add this to .config/emacs/early-init.el
+(setenv "LSP_USE_PLISTS" "true") ; remember to add this to /etc/environment or .config/emacs/early-init.el
 
 ;; Debugging
 (with-eval-after-load 'dap-mode
@@ -17,7 +16,7 @@
 ;; Rust
 (require 'dap-gdb-lldb)
 (with-eval-after-load 'lsp-rust (require 'dap-cpptools))
-;; (dap-cpptools-setup) ; only once
+;; (dap-cpptools-setup) ; needs to be run only once
 ;; yay -S gdb
 (dap-gdb-lldb-setup)
 (dap-register-debug-template "Rust::GDB Run Configuration"
