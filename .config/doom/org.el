@@ -2,6 +2,7 @@
 
 (setq org-directory "~/org/")
 (setq org-roam-directory "~/org/roam")
+(setq org-timeblock-inbox-file "~/org/todos.org")
 (setq +org-capture-todo-file "~/org/todos.org")
 (org-roam-db-autosync-mode)
 
