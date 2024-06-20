@@ -19,6 +19,7 @@
 (load! "bindings.el")
 (load! "jupyter.el")
 (load! "calendar.el")
+(load! "timeblock.el")
 
 (defvar ak/use-mu4e t)
 (when ak/use-mu4e (load! "mu4e.el"))
