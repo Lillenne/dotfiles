@@ -5,6 +5,8 @@
 ;(setq fancy-splash-image "")
 
 (setq gc-cons-threshold 1000000) ; increase gc threshold to improve performance
+(require 'load-env-vars)
+(load-env-vars "/home/aus/.dotvars")
 (setq doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 20))
 (setq doom-theme 'doom-one)
 (add-to-list 'default-frame-alist '(fullscreen . maximized)) ;;start fullscreen

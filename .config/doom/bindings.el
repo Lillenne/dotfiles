@@ -26,4 +26,4 @@
 (map! :m "C-w b" #'split-window-vertically)
 
 (use-package evil-nerd-commenter
-  :bind ("M-/" . evilnc-comment-or-uncomment-lines))
+  :bind ("C-/" . evilnc-comment-or-uncomment-lines))
