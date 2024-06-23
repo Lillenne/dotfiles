@@ -4,10 +4,7 @@
 (setq org-roam-directory "~/org/roam")
 (setq +org-capture-todo-file "~/org/todos.org")
 (org-roam-db-autosync-mode)
-;; (set-company-backend! 'org-mode 'company-yasnippet 'company-files 'company-dabbrev)
-(set-company-backend! 'org-mode '(:separate company-yasnippet company-files company-dabbrev company-ispell) 'company-capf)
-
-;; (add-hook 'org-agenda-mode-hook #'olivetti-mode)
+(set-company-backend! 'org-mode '(:separate company-yasnippet company-files company-dabbrev company-ispell) 'company-capf) ; prioritize files / snippets in org
 
 ;; note, need to create the headings before they are refiled properly
 (defun ak/move-to-hold (heading &optional file)
@@ -41,11 +38,11 @@
     (when archive (call-interactively #'org-archive-to-archive-sibling))
     ))
 
-(defun ak/toggle-org-checkbox () (interactive)
-       (let ((time (format "\nCLOSED: [%s]" (format-time-string "%Y-%m-%d %a %H:%M"))))
-         (progn (org-toggle-checkbox) (end-of-line) (insert time))))
-
-(add-hook 'org-mode-hook (lambda () (map! :leader "m x" #'ak/toggle-org-checkbox)))
+;;;; doesn't always check the box
+;; (defun ak/toggle-org-checkbox () (interactive)
+;;        (let ((time (format "\nCLOSED: [%s]" (format-time-string "%Y-%m-%d %a %H:%M"))))
+;;          (progn (org-toggle-checkbox) (end-of-line) (insert time))))
+;; (add-hook 'org-mode-hook (lambda () (map! :leader "m x" #'ak/toggle-org-checkbox)))
 
 (add-hook 'org-after-todo-state-change-hook
              (lambda ()
@@ -54,8 +51,36 @@
                (when (equal org-state "HOLD") (ak/move-to-hold "Tabled"))
                (when (equal org-state "WAIT") (ak/move-to-hold "Wait"))
                (when (equal org-state "KILL") (ak/move-to-hold "Canceled"))
-               (when (equal org-state "STRT") (ak/move-to-hold "Started" "in-progress.org"))
+               ;; (when (equal org-state "STRT") (ak/move-to-hold "Started" "in-progress.org"))
                ) 100)
+
+;how to do tags for meetings? make it a roam capture?
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . nil)
+   (python . t)
+   (csharp . t)
+   (shell . t)
+   (bash . t)
+   (mermaid . t)
+   ))
+(setq ob-mermaid-cli-path "/usr/bin/mmdc")
+
+; add @ to prompt a note + others
+(setq org-todo-keywords
+'((sequence "TODO(t)" "PROJ(p)" "LOOP(r)" "STRT(s)" "WAIT(w)" "HOLD(h)" "IDEA(i)" "|" "DONE(d)" "KILL(k)")
+ (sequence "[ ](T)" "[-](S)" "[?](W)" "|" "[X](D)")
+ (sequence "|" "OKAY(o)" "YES(y)" "NO(n)")))
+
+(setq org-startup-with-inline-images t) ;set images in org mode inline
+(setq org-log-done 'time)
+(setq org-log-into-drawer t)
+(setq org-log-redeadline nil) ; Don't log the time a task was rescheduled or redeadlined.
+(setq org-log-reschedule nil)
+(setq org-roam-v2-ack t)
+(setq org-link-descriptive nil)
+
 
 (setq org-capture-templates
 '(("n" "Personal notes" entry
@@ -83,34 +108,43 @@
 ("pt" "Project-local todo" entry (file+headline +org-capture-project-todo-file "Inbox") "* TODO %?\n%i\n%a" :prepend t)
 ("pn" "Project-local notes" entry (file+headline +org-capture-project-notes-file "Inbox") "* %U %?\n%i\n%a" :prepend t)
 ("pc" "Project-local changelog" entry (file+headline +org-capture-project-changelog-file "Unreleased") "* %U %?\n%i\n%a" :prepend t)
+;("c" "calfw2org" entry (file+headline +org-capture-todo-file "Inbox") "* %? \nSCHEDULED: %(cfw:org-capture-day)" :prepend t :time-prompt)
+("c" "calfw2org" entry (file+headline +org-capture-todo-file "Inbox") "* %? \nSCHEDULED: %(cfw:org-capture-day)")
 ("o" "Centralized templates for projects")
 ("ot" "Project todo" entry #'+org-capture-central-project-todo-file "* TODO %?\n %i\n %a" :heading "Tasks" :prepend nil)
 ("on" "Project notes" entry #'+org-capture-central-project-notes-file "* %U %?\n %i\n %a" :heading "Notes" :prepend t)
 ("oc" "Project changelog" entry #'+org-capture-central-project-changelog-file "* %U %?\n %i\n %a" :heading "Changelog" :prepend t)))
-;how to do tags for meetings? make it a roam capture?
+(setq org-roam-dailies-capture-templates '(("d" "default" entry "* %<%-I:%M %p>: %?" :target
+  (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n"))))
 
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((emacs-lisp . nil)
-   (python . t)
-   (csharp . t)
-   (shell . t)
-   (bash . t)
-   (mermaid . t)
-   ))
-(setq ob-mermaid-cli-path "/usr/bin/mmdc")
+(setq org-meetings-file "/home/aus/org/meetings.org")
 
-; add @ to prompt a note + others
-(setq org-todo-keywords
-'((sequence "TODO(t)" "PROJ(p)" "LOOP(r)" "STRT(s)" "WAIT(w)" "HOLD(h)" "IDEA(i)" "|" "DONE(d)" "KILL(k)")
- (sequence "[ ](T)" "[-](S)" "[?](W)" "|" "[X](D)")
- (sequence "|" "OKAY(o)" "YES(y)" "NO(n)")))
+;; not sure why this doesn't work with variables
+(setq org-roam-capture-templates
+'(
+("i" "sprint-item" plain (file "/home/aus/org/roam/sprint-items/templates/template.org") :target (file "sprint-items/%<%Y%m%d%H%M%S>-${slug}.org") :unnarrowed t)
+("s" "sprint" plain (file "/home/aus/org/roam/sprints/templates/template.org") :target (file "sprints/%<%Y%m%d%H%M%S>-${slug}.org") :unnarrowed t)
+("d" "default" plain "%?" :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n") :unnarrowed t)
+("m" "Meetings")
+("mm" "Scheduled meeting" entry "* ${slug} %^G \nScheduled: %U\nFor: %^{When is the meeting?}T\n- Attendees: %^{Attendees}, Austin\n- Prep/Links: \n  - [ ] %?\n- Notes:"
+        :target (file+datetree "meetings.org") :unnarrowed t :prepend t :clock-in t :clock-resume t :time-prompt t)
+("mn" "Impromptu meeting" entry "* ${slug} %^G \n%T\n- Attendees: %^{Attendees}, Austin\n To discuss \n - [ ] %?\n- Notes:"
+        :target (file+datetree "meetings.org"}) :unnarrowed t :prepend t :clock-in t :clock-resume t)
+))
 
-(setq org-startup-with-inline-images t) ;set images in org mode inline
-(setq org-log-done 'time)
-(setq org-log-into-drawer t)
-(setq org-roam-v2-ack t)
-(setq org-link-descriptive nil)
+; add id to all captures
+;; (add-hook 'org-capture-mode-hook #'org-id-get-create) ;https://www.reddit.com/r/orgmode/comments/eln9kb/capture_with_automatic_id_creation/
+
+(after! 'org
+  (require 'org-tempo) ;; This is needed as of Org 9.2
+  (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+  (add-to-list 'org-structure-template-alist '("ru" . "src rust"))
+  (add-to-list 'org-structure-template-alist '("py" . "src python")))
+
+(map! :leader "i b" #'tempo-template-org-src)
+
+; todo org-protocol and org-roam-protocol
 
 (defun ak/current-time-min-sec ()
   "Insert string for the current time formatted like '7:27 AM'."
@@ -139,36 +173,3 @@ e.g. Friday, February  9, 2024 | 7:29 AM "
   (insert (format-time-string "%A, %B %e, %Y | %-I:%M %p")))
 
 (map! :leader "i D" 'ak/today-date-time)
-
-(setq org-roam-dailies-capture-templates '(("d" "default" entry "* %<%-I:%M %p>: %?" :target
-  (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n"))))
-
-(setq org-meetings-file "/home/aus/org/meetings.org")
-
-;; not sure why this doesn't work with variables
-(setq org-roam-capture-templates
-'(
-("i" "sprint-item" plain (file "/home/aus/org/roam/sprint-items/templates/template.org") :target (file "sprint-items/%<%Y%m%d%H%M%S>-${slug}.org") :unnarrowed t)
-("s" "sprint" plain (file "/home/aus/org/roam/sprints/templates/template.org") :target (file "sprints/%<%Y%m%d%H%M%S>-${slug}.org") :unnarrowed t)
-("d" "default" plain "%?" :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n") :unnarrowed t)
-("m" "Meetings")
-("mm" "Scheduled meeting" entry "* ${slug} %^G \nScheduled: %U\nFor: %^{When is the meeting?}T\n- Attendees: %^{Attendees}, Austin\n- Prep/Links: \n  - [ ] %?\n- Notes:"
-        :target (file+datetree "meetings.org") :unnarrowed t :prepend t :clock-in t :clock-resume t :time-prompt t)
-("mn" "Impromptu meeting" entry "* ${slug} %^G \n%T\n- Attendees: %^{Attendees}, Austin\n To discuss \n - [ ] %?\n- Notes:"
-        :target (file+datetree "meetings.org"}) :unnarrowed t :prepend t :clock-in t :clock-resume t)
-))
-
-; add id to all captures
-;; (add-hook 'org-capture-mode-hook #'org-id-get-create) ;https://www.reddit.com/r/orgmode/comments/eln9kb/capture_with_automatic_id_creation/
-
-;; (add-hook 'org-mode-hook (lambda () (when (and (ak/is-only-window) (not (ak/is-minibuf))) (olivetti-mode))) 95)
-
-;; <el<tab> etc. snippets -> code blocks
-(with-eval-after-load 'org
-  (require 'org-tempo) ;; This is needed as of Org 9.2
-  (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
-  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
-  (add-to-list 'org-structure-template-alist '("ru" . "src rust"))
-  (add-to-list 'org-structure-template-alist '("py" . "src python")))
-
-; todo org-protocol and org-roam-protocol
