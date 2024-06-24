@@ -57,13 +57,10 @@
 ;;(package! evil-textobj-anyblock :disable t)
 ;;(package! evil-textobj-tree-sitter)
 (package! company-quickhelp)
-(package! ellama
-  :recipe (:host github :repo "s-kostyaev/ellama"
+(package! ellama :recipe (:host github :repo "s-kostyaev/ellama"
                  :files ("ellama.el"))) ; requires ollama and a model, default zephyr
-(package! org-hyperscheduler
-  :recipe (:host github :repo "dmitrym0/org-hyperscheduler"))
-(package! org-timeblock
-  :recipe (:host github :repo "ichernyshovvv/org-timeblock"))
+(package! org-hyperscheduler :recipe (:host github :repo "dmitrym0/org-hyperscheduler"))
+(package! org-timeblock :recipe (:host github :repo "ichernyshovvv/org-timeblock"))
 ;; (package! evil-visual-mark-mode
 ;;   :recipe (:host github :repo "roman/evil-visual-mark-mode"
 ;;            :files ("evil-visual-mark-mode.el")))
@@ -82,6 +79,5 @@
 ;;   (package! yasnippet))
 
 (package! elpy)
-;;(package! todoist)
-;; my fork of emacs todoist until sections are merged
-(package! todoist :recipe (:host github :repo "Lillenne/emacs-todoist" :files ("todoist.el")))
+(package! todoist :recipe (:host github :repo "abrochard/emacs-todoist" :files ("todoist.el")))
+(package! company-org-block)
