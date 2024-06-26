@@ -120,11 +120,13 @@ cfg reset --hard
 
 echo "source ~/.bash_additions" >> ~/.bashrc
 source ~/.bashrc
+git config --global init.defaultBranch main
 #+end_src
 * Environmental Variables
 Required to be in ~/.dotvars:
 - NAME
 - EMAIL_ADDRESS
+- GIT_EMAIL
 - SMB_USERNAME
 - SMB_PASSWORD
 - SMB_SHARE_LOCATION
@@ -143,7 +145,7 @@ set +o allexport
 cat <<EOF> ~/.gitconfig
 [user]
 	name = $NAME
-	email = $EMAIL_ADDRESS
+	email = $GIT_EMAIL
 [credential]
 	helper = store
 [pull]

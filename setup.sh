@@ -85,6 +85,7 @@ cfg reset --hard
 
 echo "source ~/.bash_additions" >> ~/.bashrc
 source ~/.bashrc
+git config --global init.defaultBranch main
 
 if [ -f "~/.dotvars.secret" ]; then return 1; fi
 cfg secret reveal
@@ -95,7 +96,7 @@ set +o allexport
 cat <<EOF> ~/.gitconfig
 [user]
 	name = $NAME
-	email = $EMAIL_ADDRESS
+	email = $GIT_EMAIL
 [credential]
 	helper = store
 [pull]
