@@ -3,6 +3,9 @@
 (setq org-directory "~/org/")
 (setq org-roam-directory "~/org/roam")
 (setq +org-capture-todo-file "~/org/todos.org")
+(setq org-agenda-files '("~/org/"
+                         "~/org/roam/"
+                         "~/org/roam/daily/"))
 (org-roam-db-autosync-mode)
 
 ;; fix for yasnippet tab key in org mode

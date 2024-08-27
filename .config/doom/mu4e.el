@@ -1,6 +1,6 @@
 ;;; debug.el -*- lexical-binding: t; -*-
-;;(require 'mu4e)
 (require 'smtpmail)
+(require 'mu4e)
 (setq +org-capture-emails-file "todos.org")
 (defvar ak/email-address (getenv "EMAIL_ADDRESS"))
 (set 'user-mail-address ak/email-address)
@@ -14,6 +14,18 @@
                 (mu4e-refile-folder . "/All Mail")
                 (smtpmail-smtp-user . ak/email-address))
                 t)
+
+;; https://github.com/djcb/mu/issues/1136
+(setf (alist-get 'trash mu4e-marks)
+      (list :char '("d" . "▼")
+            :prompt "dtrash"
+            :dyn-target (lambda (target msg)
+                          (mu4e-get-trash-folder msg))
+            :action (lambda (docid msg target)
+                      ;; Here's the main difference to the regular trash mark,
+                      ;; no +T before -N so the message is not marked as
+                      ;; IMAP-deleted:
+                      (mu4e--server-move docid (mu4e--mark-check-target target) "-N"))))
 
 ;; Mark as read and move to spam -- not working?
 ;; https://gist.github.com/Mic92/d455715242c8909cc8302aadd4745fcf
@@ -33,6 +45,7 @@
         mu4e-change-filenames-when-moving t   ; needed for mbsync
         mu4e-compose-format-flowed t
         mu4e-sent-messages-behavior 'trash   ; handled by imap
+        mu4e-refile-folder "/Archive"
         mu4e-update-interval 60)              ; update every 1 minute
 
 ;; Send mail
@@ -57,5 +70,7 @@ smtpmail-smtp-service 1025)
         ("/Sent"      . ?s)
         ("/Trash"     . ?t)
         ("/Drafts"    . ?d)
+        ("/Archive"    . ?r)
         ("/All Mail"  . ?a)))
+
 (setq shr-color-visible-luminance-min 80)

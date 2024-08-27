@@ -53,12 +53,12 @@
 (package! ob-mermaid)
 (package! evil-owl)
 (package! evil-quickscope)
-;;(package! olivetti)
+(package! olivetti)
 ;;(package! evil-textobj-anyblock :disable t)
 ;;(package! evil-textobj-tree-sitter)
 (package! company-quickhelp)
 (package! ellama :recipe (:host github :repo "s-kostyaev/ellama"
-                 :files ("ellama.el"))) ; requires ollama and a model, default zephyr
+                          :files ("ellama.el"))) ; requires ollama and a model, default zephyr
 (package! org-hyperscheduler :recipe (:host github :repo "dmitrym0/org-hyperscheduler"))
 (package! org-timeblock :recipe (:host github :repo "ichernyshovvv/org-timeblock"))
 ;; (package! evil-visual-mark-mode
