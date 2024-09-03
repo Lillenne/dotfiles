@@ -12,13 +12,15 @@ set easymotion
 " plugins
 " cx-motion (e.g., cxiw) on one spot, move to exchange target, cx-motion to exchange
 Plug 'tommcdo/vim-exchange'
-
+Plug 'justinmk/vim-sneak'
 Plug 'machakann/vim-highlightedyank'
 " gcc comment line, gc comment next motion
 Plug 'tpope/vim-commentary'
 " visual -> reg -> gr, deletes into void reg
 Plug 'vim-scripts/ReplaceWithRegister'
+Plug 'dbakker/vim-paragraph-motion'
 Plug 'vim-scripts/argextobj.vim'
+Plug 'kana/vim-textobj-entire'
 let g:argtextobj_pairs="(:),{:},[:],<:>"
 
 " set
@@ -179,8 +181,14 @@ map <leader>rca <Action>(Debugger.RemoveAllBreakpoints)
 
 " find
 map <leader>fo <Action>(RecentFiles)
+map <leader>ff <Action>(GotoFile)
+map <leader>fw <Action>(TextSearchAction)
+map <leader>fW <Action>(FindInPath)
+map <leader>fS <Action>(GotoSymbol)
+map <leader>fa <Action>(GotoAction)
+map <leader>ft <Action>(GotoType)
 map <leader>fp <Action>(FindInPath)
-map <leader>ft <Action>(ActivateTODOToolWindow)
+map <leader>tt <Action>(ActivateTODOToolWindow)
 map <leader>fl <Action>(RecentLocations)
 map <leader>of <Action>(OpenFile)
 map <leader>op <Action>(OpenFile)

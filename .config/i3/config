@@ -125,7 +125,8 @@ bindcode $mod+Shift+19    move container to workspace  $ws1; workspace  $ws1
 ######################################
 
 # start a terminal
-bindsym $mod+Return exec --no-startup-id wezterm
+# bindsym $mod+Return exec --no-startup-id wezterm
+bindsym $mod+Return exec --no-startup-id alacritty
 
 # kill focused window
 bindsym $mod+q kill
@@ -251,8 +252,8 @@ bindsym $mod+Shift+p exec --no-startup-id ~/.config/i3/scripts/power-profiles
 bindsym $mod+x exec --no-startup-id emacsclient -c
 
 # bind neovim
-#bindsym $mod+c exec "alacritty --class 'neovim,neovim' --hold -e nvim"; workspace 1
-bindsym $mod+c exec "wezterm -e nvim"; workspace 1
+bindsym $mod+c exec "alacritty --class 'neovim,neovim' --hold -e nvim"; workspace 1
+#bindsym $mod+c exec "wezterm -e nvim"; workspace 1
 
 ##########################################
 # configuration for workspace behaviour: #
@@ -393,8 +394,9 @@ exec --no-startup-id /usr/bin/dunst
 
 # Autostart apps as you like
 #exec --no-startup-id sleep 2 && xfce4-terminal
-exec --no-startup-id wezterm
-exec --no-startup-id sleep 10 && emacsclient -c
+# exec --no-startup-id wezterm
+exec --no-startup-id alacritty
+# exec --no-startup-id sleep 10 && emacsclient -c
 exec --no-startup-id firefox
 exec --no-startup-id thunar
 exec --no-startup-id redshift -P -O 4500 # reduce blue light
