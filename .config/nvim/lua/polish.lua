@@ -9,9 +9,13 @@
 --   {}
 -- )
 --
-
+vim.opt.clipboard = "unnamed"
+-- vim.cmd "set cmdheight=2"
+vim.cmd "set shortmess+=FaT"
+-- vim.cmd "set foldlevelstart=99"
+-- vim.cmd "set foldlevel=99"
+-- vim.cmd "set nofoldenable"
 vim.api.nvim_set_keymap("i", "<C-s>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", {})
-vim.api.nvim_set_option("clipboard", "unnamed")
 
 -- Set up custom filetypes
 -- vim.filetype.add {
@@ -28,6 +32,103 @@ vim.api.nvim_set_option("clipboard", "unnamed")
 --
 --
 
+-- Copilot autosuggestions
+vim.g.copilot_no_tab_map = true
+vim.g.copilot_hide_during_completion = 0
+
+local chat = require "CopilotChat"
+local actions = require "CopilotChat.actions"
+local integration = require "CopilotChat.integrations.telescope"
+
+local function pick(pick_actions)
+  return function() integration.pick(pick_actions(), {}) end
+end
+
+chat.setup {
+  question_header = "",
+  answer_header = "",
+  error_header = "",
+  allow_insecure = true,
+  mappings = {
+    reset = {
+      normal = "",
+      insert = "",
+    },
+  },
+  prompts = {
+    Explain = {
+      mapping = "<leader>Ae",
+      description = "AI Explain",
+    },
+    Review = {
+      mapping = "<leader>Ar",
+      description = "AI Review",
+    },
+    Tests = {
+      mapping = "<leader>At",
+      description = "AI Tests",
+    },
+    Fix = {
+      mapping = "<leader>Af",
+      description = "AI Fix",
+    },
+    Optimize = {
+      mapping = "<leader>Ao",
+      description = "AI Optimize",
+    },
+    Docs = {
+      mapping = "<leader>Ad",
+      description = "AI Documentation",
+    },
+    CommitStaged = {
+      mapping = "<leader>Ac",
+      description = "AI Generate Commit",
+    },
+  },
+}
+
+vim.keymap.set({ "n", "v" }, "<leader>Aa", chat.toggle, { desc = "AI Toggle" })
+vim.keymap.set({ "n", "v" }, "<leader>Ax", chat.reset, { desc = "AI Reset" })
+vim.keymap.set({ "n", "v" }, "<leader>Ah", pick(actions.help_actions), { desc = "AI Help Actions" })
+vim.keymap.set({ "n", "v" }, "<leader>AA", pick(actions.prompt_actions), { desc = "AI Prompt Actions" })
+----------------------------------------------------------------
+local install_dir = vim.fs.joinpath(vim.fn.stdpath "data", "mason")
+local dap = require "dap"
+dap.adapters.netcoredbg = {
+  type = "executable",
+  command = install_dir .. "/packages/netcoredbg/netcoredbg",
+  args = { "--interpreter=vscode" },
+}
+require("neotest").setup {
+  adapters = {
+    require "neotest-dotnet" {
+      dap = {
+        -- Extra arguments for nvim-dap configuration
+        -- See https://github.com/microsoft/debugpy/wiki/Debug-configuration-settings for values
+        args = { justMyCode = true },
+        -- Enter the name of your dap adapter, the default value is netcoredbg
+        adapter_name = "netcoredbg",
+      },
+      -- Let the test-discovery know about your custom attributes (otherwise tests will not be picked up)
+      -- Note: Only custom attributes for non-parameterized tests should be added here. See the support note about parameterized tests
+      -- custom_attributes = {
+      --   xunit = { "MyCustomFactAttribute" },
+      --   nunit = { "MyCustomTestAttribute" },
+      --   mstest = { "MyCustomTestMethodAttribute" }
+      -- },
+      -- Provide any additional "dotnet test" CLI commands here. These will be applied to ALL test runs performed via neotest. These need to be a table of strings, ideally with one key-value pair per item.
+      dotnet_additional_args = {
+        "--verbosity detailed",
+      },
+      -- Tell neotest-dotnet to use either solution (requires .sln file) or project (requires .csproj or .fsproj file) as project root
+      -- Note: If neovim is opened from the solution root, using the 'project' setting may sometimes find all nested projects, however,
+      --       to locate all test projects in the solution more reliably (if a .sln file is present) then 'solution' is better.
+      discovery_root = "project", -- Default
+    },
+  },
+}
+
+---------------------------------------------------------------
 -- setup luarocks - requires nightly?
 do
   -- Specifies where to install/use rocks.nvim
