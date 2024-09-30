@@ -241,7 +241,8 @@ bindsym XF86AudioPrev exec --no-startup-id playerctl previous
 bindsym $mod+p exec --no-startup-id /usr/local/bin/switch-audio-port
 
 ## App shortcuts
-bindsym $mod+w exec --no-startup-id /usr/bin/firefox
+# bindsym $mod+w exec --no-startup-id /usr/bin/firefox
+bindsym $mod+w exec --no-startup-id /usr/bin/brave
 bindsym $mod+e exec --no-startup-id /usr/bin/thunar
 bindsym Print exec --no-startup-id scrot ~/%Y-%m-%d-%T-screenshot.png && notify-send "Screenshot saved to ~/$(date +"%Y-%m-%d-%T")-screenshot.png"
 
@@ -250,6 +251,7 @@ bindsym $mod+Shift+p exec --no-startup-id ~/.config/i3/scripts/power-profiles
 
 # bind emacsclient
 bindsym $mod+x exec --no-startup-id emacsclient -c
+bindsym $mod+Shift+a exec /home/aus/.config/emacs/bin/org-capture
 
 # bind neovim
 bindsym $mod+c exec "alacritty --class 'neovim,neovim' --hold -e nvim"; workspace 1
@@ -286,6 +288,7 @@ set $ws10 "9"
 assign [class="alacritty"] $ws1
 assign [class="wezterm"] $ws1
 assign [class="(?i)firefox"] $ws3
+assign [class="(?i)brave"] $ws3
 assign [class="Thunar"] $ws7
 assign [class="Neovim"] $ws4
 assign [class="Emacs"] $ws4
@@ -294,6 +297,7 @@ assign [class="Emacs"] $ws4
 for_window [class=alacritty] focus
 for_window [class=wezterm] focus
 for_window [class=(?i)firefox] focus
+for_window [class=(?i)brave] focus
 for_window [class=Thunar] focus
 for_window [class=Emacs] focus
 
@@ -397,8 +401,9 @@ exec --no-startup-id /usr/bin/dunst
 # exec --no-startup-id wezterm
 exec --no-startup-id alacritty
 # exec --no-startup-id sleep 10 && emacsclient -c
-exec --no-startup-id firefox
-exec --no-startup-id thunar
+exec --no-startup-id brave
+# exec --no-startup-id firefox
+# exec --no-startup-id thunar
 exec --no-startup-id redshift -P -O 4500 # reduce blue light
 #exec --no-startup-id sleep 3 && thunar
 

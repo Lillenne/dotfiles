@@ -4,13 +4,14 @@
                                         ;(remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-shortmenu)
 (setq gc-cons-threshold 2000000) ; increase gc threshold to improve performance
 (require 'load-env-vars)
-(load-env-vars "/home/aus/.dotvars")
+(load-env-vars (expand-file-name "~/.dotvars"))
 (setq doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 20))
 (setq doom-theme 'doom-one)
 (add-to-list 'default-frame-alist '(fullscreen . maximized)) ;;start fullscreen
 (setq display-line-numbers-type 'relative)
 (setq find-file-visit-truename t)
 (setq user-full-name (getenv "NAME"))
+(setq delete-by-moving-to-trash t)
 
 (load! "org.el")
 (load! "jupyter.el")
@@ -30,7 +31,6 @@
 (when ak/use-lsp-mode (load! "debug.el")(load! "company.el"))
 (load! "evil.el")
 
-
 (defun ak/is-minibuf () (minibuffer-window-active-p (current-buffer)))
 (defun ak/is-only-window () (equal (length (window-list-1)) 1))
 
@@ -48,6 +48,38 @@
        (kill-new (expand-file-name (dired-copy-filename-as-kill))))
 (defun ak/copy-full-path () (interactive)
        (kill-new (expand-file-name (buffer-file-name))))
+
+(defun name-of-the-file ()
+  "Gets the name of the file the current buffer is based on."
+  (interactive)
+  (insert (buffer-file-name (window-buffer (minibuffer-selected-window)))))
+
+(defun print-name-of-the-file ()
+  "Gets the name of the file the current buffer is based on."
+  (interactive)
+  (print (buffer-file-name (window-buffer (minibuffer-selected-window)))))
+
+(defun delete-visited-file-current-file ()
+  "Delete the file visited by the current buffer."
+  (interactive)
+  (let* ((buffer (current-buffer))
+         (filename (buffer-file-name buffer)))
+    (when buffer
+      (when (and filename
+                 (file-exists-p filename))
+        (delete-file filename))
+      (kill-buffer buffer))))
+
+(defun delete-visited-file (buffer-name)
+  "Delete the file visited by the buffer named BUFFER-NAME."
+  (interactive "Delete file visited by buffer ")
+  (let* ((buffer (get-buffer buffer-name))
+         (filename (buffer-file-name buffer)))
+    (when buffer
+      (when (and filename
+                 (file-exists-p filename))
+        (delete-file filename))
+      (kill-buffer buffer))))
 
 (load! "banner.el")
 (load! "bindings.el")

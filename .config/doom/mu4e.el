@@ -1,21 +1,21 @@
 ;;; debug.el -*- lexical-binding: t; -*-
 
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e/")
-(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e/")
 (require 'smtpmail)
 (require 'mu4e)
-(setq +org-capture-emails-file "todos.org")
+(require 'org)
+(setq +org-capture-emails-file "todo.org")
 (defvar ak/email-address (getenv "EMAIL_ADDRESS"))
 (set 'user-mail-address ak/email-address)
 (setq mu4e-split-view 'vertical
       mu4e-headers-visible-columns 120)
 
 (set-email-account! "pm"
-                    '((mu4e-sent-folder . "/Sent")
+                    `((mu4e-sent-folder . "/Sent")
                       (mu4e-drafts-folder . "/Drafts")
                       (mu4e-trash-folder  . "/Trash")
-                      (mu4e-refile-folder . "/All Mail")
-                      (smtpmail-smtp-user . ak/email-address))
+                      (mu4e-refile-folder . "/Archive")
+                      (smtpmail-smtp-user . ,ak/email-address))
                     t)
 
 ;; https://github.com/djcb/mu/issues/1136
@@ -44,7 +44,7 @@
 ;; (define-key mu4e-headers-mode-map (kbd "X") 'mu4e-headers-mark-for-spam)
 
 
-(setq   mu4e-get-mail-command "mbsync -a"
+(setq   mu4e-get-mail-command "mbsync pm"
         mu4e-change-filenames-when-moving t   ; needed for mbsync
         mu4e-compose-format-flowed t
         mu4e-sent-messages-behavior 'trash   ; handled by imap
@@ -53,6 +53,7 @@
 
 ;; Send mail
 (setq message-send-mail-function 'smtpmail-send-it
+      message-cite-function #'mu4e-message-cite-nothing
       smtpmail-auth-credentials "~/.authinfo.gpg"
       smtpmail-smtp-server "127.0.0.1"
       smtpmail-stream-type 'starttls
@@ -74,6 +75,7 @@
         ("/Trash"     . ?t)
         ("/Drafts"    . ?d)
         ("/Archive"    . ?r)
-        ("/All Mail"  . ?a)))
+        ;; ("/All Mail"  . ?a)
+        ))
 
 (setq shr-color-visible-luminance-min 80)

@@ -154,6 +154,10 @@ cat <<EOF> ~/.gitconfig
 EOF
 #+end_src
 * Emacs
+** Required packages
+#+begin_src shell
+install texlive-core texlive-bin texlive-science gnuplot jupyter
+#+end_src
 ** Build emacs
 Note, must modify the PACKAGEBUILD to be AOT & include xwidgets
 Set lsp mode to use plists for optimal perf
@@ -169,7 +173,7 @@ mkdir ~/org
 #+end_src
 
 alternative:
-git clone git://git.sv.gnu.org/emacs.git --depth=1
+git clone -b emacs-29 git://git.sv.gnu.org/emacs.git --depth=1
 cd emacs
 ./autogen.sh
 ./configure --with-native-compilation=aot  --with-xwidgets --with-tree-sitter --with-json --with-imagemagick --with-mailutils CFLAGS="-O2 -pipe -march=native -fomit-frame-pointer"
@@ -182,7 +186,7 @@ Clone and init doom emacs, but don't build yet since we will change the config f
 git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs
 ~/.config/emacs/bin/doom install
 cfg reset --hard
-doom sync
+doom sync --gc -j $(nproc)
 doom gc
 #+end_src
 ** Mail
@@ -270,8 +274,9 @@ lat=44
 
 https://bbs.archlinux.org/viewtopic.php?id=177473
 redshift -P -O 4500
-* misc 
+* misc
   yay -S luajit-tiktoken-bin
+  yay -S prettier
 * direnv
 yay -S direnv
 direnv allow in the dir

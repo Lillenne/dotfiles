@@ -13,11 +13,12 @@ alias tat="tmux a -t"
 alias tl="tmux ls"
 alias tm="tmux"
 
+export DOTNET_ROOT="/home/aus/.dotnet"
 export PATH="${PATH:+${PATH}:}/home/aus/.local/share/bob/nvim-bin"
 export PATH="${PATH:+${PATH}:}/home/aus/.cargo/bin"
 export PATH="${PATH:+${PATH}:}/home/aus/.config/emacs/bin"
 export PATH="${PATH:+${PATH}:}/home/aus/.dotnet/tools"
-export PATH="${PATH:+${PATH}:}/home/aus/.dotnet"
+export PATH="${PATH:+${PATH}:}$DOTNET_ROOT"
 
 # Toolbox App
 export PATH="${PATH:+${PATH}:}/home/aus/.local/share/JetBrains/Toolbox/scripts"
