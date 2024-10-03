@@ -8,7 +8,12 @@
                (side . bottom)
                (window-height . 0.3)))
 (evil-owl-mode)
-(evil-snipe-override-mode nil)
+(require 'evil-surround)
+;; note for evil surround, to avoid adding a space with ([{ you must use the closing side }])
+(global-evil-surround-mode +1)
+(evil-surround-mode +1)
+(evil-snipe-mode +1)
+(evil-snipe-override-mode -1)
 (setq evil-snipe-scope 'whole-visible
       evil-snipe-auto-scroll t
       evil-snipe-smart-case t

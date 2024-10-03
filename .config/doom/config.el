@@ -14,6 +14,7 @@
 (setq delete-by-moving-to-trash t)
 (setq embark-confirm-act-all nil)
 
+
 (load! "org.el")
 (load! "jupyter.el")
 (load! "calendar.el")
@@ -22,7 +23,7 @@
 (setq todoist-token (getenv "TODOIST_TOKEN"))
 (load! "todoist.el")
 ;; (setq todoist-show-all t)
-(defvar ak/use-mu4e t)
+(defvar ak/use-mu4e nil)
 (when ak/use-mu4e (load! "mu4e.el"))
 (defvar ak/use-lsp-bridge nil)
 (when ak/use-lsp-bridge (load! "lsp-bridge.el"))
