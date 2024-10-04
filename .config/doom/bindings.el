@@ -18,8 +18,6 @@
 (map! :leader "f o" #'consult-recent-file)
 ;;(map! "C-/" #'comment-dwim) ; replaced by evil-nerd-commenter
 (map! :leader "f O" #'find-file-other-window)
-(defun ak/goto-todo () (interactive) (find-file (+org-capture-todo-file)))
-(defun ak/goto-journal () (interactive) (find-file +org-capture-journal-file))
 (defun ak/to-sprint ()
   "Creates a new sprint heading"
   (interactive)
@@ -44,9 +42,6 @@
         (search-backward "[" (line-beginning-position) t)
         (org-timestamp-up-day 14)))
     (end-of-line)))
-(map! :leader "f t s" #'ak/to-sprint)
-(map! :leader "f t j" #'ak/goto-journal)
-(map! :leader "f t t" #'ak/goto-todo)
 (map! :leader "f w" #'consult-ripgrep)
 (map! :leader "f f" #'consult-fd)
 (map! :leader "f g" #'consult-git-grep)

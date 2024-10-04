@@ -2,18 +2,33 @@
 
 ;; (after! 'org
 (require 'org)
+;; quick shortcuts
+(defmacro ak/goto (suffix key)
+  "Generates goto function for primary org files"
+  (let ((methodname (concat "ak/goto-" suffix))
+        (varname (concat "+org-capture-" suffix "-file"))
+        (keybind (concat "j " key)))
+    (eval `(defconst ,(intern varname) (expand-file-name (concat ,suffix ".org") org-directory)))
+    (eval `(defun ,(intern methodname) () (interactive) (find-file (eval (intern ,varname)))))
+    (eval `(map! :leader ,keybind #',(intern methodname)))
+    nil))
+(ak/goto "devenv" "c")
+(ak/goto "notes" "n")
+(ak/goto "projects" "p")
+(ak/goto "gifts" "g")
+(ak/goto "journal" "j")
+(ak/goto "learn" "l")
+(ak/goto "stories" "w")
+(ak/goto "todoist" "T")
+(ak/goto "todo" "t")
+(ak/goto "reading-list" "r")
+(ak/goto "memories" "M")
+(ak/goto "meetings" "m")
+(map! :leader "j s" #'ak/to-sprint)
+
 ;; Org basics
 (setq org-directory "~/org/"
-      org-startup-folded 'show3levels)
-(defun org-file-path (PATH) "Concatenates PATH to org-directory" (concat (expand-file-name org-directory) PATH))
-(defvar +org-capture-meetings-file (org-file-path "meetings.org"))
-(defvar +org-capture-gifts-file (org-file-path "gifts.org"))
-(defvar +org-capture-inbox-file (org-file-path "inbox.org"))
-(defvar +org-capture-dev-file (org-file-path "devenv.org"))
-(defvar +org-capture-learn-file (org-file-path "learn.org"))
-(defvar +org-capture-work-file (org-file-path "stories.org"))
-;; (defvar +org-capture-review-file (org-file-path "journal/planning-review.org"))
-(defvar +org-capture-review-file  "/home/aus/org/journal/planning-review.org") ;; TODO
+      org-startup-folded 'show2levels)
 
 ;; (defun ak/new-sprint-headline ()
 ;;   "Updates the sprint headline directly above"
@@ -27,231 +42,246 @@
 ;;       (org-timestamp-up-day 14)))
 ;;   ()))
 
-(setq org-agenda-sorting-strategy '(deadline-up priority-down tag-up)
-      org-priority-lowest ?D
-      ;; org-priority-faces nil
-      org-id-link-to-org-use-id t
-      org-refile-allow-creating-parent-nodes (quote confirm)
-      org-todo-keywords '((sequence "TODO(t)"  "TRIAGE(g)" "INVESTIGATE(v)" "SOMEDAY(o)" "LEARN(l)" "READ(r)" "IDEA(i)" "PROJECT(p)" "STARTED(s)" "WAIT(w)" "BLOCKED(b)" "EXPECTING(e)" "|" "DONE(d)" "CANCELED(k)")
-                          (sequence "[ ](T)" "[-](S)" "[?](W)" "|" "[X](D)"))
-      org-archive-default-command #'org-archive-set-tag
-      ;; prefix tag string with @ or use stargroup / endgroup vs grouptag for mutually exclusive
-      org-tag-alist '(("work" . ?w)
-                      ;; TODO limit tags
-                      ("gift" . ?g)
-                      ("quote" . ?q)
-                      ("family" . ?a)
-                      ("pt" . ?t)
-                      ("photo" . ?i)
-                      (:startgrouptag . nil)
-                      ;; ("Project" . ?p)
-                      ;; (:grouptags)
-                      ("faces" . ?f)
-                      ("deployment" . ?y)
-                      ("server" . ?s)
-                      ("devenv" . ?d)
-                      ("caf" . ?C)
-                      ;; ("seg; ("autolighting" . ?l)
-                      ("selfhosting" . ?h)
-                      (:endgrouptag . nil)
+(setq
+ ;;org-agenda-sorting-strategy '(deadline-up priority-down tag-up)
+ org-priority-lowest ?D
+ org-clock-continuously nil ;; t to make clock start times the previous clock end times
+ ;; org-priority-faces nil
+ org-id-link-to-org-use-id t
+ org-refile-allow-creating-parent-nodes (quote confirm)
+ org-todo-keywords '((sequence "TODO(t)"  "TRIAGE(r)" "INVESTIGATE(v/@)" "SOMEDAY(o)" "LEARN(l)" "IDEA(i)" "STARTED(s)" "BLOCKED(b@/!)" "|" "DONE(d)" "CANCELED(k@)")
+                     (sequence "[ ](T)" "[-](S)" "[?](W)" "|" "[X](D)"))
+ org-archive-default-command #'org-archive-set-tag
+ ;; prefix tag string with @ or use stargroup / endgroup vs grouptag for mutually exclusive
+ org-tag-alist '(("work" . ?w)
+                 ;; TODO limit tags
+                 ("gift" . ?g)
+                 ("quote" . ?q)
+                 ("family" . ?a)
+                 ("pt" . ?t)
+                 ("photo" . ?i)
+                 (:startgrouptag . nil)
+                 ;; ("Project" . ?p)
+                 ;; (:grouptags)
+                 ("faces" . ?f)
+                 ("deployment" . ?y)
+                 ;; ("server" . ?s)
+                 ("memories" .?e)
+                 ("devenv" . ?d)
+                 ;; ("caf" . ?C)
+                 ("langs" . ?l)
+                 ;; ("seg; ("autolighting" . ?l)
+                 ("selfhosting" . ?h)
+                 (:endgrouptag . nil)
+                 ("career" . ?r)
 
-                      (:startgrouptag . nil)
-                      ;; ("Learning Areas")
-                      ;; (:grouptags)
-                      ("computer_science" . ?c)
-                      ("machine_learning" . ?m)
-                      ("organization" . ?o) ;; TODO remove?
-                      ("programs" . ?p)
-                      (:endgrouptag . nil)
-                      ;; For people
-                      (:startgrouptag . nil)
-                      ;; ("People")
-                      ;; (:grouptags)
-                      ("althea" . ?A)
-                      ("tophi" . ?T)
-                      ("nori" . ?N)
-                      ("henrik" . ?H)
-                      ("soren" . ?S)
-                      ("pat" . ?P)
-                      ("katie" . ?E)
-                      ("pa" . ?D)
-                      ("ma" . ?M)
-                      ("kenny" . ?K)
-                      (:endgrouptag . nil))
-      org-columns-default-format "%60ITEM(Task) %TODO %6Effort(Estim){:} %CLOCKSUM(Actual)"
-      org-startup-with-inline-images t
-      org-log-done 'time
-      org-log-into-drawer t
-      org-log-redeadline t
-      org-log-reschedule t
-      org-link-descriptive nil
-      ;; split-height-threshold 0
-      ;; split-width-threshold nil
-      org-capture-templates
-      '(("n" "Note" entry (file +org-capture-notes-file) "* %u %^G %?")
-        ("t" "To-Do" entry (file +org-capture-todo-file) "* TODO %? %^G %^{EFFORT}p \nSCHEDULED: %^t" :prepend t)
-        ;; ("T" "Tracking")
-        ;; ("Te" "Email" entry (function (lambda () (org-journal-new-entry nil nil t))) "Email" :clock-in t :clock-resume t)
-        ("c" "Devenv" entry (file +org-capture-dev-file) "* TODO %? %^G %^{EFFORT}p" :prepend t)
-        ("r" "Triage Note" entry (file +org-capture-todo-file) "* TRIAGE %?" :prepend t)
-        ("l" "Learn" entry (file +org-capture-learn-file) "* LEARN %^{What category?}G %?" :prepend t)
-        ("e" "Email" entry (file +org-capture-todo-file) "* TODO %A %(org-set-tags \"email\")" :prepend t :post-hook (lambda () (org-store-link)))
-        ("g" "Gift Idea" entry (file +org-capture-gifts-file) "* %? %^{For who?}G") ;%(org-set-tags \"gift\") %^{For who?}G")
-        ("w" "Work")
-        ("ww" "Work todo" entry (file+headline +org-capture-work-file "Todo") "* TODO %? %^{EFFORT}p \nSCHEDULED: %^t" :prepend t)
-        ("wr" "PR Review" entry (file+headline +org-capture-work-file "PRs") "* TODO %^{What?} :%^{Who|ron|jeremy|bo|jared|peter}:
+                 (:startgrouptag . nil)
+                 ;; ("Learning Areas")
+                 ;; (:grouptags)
+                 ("computer_science" . ?c)
+                 ("machine_learning" . ?m)
+                 ("organization" . ?o) ;; TODO remove?
+                 ("programs" . ?p)
+                 (:endgrouptag . nil)
+                 ;; For people
+                 (:startgrouptag . nil)
+                 ;; ("People")
+                 ;; (:grouptags)
+                 ("althea" . ?A)
+                 ("tophi" . ?T)
+                 ("nori" . ?N)
+                 ("henrik" . ?H)
+                 ("soren" . ?S)
+                 ("pat" . ?P)
+                 ("katie" . ?E)
+                 ("pa" . ?D)
+                 ("ma" . ?M)
+                 ("kenny" . ?K)
+                 (:endgrouptag . nil))
+ org-columns-default-format "%60ITEM(Task) %TODO %6Effort(Estim){:} %CLOCKSUM(Actual)"
+ org-startup-with-inline-images t
+ org-log-done 'time
+ org-log-into-drawer t
+ org-log-redeadline t
+ org-log-reschedule t
+ org-link-descriptive t
+ ;; split-height-threshold 0
+ ;; split-width-threshold nil
+ org-capture-templates
+ '(("n" "Note" entry (file +org-capture-notes-file) "* %u %^G %?")
+   ("t" "To-Do" entry (file +org-capture-todo-file) "* TODO %? %^G %^{EFFORT}p \nSCHEDULED: %^t" :prepend t)
+   ;; ("T" "Tracking")
+   ;; ("Te" "Email" entry (function (lambda () (org-journal-new-entry nil nil t))) "Email" :clock-in t :clock-resume t)
+   ("c" "Devenv" entry (file +org-capture-dev-file) "* TODO %? %^G %^{EFFORT}p" :prepend t)
+   ("r" "Triage Note" entry (file +org-capture-todo-file) "* TRIAGE %?" :prepend t)
+   ("l" "Learn" entry (file +org-capture-learn-file) "* LEARN %^{What category?}G %?" :prepend t)
+   ("e" "Email" entry (file +org-capture-todo-file) "* TODO %A %(org-set-tags \"email\")" :prepend t :post-hook (lambda () (org-store-link)))
+   ("g" "Gift Idea" entry (file +org-capture-gifts-file) "* %? %^{For who?}G") ;%(org-set-tags \"gift\") %^{For who?}G")
+   ("w" "Work")
+   ("ww" "Work todo" entry (file+headline +org-capture-stories-file "Todo") "* TODO %? %^{EFFORT}p \nSCHEDULED: %^t" :prepend t)
+   ("wr" "PR Review" entry (file+headline +org-capture-stories-file "PRs") "* TODO %^{What?} :%^{Who|ron|jeremy|bo|jared|peter}:
 %u
 %?"
-         :clock-in t
-         :clock-keep t
-         :jump-to-captured t
-         :immediate-finish t)
-        ("wR" "PR Later" entry (file+headline +org-capture-work-file "PRs") "* TODO %^{What?} :%^{Who|ron|jeremy|bo|jared|peter}:\nSCHEDULED: %^t"
-         :immediate-finish t)
-        ;; Not working, org parser issues with insertion invalidating cache I think
-        ;;         ("ws" "Sprint Planning" entry (function ak/new-sprint) "* %()
-        ;; \n%?"
-        ;;          :clock-in t
-        ;;          :clock-keep t
-        ;;          :jump-to-captured t
-        ;;          :immediate-finish t)
-        ("i" "Idea" entry (file +org-capture-todo-file) "* IDEA %? %^G")
-        ("W" "Weeklies")
-        ("Wp" "Weekly Plan" entry (file+datetree +org-capture-review-file) "* Weekly Plan
+    :clock-in t
+    :clock-keep t
+    :jump-to-captured t
+    :immediate-finish t)
+   ("wR" "PR Later" entry (file+headline +org-capture-stories-file "PRs") "* TODO %^{What?} :%^{Who|ron|jeremy|bo|jared|peter}:\nSCHEDULED: %^t"
+    :immediate-finish t)
+   ;; Not working, org parser issues with insertion invalidating cache I think
+   ;;         ("ws" "Sprint Planning" entry (function ak/new-sprint) "* %()
+   ;; \n%?"
+   ;;          :clock-in t
+   ;;          :clock-keep t
+   ;;          :jump-to-captured t
+   ;;          :immediate-finish t)
+   ("i" "Idea" entry (file +org-capture-todo-file) "* IDEA %? %^G")
+   ("W" "Weeklies")
+   ("Wp" "Weekly Plan" entry (file+datetree +org-capture-journal-file) "* Weekly Plan
 %?
 ** Goals
 - %^{Goal|None}
 - %^{Goal|None}
 - %^{Goal|None}"
-         :tree-type week
-         :time-prompt t
-         :clock-in t
-         :clock-resume t
-         :unnarrowed t)
-        ("Wr" "Weekly Review" entry (file+datetree +org-capture-review-file) "* Weekly Review %t
+    :tree-type week
+    :time-prompt t
+    :clock-in t
+    :clock-resume t
+    :unnarrowed t)
+   ("Wr" "Weekly Review" entry (file+datetree +org-capture-journal-file) "* Weekly Review %t
 ** Agenda
-%(save-window-excursion (org-batch-agenda \"w\"))
+%(save-window-excursion (org-batch-agenda \"W\"))
 ** Clocktable
 %(org-dynamic-block-insert-dblock \"clocktable\" nil)
 * Reflection
 %?"
-         ;; %(org-batch-agenda \"E\") -- aborts
-         :tree-type week
-         :time-prompt t
-         :clock-in t
-         :immediate-finish t
-         :jump-to-captured t
-         :clock-keep t
-         :unnarrowed t)
-        ("j" "Journal")
-        ("jp" "Daily plan" entry (file+olp+datetree +org-capture-journal-file) "* %(format-time-string \"%-I:%M %p\"): Daily planning\n%?\n** Yesterday:
+    ;; %(org-batch-agenda \"E\") -- aborts
+    :tree-type week
+    :time-prompt t
+    :clock-in t
+    :immediate-finish t
+    :jump-to-captured t
+    :clock-keep t
+    :unnarrowed t)
+   ("j" "Journal")
+   ("jp" "Daily plan" entry (file+olp+datetree +org-capture-journal-file) "* %(format-time-string \"%-I:%M %p\"): Daily planning\n%?\n** Yesterday:
 %(save-window-excursion (org-batch-agenda \"y\"))"
-         :clock-in t
-         :clock-keep t
-         :immediate-finish t
-         :jump-to-captured t)
-        ("js" "Standup notes" entry (file+olp+datetree +org-capture-journal-file) "* %(format-time-string \"%-I:%M %p\"): Standup notes\n%?\n** Yesterday:
+    :tree-type week
+    :clock-in t
+    :clock-keep t
+    :immediate-finish t
+    :jump-to-captured t)
+   ("js" "Standup notes" entry (file+olp+datetree +org-capture-journal-file) "* %(format-time-string \"%-I:%M %p\"): Standup notes\n%?\n** Yesterday:
 %(save-window-excursion (org-batch-agenda \"y\"))
 ** Today \n
 %(save-window-excursion (org-batch-agenda \"D\"))"
-         :clock-in t
-         :clock-keep t
-         :immediate-finish t
-         :jump-to-captured t)
-        ("jr" "Daily Review" entry (file+olp+datetree +org-capture-journal-file) "* %(format-time-string \"%-I:%M %p\"): Daily Review\n%?
+    :tree-type week
+    :clock-in t
+    :clock-keep t
+    :immediate-finish t
+    :jump-to-captured t)
+   ("jr" "Daily Review" entry (file+olp+datetree +org-capture-journal-file) "* %(format-time-string \"%-I:%M %p\"): Daily Review\n%?
 ** %(save-window-excursion (org-batch-agenda \"D\"))"
-         :clock-in t
-         :clock-keep t
-         :immediate-finish t
-         :jump-to-captured t)
-        ("jn" "Now" entry (file+olp+datetree +org-capture-journal-file) "* %(format-time-string \"%-I:%M %p\"): %?"
-         :clock-in t
-         :clock-resume t
-         :unnarrowed t)
-        ("jN" "Start task" entry (file+olp+datetree +org-capture-journal-file) "* %(format-time-string \"%-I:%M %p\"): %^{Task?} %?"
-         :clock-in t
-         :clock-keep t
-         :immediate-finish t)
-        ("je" "Email | Teams" entry (file+olp+datetree +org-capture-journal-file) "Email | Teams"
-         :clock-in t
-         :clock-keep t
-         :immediate-finish t)
-        ("jl" "Later" entry (file+olp+datetree +org-capture-journal-file) "%^{Entry headline?}\n%u\n%?"
-         :clock-in t
-         :clock-resume t
-         :time-prompt t
-         :unnarrowed t)
-        ("jL" "Event" entry (file+olp+datetree +org-capture-journal-file) "%^{Event?}\n%T\n%?"
-         :time-prompt t
-         :unnarrowed t)
-        ("m" "Meetings")
-        ("mk" "Kim discussion point" entry (file+olp +org-capture-meetings-file "Kim" "Inbox")
-         "* %?"
-         :unnarrowed t)
-        ("mK" "Kim meeting notes" entry (file+olp+datetree +org-capture-meetings-file "Kim")
-         "* %?"
-         :tree-type week
-         :immediate-finish t
-         :jump-to-captured t
-         :clock-in t
-         :clock-keep t
-         :unnarrowed t)
-        ("mx" "Sioux discussion point" entry (file+olp +org-capture-meetings-file "Sioux" "Inbox")
-         "* %?"
-         :unnarrowed t)
-        ("mX" "Sioux meeting notes" entry (file+olp+datetree +org-capture-meetings-file "Sioux")
-         "%?"
-         :tree-type week
-         :immediate-finish t
-         :jump-to-captured t
-         :clock-in t
-         :clock-keep t
-         :unnarrowed t)
-        ("ms" "Steven discussion point" entry (file+olp +org-capture-meetings-file "Steven" "Inbox")
-         "* %?"
-         :unnarrowed t)
-        ("mS" "Steven meeting notes" entry (file+olp+datetree +org-capture-meetings-file "Steven")
-         "* %?"
-         :tree-type week
-         :immediate-finish t
-         :jump-to-captured t
-         :clock-in t
-         :clock-keep t
-         :unnarrowed t)
-        ("md" "Algo integration note" entry (file+olp +org-capture-meetings-file "Algorithm Integration" "Inbox")
-         "* %?"
-         :unnarrowed t)
-        ("mD" "Algorithm integration w/ David" entry (file+olp+datetree +org-capture-meetings-file "Algorithm Integration")
-         "* %?"
-         :tree-type week
-         :immediate-finish t
-         :jump-to-captured t
-         :clock-in t
-         :clock-keep t
-         :unnarrowed t)
-        ("mm" "Scheduled Meeting" entry (file+olp+datetree +org-capture-meetings-file)
-         "* %^{What are we discussing?} - %^{Attendees?} %T %^G\n** Prep: %?"
-         :prepend t
-         :clock-in t
-         :clock-resume t
-         :time-prompt t)
-        ("mn" "Impromptu Meeting" entry (file+olp+datetree +org-capture-meetings-file)
-         "* %^{Who?} %^G \n%T\n %?"
-         :immediate-finish t
-         :jump-to-captured t
-         :clock-in t
-         :clock-keep t)
-        ;; ("p" "Templates for projects")
-        ;; ("pt" "Project-local todo" entry (file+headline +org-capture-project-todo-file "Inbox") "* TODO %?" :prepend t)
-        ;; ("pn" "Project-local notes" entry (file+headline +org-capture-project-notes-file "Inbox") "* %U %?" :prepend t)
-        ;; ("pc" "Project-local changelog" entry (file+headline +org-capture-project-changelog-file "Unreleased") "* %U %?" :prepend t)
+    :tree-type week
+    :clock-in t
+    :clock-keep t
+    :immediate-finish t
+    :jump-to-captured t)
+   ("jn" "Now" entry (file+olp+datetree +org-capture-journal-file) "* %(format-time-string \"%-I:%M %p\"): %?"
+    :tree-type week
+    :clock-in t
+    :clock-resume t
+    :unnarrowed t)
+   ("jN" "Start task" entry (file+olp+datetree +org-capture-journal-file) "* %(format-time-string \"%-I:%M %p\"): %^{Task?} %?"
+    :tree-type week
+    :clock-in t
+    :clock-keep t
+    :immediate-finish t)
+   ("jl" "Later" entry (file+olp+datetree +org-capture-journal-file) "* %^{Entry headline?}\n%U%?"
+    :tree-type week
+    :time-prompt t
+    :unnarrowed t)
+   ("jL" "Later (all day)" entry (file+olp+datetree +org-capture-journal-file) "* %^{Entry headline?}\n%u%?"
+    :tree-type week
+    :time-prompt t
+    :unnarrowed t)
+   ("je" "Event" entry (file+olp+datetree +org-capture-journal-file) "* %^{Event?}\n%T%?"
+    :tree-type week
+    :time-prompt t
+    :unnarrowed t)
+   ("jE" "Event (all day)" entry (file+olp+datetree +org-capture-journal-file) "* %^{Event?}\n%t%?"
+    :tree-type week
+    :time-prompt t
+    :unnarrowed t)
+   ("M" "Memories" entry (file +org-capture-memories-file) "* %?")
+   ("m" "Meetings")
+   ("mk" "Kim discussion point" entry (file+olp +org-capture-meetings-file "Kim" "Inbox")
+    "* %?"
+    :unnarrowed t)
+   ("mK" "Kim meeting notes" entry (file+olp+datetree +org-capture-meetings-file "Kim")
+    "* %?"
+    :tree-type week
+    :immediate-finish t
+    :jump-to-captured t
+    :clock-in t
+    :clock-keep t
+    :unnarrowed t)
+   ("mx" "Sioux discussion point" entry (file+olp +org-capture-meetings-file "Sioux" "Inbox")
+    "* %?"
+    :unnarrowed t)
+   ("mX" "Sioux meeting notes" entry (file+olp+datetree +org-capture-meetings-file "Sioux")
+    "%?"
+    :tree-type week
+    :immediate-finish t
+    :jump-to-captured t
+    :clock-in t
+    :clock-keep t
+    :unnarrowed t)
+   ("ms" "Steven discussion point" entry (file+olp +org-capture-meetings-file "Steven" "Inbox")
+    "* %?"
+    :unnarrowed t)
+   ("mS" "Steven meeting notes" entry (file+olp+datetree +org-capture-meetings-file "Steven")
+    "* %?"
+    :tree-type week
+    :immediate-finish t
+    :jump-to-captured t
+    :clock-in t
+    :clock-keep t
+    :unnarrowed t)
+   ("md" "Algo integration note" entry (file+olp +org-capture-meetings-file "Algorithm Integration" "Inbox")
+    "* %?"
+    :unnarrowed t)
+   ("mD" "Algorithm integration w/ David" entry (file+olp+datetree +org-capture-meetings-file "Algorithm Integration")
+    "* %?"
+    :tree-type week
+    :immediate-finish t
+    :jump-to-captured t
+    :clock-in t
+    :clock-keep t
+    :unnarrowed t)
+   ("mm" "Scheduled Meeting" entry (file+olp+datetree +org-capture-meetings-file)
+    "* %^{What are we discussing?} - %^{Attendees?} %T %^G\n** Prep: %?"
+    :prepend t
+    :clock-in t
+    :clock-resume t
+    :time-prompt t)
+   ("mn" "Impromptu Meeting" entry (file+olp+datetree +org-capture-meetings-file)
+    "* %^{Who?} %^G \n%T\n %?"
+    :immediate-finish t
+    :jump-to-captured t
+    :clock-in t
+    :clock-keep t)
+   ;; ("p" "Templates for projects")
+   ;; ("pt" "Project-local todo" entry (file+headline +org-capture-project-todo-file "Inbox") "* TODO %?" :prepend t)
+   ;; ("pn" "Project-local notes" entry (file+headline +org-capture-project-notes-file "Inbox") "* %U %?" :prepend t)
+   ;; ("pc" "Project-local changelog" entry (file+headline +org-capture-project-changelog-file "Unreleased") "* %U %?" :prepend t)
                                         ;("c" "calfw2org" entry (file+headline +org-capture-todo-file "Inbox") "* %? \nSCHEDULED: %(cfw:org-capture-day)" :prepend t :time-prompt)
-        ("c" "calfw2org" entry (file+headline +org-capture-todo-file "Inbox") "* %? \nSCHEDULED: %(cfw:org-capture-day)")
-        ("p" "Centralized templates for projects")
-        ("pi" "Project idea" entry #'+org-capture-central-project-todo-file "* IDEA %?" :heading "Ideas")
-        ("pt" "Project todo" entry #'+org-capture-central-project-todo-file "* TODO %?" :heading "Tasks" :prepend nil)
-        ("pn" "Project notes" entry #'+org-capture-central-project-notes-file "* %U %?" :heading "Notes" :prepend t)
-        ("pc" "Project changelog" entry #'+org-capture-central-project-changelog-file "* %U %?" :heading "Changelog" :prepend t)))
+   ("c" "calfw2org" entry (file+headline +org-capture-todo-file "Inbox") "* %? \nSCHEDULED: %(cfw:org-capture-day)")
+   ("p" "Centralized templates for projects")
+   ("pi" "Project idea" entry #'+org-capture-central-project-todo-file "* IDEA %?" :heading "Ideas")
+   ("pt" "Project todo" entry #'+org-capture-central-project-todo-file "* TODO %?" :heading "Tasks" :prepend nil)
+   ("pn" "Project notes" entry #'+org-capture-central-project-notes-file "* %U %?" :heading "Notes" :prepend t)
+   ("pc" "Project changelog" entry #'+org-capture-central-project-changelog-file "* %U %?" :heading "Changelog" :prepend t)))
 
 ;; Save Org buffers after refiling!
 (advice-add 'org-refile :after 'org-save-all-org-buffers)
@@ -266,9 +296,18 @@
         (goto-char (marker-position marker))
         (org-clock-in))
     (warn "Clock not started (Could not find ID '%s' in file '%s')" id file)))
-(map! :leader "n T c" :desc "Clock config" #'(lambda () (interactive) (my/start-heading-clock "0d28712a-e265-4e1c-8210-7487e1da597a" "/home/aus/org/projects.org")))
-(map! :leader "n T t" :desc "Clock Teams" #'(lambda () (interactive) (my/start-heading-clock "ea3dc712-93d8-49d1-b35d-c84a239bc239" "/home/aus/org/projects.org")))
-(map! :leader "n T e" :desc "Clock email" #'(lambda () (interactive) (my/start-heading-clock "2f8d99c7-7f88-43ae-9f30-17bd44a5e29b" "/home/aus/org/projects.org")))
+(map! :leader :desc "Clock config" "n i c" #'(lambda () (interactive) (my/start-heading-clock "0d28712a-e265-4e1c-8210-7487e1da597a" "/home/aus/org/projects.org")))
+(map! :leader :desc "Clock Emacs" "n i e" #'(lambda () (interactive) (my/start-heading-clock "6da4661c-bdad-4f14-9202-d3a039807c9d" "/home/aus/org/projects.org")))
+(map! :leader :desc "Clock Teams" "n i t" #'(lambda () (interactive) (my/start-heading-clock "ea3dc712-93d8-49d1-b35d-c84a239bc239" "/home/aus/org/projects.org")))
+(map! :leader :desc "Clock email" "n i E" #'(lambda () (interactive) (my/start-heading-clock "2f8d99c7-7f88-43ae-9f30-17bd44a5e29b" "/home/aus/org/projects.org")))
+(map! :leader :desc "Clock in recent" "n i i" #'(lambda () (interactive)
+                                                  (if (org-clock-is-active)
+                                                      (org-clock-goto)
+                                                    (save-window-excursion
+                                                      (find-file +org-capture-todo-file)
+                                                      (org-clock-in '(4))))))
+(map! :leader :desc "Goto clock" "n g" #'org-clock-goto)
+(map! :leader :desc "Clock out" "n o" #'org-clock-out)
 ;;(my/start-heading-clock "65d813d9-e513-482f-bb65-6430d1027666" "~/your-task-file.org")
 
 ;; Fix for yasnippet tab key in org mode
@@ -320,13 +359,21 @@
 (defun org-agenda-not-done () (org-agenda-skip-entry-if 'nottodo 'done))
 (setq org-agenda-custom-commands
       '(("c" "Simple agenda view"
-         ((todo "TRIAGE")
+         (
+          ;; Todos I haven't finished writing
+          (todo "TRIAGE")
+          ;; things I probably shouldn't forget about
           (tags "PRIORITY=\"A\""
                 ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
                  (org-agenda-overriding-header "High-priority unfinished tasks:")))
-          (agenda "" ((org-agenda-start-day "0d") (org-agenda-span 1)))
-          (agenda "" ((org-agenda-start-day "+1d") (org-agenda-span 6)))
-          (alltodo "")))
+          ;; This week
+          (agenda ""
+                  ((org-agenda-span 'week)
+                   (org-agenda-start-day "0d")))
+          ;; (agenda "" ((org-agenda-start-day "0d") (org-agenda-span 1)))
+          ;; (agenda "" ((org-agenda-start-day "+1d") (org-agenda-span 6)))
+          ;; (alltodo "")
+          ))
         ("d" "Today"
          ((todo "TRIAGE")
           (tags "PRIORITY=\"A\""
@@ -376,7 +423,11 @@
           ;; (org-agenda-start-with-log-mode '(closed clock))
           ;; (org-agenda-skip-function #'org-agenda-not-done)
           ))
-        ("w" "Weekly review"
+        ("w" "Weekly plan"
+         agenda ""
+         ((org-agenda-span 'week)
+          (org-agenda-start-day "0d")))
+        ("W" "Weekly review"
          agenda ""
          (
           (org-agenda-start-day "-6d")
@@ -395,7 +446,7 @@
           (org-agenda-start-with-log-mode 'only)
           (org-agenda-log-mode-items '(closed clock))
           (org-agenda-skip-function #'org-agenda-not-done)))
-        ("W" "Fortnite review"
+        ("F" "Fortnite review"
          agenda ""
          ((org-agenda-start-day "-13d")
           (org-agenda-span 14)
@@ -456,6 +507,48 @@
 (setq org-roam-dailies-capture-templates '(("d" "default" entry "* %<%-I:%M %p>: %?" :target
                                             (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n"))))
 ;; )
+(defun ak/add-roam-tags ()
+  "Iterates roam files without FILETAGS and asks for tags."
+  ;; TODO refine the list of tags.
+  (interactive)
+  (save-window-excursion
+    (dolist-with-progress-reporter (file (directory-files org-roam-directory t ".*\.org" t))
+        "Adding tags to roam files..."
+      (find-file file)
+      (goto-char (point-min))
+      (unless (or (cdr (car (org-collect-keywords '("FILETAGS")))) (not (search-forward "#+" nil t)))
+        (end-of-line)
+        (newline)
+        (insert "#+FILETAGS: ")
+        (while-let ((input (s-trim (completing-read "Tags? " (-filter #'stringp (mapcar 'car org-tag-alist )))))
+                    (continue (not (s-equals? "" input))))
+          (insert ":")
+          (insert input)
+          )
+        (insert ":")
+        (save-buffer)
+        (kill-current-buffer)
+        ))))
+
+;; Roam additions
+(require 'org-roam-timestamps)
+(setq org-roam-timestamps-remember-timestamps t)
+(org-roam-timestamps-mode)
+(use-package! websocket
+  :after org-roam)
+
+(use-package! org-roam-ui
+  :after org-roam ;; or :after org
+  ;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
+  ;;         a hookable mode anymore, you're advised to pick something yourself
+  ;;         if you don't care about startup time, use
+  ;;  :hook (after-init . org-roam-ui-mode)
+  :config
+  (setq org-roam-ui-sync-theme t
+        org-roam-ui-follow t
+        org-roam-ui-update-on-save t
+        org-roam-ui-open-on-start t))
+
 
 ;; Org src blocks
 ;; (after! 'org-tempo
