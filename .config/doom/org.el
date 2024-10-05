@@ -28,7 +28,8 @@
 
 ;; Org basics
 (setq org-directory "~/org/"
-      org-startup-folded 'show2levels)
+      ;; org-startup-folded 'show2levels
+      )
 
 ;; (defun ak/new-sprint-headline ()
 ;;   "Updates the sprint headline directly above"
@@ -42,6 +43,10 @@
 ;;       (org-timestamp-up-day 14)))
 ;;   ()))
 
+(defun ak/complete-recurring-task (ID)
+  (save-window-excursion
+    (org-id-goto ID)
+    (org-todo 'done)))
 (setq
  ;;org-agenda-sorting-strategy '(deadline-up priority-down tag-up)
  org-priority-lowest ?D
@@ -110,9 +115,7 @@
  org-capture-templates
  '(("n" "Note" entry (file +org-capture-notes-file) "* %u %^G %?")
    ("t" "To-Do" entry (file +org-capture-todo-file) "* TODO %? %^G %^{EFFORT}p \nSCHEDULED: %^t" :prepend t)
-   ;; ("T" "Tracking")
-   ;; ("Te" "Email" entry (function (lambda () (org-journal-new-entry nil nil t))) "Email" :clock-in t :clock-resume t)
-   ("c" "Devenv" entry (file +org-capture-dev-file) "* TODO %? %^G %^{EFFORT}p" :prepend t)
+   ("c" "Devenv" entry (file +org-capture-devenv-file) "* TODO %? %^G %^{EFFORT}p" :prepend t)
    ("r" "Triage Note" entry (file +org-capture-todo-file) "* TRIAGE %?" :prepend t)
    ("l" "Learn" entry (file +org-capture-learn-file) "* LEARN %^{What category?}G %?" :prepend t)
    ("e" "Email" entry (file +org-capture-todo-file) "* TODO %A %(org-set-tags \"email\")" :prepend t :post-hook (lambda () (org-store-link)))
@@ -128,48 +131,42 @@
     :immediate-finish t)
    ("wR" "PR Later" entry (file+headline +org-capture-stories-file "PRs") "* TODO %^{What?} :%^{Who|ron|jeremy|bo|jared|peter}:\nSCHEDULED: %^t"
     :immediate-finish t)
-   ;; Not working, org parser issues with insertion invalidating cache I think
-   ;;         ("ws" "Sprint Planning" entry (function ak/new-sprint) "* %()
-   ;; \n%?"
-   ;;          :clock-in t
-   ;;          :clock-keep t
-   ;;          :jump-to-captured t
-   ;;          :immediate-finish t)
    ("i" "Idea" entry (file +org-capture-todo-file) "* IDEA %? %^G")
-   ("W" "Weeklies")
-   ("Wp" "Weekly Plan" entry (file+datetree +org-capture-journal-file) "* Weekly Plan
-%?
-** Goals
+   ("j" "Journal")
+   ("jP" "Weekly Plan" entry (file+datetree +org-capture-journal-file) "* Weekly Plan
+Goals
 - %^{Goal|None}
 - %^{Goal|None}
-- %^{Goal|None}"
+- %^{Goal|None}
+
+%?"
     :tree-type week
     :time-prompt t
     :clock-in t
+    :after-finalize (lambda () (ak/complete-recurring-task "963e452d-1202-41bf-8361-5caa25ad6511"))
     :clock-resume t
     :unnarrowed t)
-   ("Wr" "Weekly Review" entry (file+datetree +org-capture-journal-file) "* Weekly Review %t
+   ("jR" "Weekly Review" entry (file+datetree +org-capture-journal-file) "* Weekly Review
+%?
 ** Agenda
 %(save-window-excursion (org-batch-agenda \"W\"))
 ** Clocktable
-%(org-dynamic-block-insert-dblock \"clocktable\" nil)
-* Reflection
-%?"
-    ;; %(org-batch-agenda \"E\") -- aborts
+%(org-dynamic-block-insert-dblock \"clocktable\" nil)"
     :tree-type week
     :time-prompt t
     :clock-in t
     :immediate-finish t
     :jump-to-captured t
+    :after-finalize (lambda () (ak/complete-recurring-task "689d7bf9-bf59-4ad3-bfbe-024c3beed495"))
     :clock-keep t
     :unnarrowed t)
-   ("j" "Journal")
    ("jp" "Daily plan" entry (file+olp+datetree +org-capture-journal-file) "* %(format-time-string \"%-I:%M %p\"): Daily planning\n%?\n** Yesterday:
 %(save-window-excursion (org-batch-agenda \"y\"))"
     :tree-type week
     :clock-in t
     :clock-keep t
     :immediate-finish t
+    :after-finalize (lambda () (ak/complete-recurring-task "6323b0c4-6455-413c-9e05-e5420818b72e"))
     :jump-to-captured t)
    ("js" "Standup notes" entry (file+olp+datetree +org-capture-journal-file) "* %(format-time-string \"%-I:%M %p\"): Standup notes\n%?\n** Yesterday:
 %(save-window-excursion (org-batch-agenda \"y\"))
@@ -186,6 +183,7 @@
     :clock-in t
     :clock-keep t
     :immediate-finish t
+    :after-finalize (lambda () (ak/complete-recurring-task "57331d3b-c20d-43f5-ad21-2a3a40e88a98"))
     :jump-to-captured t)
    ("jn" "Now" entry (file+olp+datetree +org-capture-journal-file) "* %(format-time-string \"%-I:%M %p\"): %?"
     :tree-type week
@@ -297,6 +295,7 @@
         (org-clock-in))
     (warn "Clock not started (Could not find ID '%s' in file '%s')" id file)))
 (map! :leader :desc "Clock config" "n i c" #'(lambda () (interactive) (my/start-heading-clock "0d28712a-e265-4e1c-8210-7487e1da597a" "/home/aus/org/projects.org")))
+(map! :leader :desc "Clock organization" "n i o" #'(lambda () (interactive) (my/start-heading-clock "946ea368-5645-4d81-b2fe-f8a287d7acc8" "/home/aus/org/projects.org")))
 (map! :leader :desc "Clock Emacs" "n i e" #'(lambda () (interactive) (my/start-heading-clock "6da4661c-bdad-4f14-9202-d3a039807c9d" "/home/aus/org/projects.org")))
 (map! :leader :desc "Clock Teams" "n i t" #'(lambda () (interactive) (my/start-heading-clock "ea3dc712-93d8-49d1-b35d-c84a239bc239" "/home/aus/org/projects.org")))
 (map! :leader :desc "Clock email" "n i E" #'(lambda () (interactive) (my/start-heading-clock "2f8d99c7-7f88-43ae-9f30-17bd44a5e29b" "/home/aus/org/projects.org")))
@@ -308,7 +307,6 @@
                                                       (org-clock-in '(4))))))
 (map! :leader :desc "Goto clock" "n g" #'org-clock-goto)
 (map! :leader :desc "Clock out" "n o" #'org-clock-out)
-;;(my/start-heading-clock "65d813d9-e513-482f-bb65-6430d1027666" "~/your-task-file.org")
 
 ;; Fix for yasnippet tab key in org mode
 (defun my/org-tab-conditional ()
@@ -346,7 +344,7 @@
       org-deadline-warning-days 0
       org-agenda-skip-scheduled-if-done t
       org-agenda-columns-add-appointments-to-effort-sum t
-      org-clock-clocktable-default-properties '(:scope agenda-with-archives :maxlevel 3 :emphasize nil :block thisweek :fileskip0 t :link nil :level nil :hidefiles t :filetitle t :compact t :narrow 70!)
+      org-clock-clocktable-default-properties '(:scope agenda-with-archives :maxlevel 4 :emphasize nil :block thisweek :fileskip0 t :link nil :level nil :hidefiles t :filetitle t :compact t :narrow 70!)
       org-agenda-prefix-format
       '((agenda . " %i %-12:c%?-12t%-6e % s")
         (todo . " %i %-12:c %-6e")
@@ -430,9 +428,9 @@
         ("W" "Weekly review"
          agenda ""
          (
-          (org-agenda-start-day "-6d")
-          ;; (org-agenda-span 7)
-          (org-agenda-span 'week)
+          ;; (org-agenda-start-day "-6d")
+          (org-agenda-span 7)
+          ;; (org-agenda-span 'week)
           (org-agenda-skip-archived-trees nil)
           (org-export-with-archived-trees t)
           (org-agenda-archives-mode t)

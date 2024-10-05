@@ -14,6 +14,12 @@
 (setq delete-by-moving-to-trash t)
 (setq embark-confirm-act-all nil)
 
+;; Enable when gnu repo is down  https://www.reddit.com/r/DoomEmacs/comments/1dohgxv/gitsavannahgnuorg_is_down/
+;;(defadvice! straight-use-recipes-ignore-nongnu-elpa-a (fn recipe)
+;;  :around #'straight-use-recipes
+;;  (unless (eq 'nongnu-elpa (car recipe))
+;;    (funcall fn recipe)))
+
 
 (load! "org.el")
 (load! "jupyter.el")
