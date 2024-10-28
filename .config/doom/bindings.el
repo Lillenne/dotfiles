@@ -62,6 +62,7 @@
 (map! :map 'override "|" nil)
 (map! :m "|" #'split-window-right)
 (map! :m "#" #'split-window-below)
+(map! :m "C-v" #'split-window-right)
 ;; (map! :g "C-e" nil)
 ;; (map! :i "C-e" nil)
 ;; (map! :map 'override "C-e" #'corfu-quit)

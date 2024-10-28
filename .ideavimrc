@@ -47,6 +47,7 @@ set clipboard+=unnamed
 map <leader>hrr :source ~/.ideavimrc<CR>
 
 " next/prev
+ActivateProblemsViewToolWindow
 nmap ]e <Action>(GotoNextError)
 nmap [e <Action>(GotoPreviousError)
 nmap [d <Action>(PreviousDiff)
@@ -148,9 +149,9 @@ map <leader>noC <Action>(NotebookOutputCollapseAllAction)
 
 
 " git
-map <leader>ha <Action>(HideAllWindows)
+map <leader>hh <Action>(HideAllWindows)
 map <leader>hs <Action>(HideSideWindows)
-map <leader>hh <Action>(HideActiveWindow)
+map <leader>ha <Action>(HideActiveWindow)
 map <leader>Gg <Action>(Git.Menu)
 map <leader>GG <Action>(ActivateVersionControlToolWindow)
 map <leader>Ga <Action>(Git.Add)
@@ -190,8 +191,8 @@ map <leader>ft <Action>(GotoType)
 map <leader>fp <Action>(FindInPath)
 map <leader>tt <Action>(ActivateTODOToolWindow)
 map <leader>fl <Action>(RecentLocations)
-map <leader>of <Action>(OpenFile)
 map <leader>op <Action>(OpenFile)
+map <leader>of <Action>(SelectInProjectView)
 map <leader>/ <Action>(SearchEverywhere)
 
 " goto
@@ -210,14 +211,16 @@ map <leader>sa <Action>(SelectAllOccurences)
 
 
 " window navigation
-map <C-v> <Action>(SplitVertically)
-map <C-b> <Action>(SplitHorizontally)
+map # <Action>(SplitVertically)
+map <C-v> <Action>(SplitHorizontally)
 map <C-h> <C-w>h
 map <C-l> <C-w>l
 map <C-j> <C-w>j
 map <C-k> <C-w>k
 map <leader>wq <Action>(Unsplit)
 map <leader>wQ <Action>(UnsplitAll)
+map <leader>k <Action>(Unsplit)
+map <leader>K <Action>(UnsplitAll)
 
 " Scroll
 map <A-j> <C-d>
@@ -226,6 +229,10 @@ map <A-k> <C-u>
 " copilot
 map <leader>cp <Action>(copilot.openCopilot)
 map <leader>cr <Action>(copilot.requestCompletions)
+map <leader>cc <Action>(copilot.chat.show)
+
+"unit testing
+:map <leader>u <Action>(RiderUnitTestQuickListPopupAction)
 
 "ShowBookmarks
 "ShowFilePath
