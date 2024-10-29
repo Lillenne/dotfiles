@@ -48,6 +48,11 @@
     (org-id-goto ID)
     (org-todo 'done)))
 (setq
+ org-icalendar-combined-agenda-file (expand-file-name "org.ics" org-directory)
+ org-export-with-broken-links t
+ org-icalendar-ttl "PT1H" ;; 1 hr
+ org-icalendar-include-body 0
+ org-icalendar-timezone "America/Los_Angeles"
  ;;org-agenda-sorting-strategy '(deadline-up priority-down tag-up)
  org-priority-lowest ?D
  org-clock-continuously t ;; t to make clock start times the previous clock end times, nil to stop
@@ -55,7 +60,7 @@
  ;; org-priority-faces nil
  ;; org-id-link-to-org-use-id t ;; use ids for links. Sometimes creates them unnecessarily
  org-refile-allow-creating-parent-nodes (quote confirm)
- org-todo-keywords '((sequence "TODO(t)"  "TRIAGE(r)" "INVESTIGATE(v/@)" "SOMEDAY(o)" "LEARN(l)" "IDEA(i)" "STARTED(s)" "BLOCKED(b@/!)" "|" "DONE(d)" "CANCELED(k@)")
+ org-todo-keywords '((sequence "TODO(t)"  "TRIAGE(r)" "INVESTIGATE(v/@)" "SOMEDAY(o)" "LEARN(l)" "IDEA(i)" "STARTED(s)" "BLOCKED(b@/@)" "|" "DONE(d)" "CANCELED(k@)")
                      (sequence "[ ](T)" "[-](S)" "[?](W)" "|" "[X](D)"))
  org-archive-default-command #'org-archive-set-tag
  ;; prefix tag string with @ or use stargroup / endgroup vs grouptag for mutually exclusive
@@ -115,6 +120,7 @@
  ;; split-width-threshold nil
  org-capture-templates
  '(("n" "Note" entry (file +org-capture-notes-file) "* %u %^G %?")
+   ("C" "Current Clock" plain (clock) "%?" :unnarrowed t)
    ("t" "To-Do" entry (file +org-capture-todo-file) "* TODO %? %^G %^{EFFORT}p \nSCHEDULED: %^t" :prepend t)
    ("c" "Devenv" entry (file +org-capture-devenv-file) "* TODO %? %^G %^{EFFORT}p" :prepend t)
    ("r" "Triage Note" entry (file +org-capture-todo-file) "* TRIAGE %?" :prepend t)
@@ -348,7 +354,7 @@ Goals
 ;; )
 
 ;; Make captures full screen
-(defun stag-misanthropic-capture (&rest r)
+(defun stag-misanthropic-capture (&rest _)
   (delete-other-windows))
 (advice-add  #'org-capture-place-template :after 'stag-misanthropic-capture)
 
