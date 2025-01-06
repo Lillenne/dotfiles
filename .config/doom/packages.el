@@ -50,15 +50,15 @@
                                         ;(unpin! t)
 
 
-(package! ob-mermaid)
+;; (package! ob-mermaid)
 (package! evil-owl)
 (package! evil-quickscope)
 (package! olivetti)
 ;;(package! evil-textobj-anyblock :disable t)
 ;;(package! evil-textobj-tree-sitter)
-(package! ellama :recipe (:host github :repo "s-kostyaev/ellama"
-                          :files ("ellama.el"))) ; requires ollama and a model, default zephyr
-(package! org-hyperscheduler :recipe (:host github :repo "dmitrym0/org-hyperscheduler"))
+;; (package! ellama :recipe (:host github :repo "s-kostyaev/ellama"
+;;                           :files ("ellama.el"))) ; requires ollama and a model, default zephyr
+;; (package! org-hyperscheduler :recipe (:host github :repo "dmitrym0/org-hyperscheduler"))
 ;; (package! org-timeblock :recipe (:host github :repo "ichernyshovvv/org-timeblock"))
 ;; (package! evil-visual-mark-mode
 ;;   :recipe (:host github :repo "roman/evil-visual-mark-mode"
@@ -78,9 +78,9 @@
 ;;   (package! yasnippet))
 
 (package! elpy)
-(package! todoist :recipe (:host github :repo "abrochard/emacs-todoist" :files ("todoist.el")))
-(unpin! (:editor snippets))
-(unpin! (:completion corfu))
+;; (package! todoist :recipe (:host github :repo "abrochard/emacs-todoist" :files ("todoist.el")))
+;; (unpin! (:editor snippets))
+;; (unpin! (:completion corfu))
 
 ;; (package! company-org-block)
 ;; (package! company-quickhelp)
@@ -90,4 +90,13 @@
 (package! org-roam-ui)
 (package! org-roam-timestamps)
 
-(package! khoj :recipe (:host github :repo "khoj-ai/khoj" :files (:defaults "src/interface/emacs/khoj.el")))
+;; (package! khoj :recipe (:host github :repo "khoj-ai/khoj" :files (:defaults "src/interface/emacs/khoj.el")))
+(package! org-super-agenda)
+(package! org-todoist
+  :recipe (:host github
+           :repo "lillenne/org-todoist"
+           :branch "main"
+           :files ("org-todoist.el")))
+
+;; (package! conda)
+;; (package! move-text)

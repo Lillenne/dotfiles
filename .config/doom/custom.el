@@ -9,7 +9,7 @@
  '(ein:output-area-inlined-images t)
  '(magit-todos-insert-after '(bottom) nil nil "Changed by setter of obsolete option `magit-todos-insert-at'")
  '(org-agenda-files
-   '("/home/aus/org/devenv.org" "/home/aus/org/expecting.org" "/home/aus/org/gifts.org" "/home/aus/org/inbox.org" "/home/aus/org/learn.org" "/home/aus/org/meetings.org" "/home/aus/org/memories.org" "/home/aus/org/notes.org" "/home/aus/org/projects.org" "/home/aus/org/reading-list.org" "/home/aus/org/stories.org" "/home/aus/org/todo.org" "/home/aus/org/todoist.org" "/home/aus/org/journal/journal-20250101.org" "/home/aus/org/journal/journal-20240101.org"))
+   '("/home/aus/org/all-posts.org" "/home/aus/org/devenv.org" "/home/aus/org/gifts.org" "/home/aus/org/journal.org" "/home/aus/org/learn.org" "/home/aus/org/meetings.org" "/home/aus/org/memories.org" "/home/aus/org/projects.org" "/home/aus/org/reading-list.org" "/home/aus/org/todo.org" "/home/aus/org/todoist.org" "/home/aus/org/work.org" "/home/aus/org/journal/journal-20250101.org" "/home/aus/org/journal/journal-20240101.org"))
  '(org-hyperscheduler-inbox-file "~/org/todos.org" t)
  '(org-hyperscheduler-readonly-mode nil t)
  '(org-timeblock-display-time t)
