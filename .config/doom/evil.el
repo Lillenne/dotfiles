@@ -14,7 +14,7 @@
 (evil-surround-mode +1)
 (evil-snipe-mode +1)
 (evil-snipe-override-mode -1)
-(setq evil-snipe-scope 'whole-visible
+(setq evil-snipe-scope 'whole-buffer
       evil-snipe-auto-scroll t
       evil-snipe-smart-case t
       evil-snipe-auto-scroll t
