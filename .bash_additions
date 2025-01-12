@@ -1,6 +1,8 @@
+#!/usr/bin/env sh
+
 alias cfg='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 alias jp="jupyter-lab --no-browser"
-alias mm=micromamba
+alias mm=conda
 alias mml="mm activate ml"
 alias mj="mml; cd ~/jupyter; jp"
 alias mda="mm deactivate"
@@ -14,7 +16,8 @@ alias tl="tmux ls"
 alias tm="tmux"
 
 export DOTNET_ROOT="/home/aus/.dotnet"
-export PATH="${PATH:+${PATH}:}/home/aus/.local/share/bob/nvim-bin"
+# export DOTNET_ROOT="/usr/share/dotnet/"
+# export PATH="${PATH:+${PATH}:}/home/aus/.local/share/bob/nvim-bin"
 export PATH="${PATH:+${PATH}:}/home/aus/.cargo/bin"
 export PATH="${PATH:+${PATH}:}/home/aus/.config/emacs/bin"
 export PATH="${PATH:+${PATH}:}/home/aus/.dotnet/tools"
@@ -25,3 +28,10 @@ export PATH="${PATH:+${PATH}:}/home/aus/.local/share/JetBrains/Toolbox/scripts"
 
 export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+${LD_LIBRARY_PATH}:}/usr/local/lib64"
 eval "$(direnv hook bash)"
+
+# export PYENV_ROOT="$HOME/.pyenv"
+# command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+# eval "$(pyenv init -)"
+
+# mamba
+export PATH="${PATH:+${PATH}:}/home/aus/miniforge3/condabin"
