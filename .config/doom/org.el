@@ -75,7 +75,7 @@
  ;; org-priority-faces nil
  ;; org-id-link-to-org-use-id t ;; use ids for links. Sometimes creates them unnecessarily
  org-refile-allow-creating-parent-nodes (quote confirm)
- org-todo-keywords '((sequence "TODO(t)"  "TRIAGE(r)" "INVESTIGATE(v/@)" "SOMEDAY(o)" "LEARN(l)" "IDEA(i)" "STARTED(s)" "BLOCKED(b@)" "|" "DONE(d)" "CANCELED(k@)")
+ org-todo-keywords '((sequence "TODO(t)" "NEXT(n)"  "TRIAGE(r)" "INVESTIGATE(v/@)" "SOMEDAY(o)" "LEARN(l)" "IDEA(i)" "STARTED(s)" "BLOCKED(b@)" "|" "DONE(d)" "CANCELED(k@)")
                      (sequence "[ ](T)" "[-](S)" "[?](W)" "|" "[X](D)"))
  org-archive-default-command #'org-archive-set-tag
  ;; prefix tag string with @ or use stargroup / endgroup vs grouptag for mutually exclusive
@@ -491,6 +491,7 @@ See `org-capture-templates' for more information."
                                       (:discard (:tag "work"))
                                       (:name "Habits" :habit t)
                                       (:name "Triage" :todo "TRIAGE")
+                                      (:name "Next" :todo "NEXT")
                                       (:name "Blocked" :todo "BLOCKED")
                                       (:name "Overdue" :deadline past)
                                       (:name "Due today" :deadline today)
@@ -509,6 +510,7 @@ See `org-capture-templates' for more information."
                                            (:name "Scheduled" :time-grid t :transformer (--> it (upcase it)))
                                            (:name "Habits" :habit t)
                                            (:name "Triage" :todo "TRIAGE")
+                                           (:name "Next" :todo "NEXT")
                                            (:name "Blocked" :todo "BLOCKED")
                                            (:name "Overdue" :deadline past)
                                            (:name "Due today" :deadline today)
@@ -528,6 +530,8 @@ See `org-capture-templates' for more information."
          (
           ;; Todos I haven't finished writing
           (todo "TRIAGE")
+
+          (todo "NEXT")
           ;; This week
           (agenda ""
                   ((org-agenda-span 'week)
