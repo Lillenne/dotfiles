@@ -38,7 +38,8 @@
 ;; Org basics
 (setq org-directory "~/org/"
       org-startup-folded 'show2levels
-      )
+      org-columns-default-format "%TODO %3PRIORITY %60ITEM(Task) %6Effort(Estim){:} %CLOCKSUM(Actual) %TAGS"
+      org-global-properties '(("Effort_ALL" . "0:05 0:15 0:30 1:00 2:00 4:00 8:00 16:00 24:00")))
 
 ;; (defun ak/new-sprint-headline ()
 ;;   "Updates the sprint headline directly above"
@@ -141,7 +142,7 @@
    ("t" "To-Do" entry (file +org-capture-todo-file) "* TODO %? %^G %^{EFFORT}p \nSCHEDULED: %^t" :prepend t)
    ("q" "Todoist")
    ("qq" "Inbox" entry (file+olp ,(org-todoist-file) ,org-todoist-project-headline "Inbox" "Default") "* TODO %? %^G %^{EFFORT}p \nSCHEDULED: %^t")
-   ;; ("qt" "Select") ;; TODO dynamically select todoist project / section
+   ("qs" "Select Project" entry (function org-todoist--find-project-and-section) "* TODO %^{What is the task} %^G %^{EFFORT}p %(org-todoist-assign-task) %(progn (org-schedule nil) nil) %(progn (org-deadline nil) nil)\n%?")
    ("c" "New encrypted journal entry" entry
     (file+olp+datetree "~/org/personal/journal.org.gpg")
     "* %U - %?" :tree-type week)
