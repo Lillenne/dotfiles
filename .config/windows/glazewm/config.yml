@@ -63,7 +63,6 @@ gaps:
     left: "0px"
 
 window_rules:
-
   - commands: ["move --workspace 0"]
     match:
       - window_process: { regex: "wt|wezterm|cmd|pwsh|powershell" }
@@ -88,7 +87,7 @@ window_rules:
 
   - commands: ["move --workspace 5"]
     match:
-      - window_process: { regex: "outlook|Outlook|olk" }
+      - window_process: { regex: "outlook|Outlook|olk|OUTLOOK" }
 
   - commands: ["ignore"]
     match:

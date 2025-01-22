@@ -327,14 +327,16 @@ Goals
     :clock-in t
     :clock-keep t
     :unnarrowed t)
-   ("mm" "Scheduled Meeting" entry (file+olp+datetree +org-capture-meetings-file)
+   ("mm" "Scheduled Meeting" entry (file+olp+datetree +org-capture-meetings-file "Meetings")
     "* %^{What are we discussing?} - %^{Attendees?} %T %^G\n** Prep: %?"
     :prepend t
+    :tree-type week
     :clock-in t
     :clock-resume t
     :time-prompt t)
-   ("mn" "Impromptu Meeting" entry (file+olp+datetree +org-capture-meetings-file)
+   ("mn" "Impromptu Meeting" entry (file+olp+datetree +org-capture-meetings-file "Meetings")
     "* %^{Who?} %^G \n%T\n %?"
+    :tree-type week
     :immediate-finish t
     :jump-to-captured t
     :clock-in t
@@ -392,6 +394,7 @@ See `org-capture-templates' for more information."
     (warn "Clock not started (Could not find ID '%s' in file '%s')" id file)))
 (map! :leader :desc "Clock config" "n i c" #'(lambda () (interactive) (my/start-heading-clock "0d28712a-e265-4e1c-8210-7487e1da597a" "/home/aus/org/projects.org")))
 (map! :leader :desc "Clock organization" "n i o" #'(lambda () (interactive) (my/start-heading-clock "946ea368-5645-4d81-b2fe-f8a287d7acc8" "/home/aus/org/projects.org")))
+(map! :leader :desc "Clock answer questions" "n i q" #'(lambda () (interactive) (my/start-heading-clock "ebacb25c-cbe1-4742-be59-385cc1a31b2c" "/home/aus/org/work.org")))
 (map! :leader :desc "Clock Emacs" "n i e" #'(lambda () (interactive) (my/start-heading-clock "6da4661c-bdad-4f14-9202-d3a039807c9d" "/home/aus/org/projects.org")))
 (map! :leader :desc "Clock Teams" "n i t" #'(lambda () (interactive) (my/start-heading-clock "ea3dc712-93d8-49d1-b35d-c84a239bc239" "/home/aus/org/projects.org")))
 (map! :leader :desc "Clock email" "n i E" #'(lambda () (interactive) (my/start-heading-clock "2f8d99c7-7f88-43ae-9f30-17bd44a5e29b" "/home/aus/org/projects.org")))
