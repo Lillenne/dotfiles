@@ -8,33 +8,23 @@
       (expand-file-name (if (s-ends-with? ".org" TEXT t) TEXT (concat TEXT ".org"))
                         org-directory)))
 
-;; quick shortcuts
-(defmacro ak/goto (suffix key)
-  "Generates goto function for primary org files"
-  (let ((methodname (concat "ak/goto-" suffix))
-        (varname (concat "+org-capture-" suffix "-file"))
-        (keybind (concat "j " key)))
-    (eval `(defconst ,(intern varname) (expand-file-name (concat ,suffix ".org") org-directory)))
-    (eval `(defun ,(intern methodname) () (interactive) (find-file (eval (intern ,varname)))))
-    (eval `(map! :leader ,keybind #',(intern methodname)))
-    nil))
-(ak/goto "devenv" "c")
-(ak/goto "notes" "n")
-(ak/goto "projects" "p")
-(ak/goto "gifts" "g")
-(ak/goto "journal" "j")
-(ak/goto "learn" "l")
-(ak/goto "work" "w")
-(ak/goto "todoist" "q")
-(ak/goto "todo" "t")
-(ak/goto "reading-list" "r")
-(ak/goto "memories" "M")
-(ak/goto "meetings" "m")
-(map! :leader "j s" #'ak/to-sprint)
-(map! :leader "j e c" #'(lambda () (interactive) (find-file "/home/aus/org/calendar.org")))
-(map! :leader "j e w" #'(lambda () (interactive) (find-file "/home/aus/org/calendar_work.org")))
-(map! :leader "j e f" #'(lambda () (interactive) (find-file "/home/aus/org/calendar_family.org")))
-
+(map! :leader (:prefix ("j" . "Quick files")
+                       "s" #'ak/to-sprint
+                       "m" #'(lambda () (interactive) (find-file (ak/from-org-dir "memories")))
+                       "M" #'(lambda () (interactive) (find-file (ak/from-org-dir "meetings")))
+                       "b" #'(lambda () (interactive) (find-file (ak/from-org-dir "all-posts")))
+                       "g" #'(lambda () (interactive) (find-file (ak/from-org-dir "gifts")))
+                       "l" #'(lambda () (interactive) (find-file (ak/from-org-dir "learn")))
+                       "t" #'(lambda () (interactive) (find-file (ak/from-org-dir "todo")))
+                       "d" #'(lambda () (interactive) (find-file (ak/from-org-dir "devenv")))
+                       "w" #'(lambda () (interactive) (find-file (ak/from-org-dir "work")))
+                       "q" #'(lambda () (interactive) (find-file (org-todoist-file)))
+                       "p" #'(lambda () (interactive) (find-file (ak/from-org-dir "projects")))
+                       "r" #'(lambda () (interactive) (find-file (ak/from-org-dir "reading-list"))))
+      (:prefix ("jc" . "Calendar")
+               "c" #'(lambda () (interactive) (find-file (ak/from-org-dir "calendar")))
+               "w" #'(lambda () (interactive) (find-file (ak/from-org-dir "calendar_work")))
+               "f" #'(lambda () (interactive) (find-file (ak/from-org-dir "calendar_family")))))
 ;; Org basics
 (setq org-directory "~/org/"
       org-startup-folded 'show2levels
@@ -73,9 +63,9 @@
  org-priority-lowest ?D
  org-clock-continuously nil ;; t to make clock start times the previous clock end times, nil to stop
  org-clock-idle-time '30
- ;; org-priority-faces nil
+ org-priority-faces nil
  ;; org-id-link-to-org-use-id t ;; use ids for links. Sometimes creates them unnecessarily
- org-refile-allow-creating-parent-nodes (quote confirm)
+ org-refile-allow-creating-parent-nodes 'confirm
  org-todo-keywords '((sequence "TODO(t)" "NEXT(n)"  "TRIAGE(r)" "INVESTIGATE(v/@)" "SOMEDAY(o)" "LEARN(l)" "IDEA(i)" "STARTED(s)" "BLOCKED(b@)" "|" "DONE(d)" "CANCELED(k@)")
                      (sequence "[ ](T)" "[-](S)" "[?](W)" "|" "[X](D)"))
  org-archive-default-command #'org-archive-set-tag
@@ -90,7 +80,7 @@
                  ;; (:grouptags)
                  ;; ("deployment" . ?y)
                  ;; ("server" . ?s) ;; lump in with devenv
-                 ("memories" .?e) ;; should just go in memories file
+                 ("memories" .?e) ;; should just go in memories file with filetag
                  ("devenv" . ?d)
                  ;; ("caf" . ?C)
                  ;; ("langs" . ?l)
@@ -122,7 +112,6 @@
                  ("ma" . ?M)
                  ("kenny" . ?K)
                  (:endgrouptag . nil))
- org-columns-default-format "%60ITEM(Task) %TODO %6Effort(Estim){:} %CLOCKSUM(Actual)"
  org-startup-with-inline-images t
  org-log-done 'time
  org-log-into-drawer t
@@ -132,20 +121,18 @@
  ;; split-height-threshold 0
  ;; split-width-threshold nil
  org-capture-templates
- `(("n" "Note" entry (file +org-capture-notes-file) "* %u %^G %?")
-   ("a" "Appointments")
+ `(("a" "Appointments")
    ("aa" "Appointment" entry (file ,(ak/from-org-dir "calendar.org"))
     "* %?\n:PROPERTIES:\n:calendar-id:\t%(getenv \"GMAIL\")\n:END:\n:org-gcal:\n%^T--%^T\n:END:\n\n" :jump-to-captured t)
    ("af" "Family Appointment" entry (file ,(ak/from-org-dir "calendar_family.org"))
     "* %?\n:PROPERTIES:\n:calendar-id:\t%(getenv \"GCAL_FAMILY\")\n:END:\n:org-gcal:\n%^T--%^T\n:END:\n\n" :jump-to-captured t)
-   ("C" "Current Clock" plain (clock) "%?" :unnarrowed t)
+   ("c" "Current Clock" plain (clock) "%?" :unnarrowed t)
    ("t" "To-Do" entry (file +org-capture-todo-file) "* TODO %? %^G %^{EFFORT}p \nSCHEDULED: %^t" :prepend t)
    ("q" "Todoist")
-   ("qq" "Inbox" entry (file+olp ,(org-todoist-file) ,org-todoist-project-headline "Inbox" "Default") "* TODO %? %^G %^{EFFORT}p \nSCHEDULED: %^t")
-   ("qs" "Select Project" entry (function org-todoist--find-project-and-section) "* TODO %^{What is the task} %^G %^{EFFORT}p %(org-todoist-assign-task) %(progn (org-schedule nil) nil) %(progn (org-deadline nil) nil)\n%?")
-   ("c" "New encrypted journal entry" entry
-    (file+olp+datetree "~/org/personal/journal.org.gpg")
-    "* %U - %?" :tree-type week)
+   ("qq" "Inbox" entry (file+olp ,(org-todoist-file) "Inbox" ,org-todoist--default-section-name) "* TODO %? %^G %^{EFFORT}p \nSCHEDULED: %^t")
+   ("qs" "Select Project" entry (function org-todoist-find-project-and-section) "* TODO %^{What is the task} %^G %^{EFFORT}p %(org-todoist-assign-task) %(progn (org-schedule nil) nil) %(progn (org-deadline nil) nil)\n%?")
+   ("qn" "Project Notes" entry (function org-todoist-project-notes) "* %?")
+
    ("d" "Devenv" entry (file +org-capture-devenv-file) "* TODO %? %^G %^{EFFORT}p" :prepend t)
    ;; ("r" "Triage Note" entry (file +org-capture-todo-file) "* TRIAGE %?" :prepend t)
    ("l" "Learn" entry (file +org-capture-learn-file) "* LEARN %^{What category?}G %?" :prepend t)
@@ -164,6 +151,9 @@
     :immediate-finish t)
    ("i" "Idea" entry (file +org-capture-todo-file) "* IDEA %? %^G")
    ("j" "Journal")
+   ("jc" "New encrypted journal entry" entry
+    (file+olp+datetree "~/org/personal/journal.org.gpg")
+    "* %U - %?" :tree-type week)
    ("jw" "Weeklies")
    ("jwp" "Weekly Plan" entry (file+datetree +org-capture-journal-file) "* Weekly Plan
 Goals
@@ -701,11 +691,11 @@ See `org-capture-templates' for more information."
 ;;     (org-store-agenda-views )))
 
 ;; Journal
-(require 'org-journal)
+;; (require 'org-journal)
 ;; (after! org-journal
-(setq org-journal-file-format "journal-%Y%m%d.org"
-      org-journal-file-type 'yearly
-      org-journal-enable-agenda-integration t)
+;; (setq org-journal-file-format "journal-%Y%m%d.org"
+;;       org-journal-file-type 'yearly
+;;       org-journal-enable-agenda-integration t)
 ;; )
 
 ;; Roam

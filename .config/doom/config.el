@@ -6,6 +6,7 @@
 (setenv "LSP_USE_PLISTS" "true") ; remember to add this to /etc/environment or .config/emacs/early-init.el
 (setq gc-cons-threshold 2000000) ; increase gc threshold to improve performance
 (require 'load-env-vars)
+(setq auth-sources '("~/.authinfo.gpg"))
 (load-env-vars (expand-file-name "~/.dotvars.gpg"))
 (setq doom-font (font-spec :family "JetBrainsMono Nerd Font Mono" :size 20))
 (setq doom-theme 'doom-one)
@@ -24,6 +25,7 @@
 
 
 ;; (load! "jupyter.el")
+(load! "git.el")
 (load! "calendar.el")
 (load! "mu4e.el")
 ;; (load! "timeblock.el")
