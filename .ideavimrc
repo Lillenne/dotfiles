@@ -46,6 +46,14 @@ set clipboard+=unnamed
 
 map <leader>hrr :source ~/.ideavimrc<CR>
 
+" build
+map <leader>BB <Action>(BuildSolutionAction)
+map <leader>Bb <Action>(BuildCurrentProject)
+map <leader>BR <Action>(RebuildSolutionAction)
+map <leader>Br <Action>(RebuildCurrentProject)
+map <leader>BC <Action>(CleanSolutionAction)
+map <leader>Bc <Action>(CleanCurrentProject)
+
 " next/prev
 ActivateProblemsViewToolWindow
 nmap ]e <Action>(GotoNextError)
@@ -75,11 +83,16 @@ map <leader>ba <Action>(NewFile)
 
 " buffers
 map <leader>bd <Action>(CloseEditor)
+map <leader>c <Action>(CloseEditor)
+map <leader>ca <Action>(CloseAllEditors)
 map <leader>bD <Action>(CloseAllEditors)
 map <leader>bo <Action>(CloseAllEditorsButActive)
+map <leader>Co <Action>(CloseAllEditorsButActive)
+map U <Action>(ReopenClosedTab)
+map <leader>q <Action>(CloseAllEditorsButActive)
+map <leader>Q <Action>(CloseAllEditors)
 "map <leader>bu <Action>(CloseAllUnmodifiedEditors)
 "map <C-s> <Action>(SaveDocument)
-"map <leader>bR <Action>(ReopenClosedTab)
 
 " terminal
 map <leader>wh <Action>(Terminal.SplitHorizontally)
@@ -87,20 +100,20 @@ map <leader>wv <Action>(Terminal.SplitVertically)
 map <leader>ot <Action>(ActivateTerminalToolWindow)
 
 " expand/collapse
-map <leader>za <Action>(ExpandAllRegions)
-map <leader>zs <Action>(CollapseAllRegions)
-map <leader>zcc <Action>(CollapseDocComments)
-map <leader>zoc <Action>(ExpandDocComments)
-map <leader>zcr <Action>(CollapseRegion)
-map <leader>zor <Action>(ExpandRegion)
-map <leader>zcb <Action>(CollapseBlock)
-map <leader>zob <Action>(ExpandBlock)
+map <leader>za <Action>(CollapseAllRegions)
+map <leader>zA <Action>(ExpandAllRegions)
+map <leader>zc <Action>(CollapseDocComments)
+map <leader>zC <Action>(ExpandDocComments)
+map <leader>zz <Action>(CollapseRegion)
+map <leader>zZ <Action>(ExpandRegion)
+map <leader>zb <Action>(CollapseBlock)
+map <leader>zB <Action>(ExpandBlock)
 
 " code/rename
 map <leader>R <Action>(RenameElement)
-"map <leader>br <Action>(RenameFile)
-map <C-/> <Action>(CommentByLineComment)
-map <leader><C-/> <Action>(CommentByBlockComment)
+map <leader>br <Action>(RenameFile)
+"map <C-/> <Action>(CommentByLineComment)
+"map <leader><C-/> <Action>(CommentByBlockComment)
 map <leader>ii <Action>(Generate)
 map <leader>iv <Action>(IntroduceVariable)
 map <leader>ie <Action>(ExtractMethod)
@@ -113,7 +126,7 @@ map <leader>im <Action>(ImplementMethods)
 map <leader>dd <Action>(SafeDelete)
 map <leader>Z <Action>(ToggleZenMode)
 
-map <leader>hrr <Action>(RoslynRebootAction)
+map <leader>hra <Action>(RoslynRebootAction)
 
 " jupyter
 map <leader>nq <Action>(JupyterShutdownNotebookAction)
@@ -144,30 +157,33 @@ map <leader>ncm <Action>(NotebookConvertToMarkdownCellAction)
 map <leader>noc <Action>(NotebookOutputCollapseSingleInCellAction)
 map <leader>noC <Action>(NotebookOutputCollapseAllAction)
 
-" missing run all below?
-
-
-
-" git
+"hide windows
 map <leader>hh <Action>(HideAllWindows)
 map <leader>hs <Action>(HideSideWindows)
 map <leader>ha <Action>(HideActiveWindow)
-map <leader>Gg <Action>(Git.Menu)
+
+" git
+"map <leader>gd <Action>(ShowDiff)
+map <leader>gg <Action>(Git.Menu)
 map <leader>GG <Action>(ActivateVersionControlToolWindow)
-map <leader>Ga <Action>(Git.Add)
+" map <leader>Ga <Action>(Git.Add)
 " map <leader>Gcc <Action>(Git.Commit.Stage)
-map <leader>Gcb <Action>(Git.Checkout.Branch)
-map <leader>Gs <Action>(Git.Show.Stash)
-map <leader>GT <Action>(Git.Tag)
-map <leader>Gpr <Action>(GitHub.View.PullRequest)
-map <leader>Gpu <Action>(Git.Push)
-map <leader>Gpd <Action>(Git.Pull)
-map <leader>Gf <Action>(Git.Fetch)
-map <leader>Gbb <Action>(Git.Branches)
-map <leader>Gbl <Action>(Git.Branches.List)
-map <leader>Gir <Action>(Git.Interactive.Rebase)
-map <leader>Gr <Action>(Git.Reset)
-map <leader>Gir <Action>(Git.Interactive.Rebase)
+map <leader>gcb <Action>(Git.Checkout.Branch)
+map <leader>gs <Action>(Git.Show.Stash)
+map <leader>gT <Action>(Git.Tag)
+" map <leader>Gpr <Action>(GitHub.View.PullRequest)
+"map <leader>gP <Action>(Git.PushUpToCommit)
+"map <leader>gP <Action>(Git.Push)
+map <leader>gp <Action>(Git.Pull)
+map <leader>gf <Action>(Git.Fetch)
+map <leader>gb <Action>(Git.Branches)
+map <leader>gbl <Action>(Git.Branches.List)
+" map <leader>gir <Action>(Git.Interactive.Rebase)
+map <leader>gr <Action>(Git.Reset)
+map <leader>gir <Action>(Git.Interactive.Rebase)
+
+nmap <leader>K <Action>(QuickPreview)
+nmap <leader>k <Action>(QuickActions)
 
 " run
 map <leader>rft <Action>(RerunFailedTests)
@@ -179,13 +195,18 @@ map <leader>rs <Action>(Stop)
 map <leader>raw <Action>(Debugger.AddToWatch)
 map <leader>rca <Action>(Debugger.RemoveAllBreakpoints)
 
+"github
+"map <leader>gcp <Action>(GitHub.Create.Pull.Request)
+map <leader>gmm <Action>(GitHub.MainMenu)
+map <leader>gir <Action>(Git.Interactive.Rebase)MainMenu
 
 " find
 map <leader>fo <Action>(RecentFiles)
 map <leader>ff <Action>(GotoFile)
 map <leader>fw <Action>(TextSearchAction)
 map <leader>fW <Action>(FindInPath)
-map <leader>fS <Action>(GotoSymbol)
+map <leader>fs <Action>(GotoSymbol)
+map <leader>w <Action>(SaveDocument)
 map <leader>fa <Action>(GotoAction)
 map <leader>ft <Action>(GotoType)
 map <leader>fp <Action>(FindInPath)
@@ -194,6 +215,8 @@ map <leader>fl <Action>(RecentLocations)
 map <leader>op <Action>(OpenFile)
 map <leader>of <Action>(SelectInProjectView)
 map <leader>/ <Action>(SearchEverywhere)
+
+map <leader>CC <Action>(CodeCleanup)
 
 " goto
 map ga <Action>(GotoAction)
@@ -209,6 +232,9 @@ map gs <Action>(GotoSymbol)
 map gu <Action>(FindUsages)
 map <leader>sa <Action>(SelectAllOccurences)
 
+" Scroll
+map <A-j> <C-d>
+map <A-k> <C-u>
 
 " window navigation
 map # <Action>(SplitVertically)
@@ -232,7 +258,28 @@ map <leader>cr <Action>(copilot.requestCompletions)
 map <leader>cc <Action>(copilot.chat.show)
 
 "unit testing
+:map <leader>U <Action>(ActivateUnitTestsToolWindow)
 :map <leader>u <Action>(RiderUnitTestQuickListPopupAction)
+
+" tool windows
+map <leader>ot <Action>(ActivateTerminalToolWindow)
+map <leader>tt <Action>(ActivateTerminalToolWindow)
+map <leader>th <Action>(ActivateTerminalToolWindow)
+map <leader>th <Action>(ActivateTerminalToolWindow)
+map <leader>tpr <Action>(ActivatePullRequestsToolWindow)
+"map <leader>tpp <Action>(ActivateProblemsToolWindow)
+map <leader>tnu <Action>(ActivateNuGetToolWindow)
+"map <leader>tmo <Action>(ActivateMonitoringToolWindow)
+map <leader>tT <Action>(ActivatedotTraceProfilerToolWindow)
+map <leader>tt <Action>(ActivateTODOToolWindow)
+map <leader>tg <Action>(ActivateVersionControlToolWindow)
+map <leader>tc <Action>(ActivateCommitToolWindow)
+map <leader>tu <Action>(ActivateUnitTestsToolWindow)
+map <leader>td <Action>(ActivateDebugToolWindow)
+
+" yank
+map <leader>ya <Action>(CopyAbsolutePath)
+map <leader>yp <Action>(CopyFileName)
 
 "ShowBookmarks
 "ShowFilePath
