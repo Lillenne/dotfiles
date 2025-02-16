@@ -82,3 +82,6 @@
 ;;   (package! yasnippet))
 
 (package! elpy)
+;;(package! todoist)
+;; my fork of emacs todoist until sections are merged
+(package! todoist :recipe (:host github :repo "Lillenne/emacs-todoist" :files ("todoist.el")))

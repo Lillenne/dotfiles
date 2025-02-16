@@ -20,6 +20,9 @@
 (load! "jupyter.el")
 (load! "calendar.el")
 (load! "timeblock.el")
+(require 'todoist)
+(setq todoist-token (getenv "TODOIST_TOKEN"))
+;; (setq todoist-show-all t)
 
 (defvar ak/use-mu4e t)
 (when ak/use-mu4e (load! "mu4e.el"))
