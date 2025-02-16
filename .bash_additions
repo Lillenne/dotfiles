@@ -23,3 +23,4 @@ export PATH="${PATH:+${PATH}:}/home/aus/.dotnet"
 export PATH="${PATH:+${PATH}:}/home/aus/.local/share/JetBrains/Toolbox/scripts"
 
 export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+${LD_LIBRARY_PATH}:}/usr/local/lib64"
+eval "$(direnv hook bash)"

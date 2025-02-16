@@ -8,10 +8,14 @@
                (side . bottom)
                (window-height . 0.3)))
 (evil-owl-mode)
-(setq evil-snipe-scope 'whole-visible)
-(setq evil-snipe-auto-scroll t)
-(use-package evil-quickscope
-  :config (global-evil-quickscope-always-mode 1))
+(evil-snipe-override-mode nil)
+(setq evil-snipe-scope 'whole-visible
+      evil-snipe-auto-scroll t
+      evil-snipe-smart-case t
+      evil-snipe-auto-scroll t
+      evil-snipe-use-vim-sneak-bindings t)
+;; (use-package evil-quickscope
+;;   :config (global-evil-quickscope-always-mode 1))
 
 ;; ;; bind `function.inner`(function block without name and args) to `f` for use in things like `vif`, `yif`
 ;; (define-key evil-inner-text-objects-map "f" (evil-textobj-tree-sitter-get-textobj "function.inner"))

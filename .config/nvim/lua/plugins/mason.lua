@@ -11,14 +11,13 @@ return {
       opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, {
         "lua_ls",
         "csharp_ls",
-        -- "omnisharp",
         "cssls",
         "dockerls",
-        -- "fsautocomplete",
         "html",
         "jsonls",
         "pyright",
         "tailwindcss",
+        "rust_analyzer",
       })
     end,
   },

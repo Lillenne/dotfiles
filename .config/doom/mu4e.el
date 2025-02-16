@@ -1,4 +1,7 @@
 ;;; debug.el -*- lexical-binding: t; -*-
+
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e/")
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e/")
 (require 'smtpmail)
 (require 'mu4e)
 (setq +org-capture-emails-file "todos.org")
@@ -8,12 +11,12 @@
       mu4e-headers-visible-columns 120)
 
 (set-email-account! "pm"
-                '((mu4e-sent-folder . "/Sent")
-                (mu4e-drafts-folder . "/Drafts")
-                (mu4e-trash-folder  . "/Trash")
-                (mu4e-refile-folder . "/All Mail")
-                (smtpmail-smtp-user . ak/email-address))
-                t)
+                    '((mu4e-sent-folder . "/Sent")
+                      (mu4e-drafts-folder . "/Drafts")
+                      (mu4e-trash-folder  . "/Trash")
+                      (mu4e-refile-folder . "/All Mail")
+                      (smtpmail-smtp-user . ak/email-address))
+                    t)
 
 ;; https://github.com/djcb/mu/issues/1136
 (setf (alist-get 'trash mu4e-marks)
@@ -50,12 +53,12 @@
 
 ;; Send mail
 (setq message-send-mail-function 'smtpmail-send-it
-smtpmail-auth-credentials "~/.authinfo.gpg"
-smtpmail-smtp-server "127.0.0.1"
-smtpmail-stream-type 'starttls
-smtpmail-smtp-service 1025)
+      smtpmail-auth-credentials "~/.authinfo.gpg"
+      smtpmail-smtp-server "127.0.0.1"
+      smtpmail-stream-type 'starttls
+      smtpmail-smtp-service 1025)
 
-;(add-to-list 'gnutls-trustfiles (expand-file-name "~/.config/protonmail/bridge-v3/cert.pem"))
+                                        ;(add-to-list 'gnutls-trustfiles (expand-file-name "~/.config/protonmail/bridge-v3/cert.pem"))
 
 ;; TODO gmail context?
 ;; (setq smtpmail-servers-requiring-authorization ".*")
@@ -66,7 +69,7 @@ smtpmail-smtp-service 1025)
 ;; ;; messages don't really "move"
 ;; mu4e-index-lazy-check t)
 (setq mu4e-maildir-shortcuts
-        '(("/Inbox"   . ?i)
+      '(("/Inbox"   . ?i)
         ("/Sent"      . ?s)
         ("/Trash"     . ?t)
         ("/Drafts"    . ?d)

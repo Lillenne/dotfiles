@@ -2,9 +2,7 @@
 
 ;;TODO check out grip mode +grip flag for md mode https://github.com/seagle0128/grip-mode
                                         ;(remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-shortmenu)
-                                        ;(setq fancy-splash-image "")
-(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e/")
-(setq gc-cons-threshold 1000000) ; increase gc threshold to improve performance
+(setq gc-cons-threshold 2000000) ; increase gc threshold to improve performance
 (require 'load-env-vars)
 (load-env-vars "/home/aus/.dotvars")
 (setq doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 20))
@@ -14,9 +12,7 @@
 (setq find-file-visit-truename t)
 (setq user-full-name (getenv "NAME"))
 
-(load! "evil.el")
 (load! "org.el")
-(load! "bindings.el")
 (load! "jupyter.el")
 (load! "calendar.el")
 (load! "timeblock.el")
@@ -24,17 +20,16 @@
 (setq todoist-token (getenv "TODOIST_TOKEN"))
 (load! "todoist.el")
 ;; (setq todoist-show-all t)
-
 (defvar ak/use-mu4e t)
 (when ak/use-mu4e (load! "mu4e.el"))
-(defvar ak/use-lsp-mode t)
-(when ak/use-lsp-mode (load! "debug.el")(load! "company.el"))
-
 (defvar ak/use-lsp-bridge nil)
 (when ak/use-lsp-bridge (load! "lsp-bridge.el"))
-
 (defvar ak/use-ellama t)
 (when ak/use-ellama (load! "ellama.el"))
+(defvar ak/use-lsp-mode t)
+(when ak/use-lsp-mode (load! "debug.el")(load! "company.el"))
+(load! "evil.el")
+
 
 (defun ak/is-minibuf () (minibuffer-window-active-p (current-buffer)))
 (defun ak/is-only-window () (equal (length (window-list-1)) 1))
@@ -54,8 +49,9 @@
 (defun ak/copy-full-path () (interactive)
        (kill-new (expand-file-name (buffer-file-name))))
 
-
 (load! "banner.el")
+(load! "bindings.el")
+(load! "polish.el")
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
