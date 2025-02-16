@@ -1,5 +1,7 @@
 ;;; bindings.el -*- lexical-binding: t; -*-
 
+;; (map! :map 'override "C-i" #'better-jumper-jump-forward) ;; this bind for some reason keeps messing other stuff up?
+
 (defun vterm-vsplit () (interactive) (split-window-horizontally) (other-window 1) (+vterm/here default-directory))
 (map! :leader "o v" #'vterm-vsplit)
 (map! :leader "k" #'+workspace/close-window-or-workspace)
@@ -11,6 +13,22 @@
 (map! :m "<C-S-down>" #'enlarge-window)
 (map! :m "<C-S-left>" #'shrink-window-horizontally)
 (map! :m "<C-S-right>" #'enlarge-window-horizontally)
+
+;; move line up
+(defun move-line-up ()
+  (interactive)
+  (transpose-lines 1)
+  (previous-line 2))
+
+;; move line down
+(defun move-line-down ()
+  (interactive)
+  (next-line 1)
+  (transpose-lines 1)
+  (previous-line 1))
+
+;; (map! :m "<M-down>" #'move-line-down)
+;; (map! :m "<M-up>" #'move-line-up)
 
 (map! :leader "j u" #'sp-up-sexp)
 (map! :leader "j d" #'sp-down-sexp)
@@ -53,14 +71,18 @@
 (map! :map 'override "C-A" #'embark-act)
 (map! :map 'override "C-S" #'embark-act-all)
 (map! :map 'override "M-SPC" #'doom/leader)
-(map! :map 'override "C-h" #'evil-window-left)
 (map! :map 'override "C-S-h" #'+evil/window-move-left)
-(map! :map 'override "C-l" #'evil-window-right)
 (map! :map 'override "C-S-l" #'+evil/window-move-right)
-(map! :map 'override "C-k" #'evil-window-up)
 (map! :map 'override "C-S-k" #'+evil/window-move-up)
-(map! :map 'override "C-j" #'evil-window-down)
 (map! :map 'override "C-S-j" #'+evil/window-move-down)
+(map! :map 'override "C-h" #'evil-window-left)
+(map! :map 'override "C-l" #'evil-window-right)
+(map! :map 'override "C-k" #'evil-window-up)
+(map! :map 'override "C-j" #'evil-window-down)
+(map! :map 'org-mode-map "C-<right>" #'org-down-element)
+(map! :map 'org-mode-map "C-<left>" #'org-up-element)
+(map! :map 'org-mode-map "C-<down>" #'org-forward-element)
+(map! :map 'org-mode-map "C-<up>" #'org-backward-element)
 (map! :map 'override "C-S-r" #'evil-window-rotate-downwards)
 (map! :map 'override "C-M-r" #'evil-window-rotate-upwards)
 (map! :map 'override "|" nil)

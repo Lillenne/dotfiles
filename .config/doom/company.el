@@ -8,6 +8,7 @@
   (corfu-preselect 'prompt) ;; Always preselect the prompt
   ;; (corfu-preselect 'valid)
   (corfu-popupinfo-delay '(0.1 . 0.3))
+  ;; (+corfu-want-ret-to-confirm both)
 
   ;; Use TAB for cycling, default is `corfu-complete'.
   :bind

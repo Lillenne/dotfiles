@@ -10,7 +10,7 @@
 (setq mu4e-split-view 'vertical
       mu4e-headers-visible-columns 120)
 
-(set-email-account! "aus-pm"
+(set-email-account! "pm"
                     `((mu4e-sent-folder . "/aus-pm/Sent")
                       (mu4e-drafts-folder . "/aus-pm/Drafts")
                       (mu4e-trash-folder  . "/aus-pm/Trash")
@@ -18,11 +18,11 @@
                       (smtpmail-smtp-user . ,ak/email-address)
                       (user-mail-address . ,ak/email-address))
                     t)
-(set-email-account! "aus-pix"
+(set-email-account! "Pixalyzer"
                     `((mu4e-sent-folder . "/aus-pix/Sent")
                       (mu4e-drafts-folder . "/aus-pix/Drafts")
                       (mu4e-trash-folder  . "/aus-pix/Trash")
-                      (mu4e-refile-folder . "/aus-pix/Archive")
+                      (mu4e-refile-folder . "/aus-pm/Archive")
                       (smtpmail-smtp-user . ,ak/business-email-address)
                       (user-mail-address . ,ak/business-email-address))
                     t)
@@ -64,8 +64,8 @@
 (setq message-send-mail-function 'smtpmail-send-it
       message-cite-function #'mu4e-message-cite-nothing
       smtpmail-auth-credentials "~/.authinfo.gpg"
-      smtpmail-smtp-server "127.0.0.1"
       smtpmail-stream-type 'starttls
+      smtpmail-smtp-server "127.0.0.1"
       smtpmail-smtp-service 1025)
 
 ;; TODO gmail context?
@@ -87,6 +87,7 @@
 
 (setq shr-color-visible-luminance-min 80)
 (add-to-list 'gnutls-trustfiles (expand-file-name "~/.config/protonmail/bridge/cert.pem"))
+;; (add-to-list 'gnutls-trustfiles (expand-file-name "~/.config/protonmail/bridge/certnas.pem"))
 
 ;; TODO
 (add-to-list 'mu4e-bookmarks

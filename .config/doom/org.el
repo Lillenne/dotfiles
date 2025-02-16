@@ -19,7 +19,7 @@
 (ak/goto "journal" "j")
 (ak/goto "learn" "l")
 (ak/goto "stories" "w")
-(ak/goto "todoist" "T")
+(ak/goto "todoist" "q")
 (ak/goto "todo" "t")
 (ak/goto "reading-list" "r")
 (ak/goto "memories" "M")
@@ -47,6 +47,12 @@
   (save-window-excursion
     (org-id-goto ID)
     (org-todo 'done)))
+
+;; org crypt
+(require 'org-crypt)
+(org-crypt-use-before-save-magic)
+(setq org-crypt-key nil) ;; use symmetric encryption
+
 (setq
  org-icalendar-combined-agenda-file (expand-file-name "org.ics" org-directory)
  org-export-with-broken-links t
@@ -60,7 +66,7 @@
  ;; org-priority-faces nil
  ;; org-id-link-to-org-use-id t ;; use ids for links. Sometimes creates them unnecessarily
  org-refile-allow-creating-parent-nodes (quote confirm)
- org-todo-keywords '((sequence "TODO(t)"  "TRIAGE(r)" "INVESTIGATE(v/@)" "SOMEDAY(o)" "LEARN(l)" "IDEA(i)" "STARTED(s)" "BLOCKED(b@/@)" "|" "DONE(d)" "CANCELED(k@)")
+ org-todo-keywords '((sequence "TODO(t)"  "TRIAGE(r)" "INVESTIGATE(v/@)" "SOMEDAY(o)" "LEARN(l)" "IDEA(i)" "STARTED(s)" "BLOCKED(b@)" "|" "DONE(d)" "CANCELED(k@)")
                      (sequence "[ ](T)" "[-](S)" "[?](W)" "|" "[X](D)"))
  org-archive-default-command #'org-archive-set-tag
  ;; prefix tag string with @ or use stargroup / endgroup vs grouptag for mutually exclusive
@@ -69,28 +75,25 @@
                  ("gift" . ?g)
                  ("quote" . ?q)
                  ("family" . ?a)
-                 ("pt" . ?t)
-                 ("photo" . ?i)
                  (:startgrouptag . nil)
                  ;; ("Project" . ?p)
                  ;; (:grouptags)
-                 ("faces" . ?f)
-                 ("deployment" . ?y)
-                 ;; ("server" . ?s)
-                 ("memories" .?e)
+                 ;; ("deployment" . ?y)
+                 ;; ("server" . ?s) ;; lump in with devenv
+                 ("memories" .?e) ;; should just go in memories file
                  ("devenv" . ?d)
                  ;; ("caf" . ?C)
-                 ("langs" . ?l)
+                 ;; ("langs" . ?l)
                  ;; ("seg; ("autolighting" . ?l)
-                 ("selfhosting" . ?h)
+                 ;; ("selfhosting" . ?h) ;; lump in with devenv
                  (:endgrouptag . nil)
-                 ("career" . ?r)
+                 ;; ("career" . ?r)
 
                  (:startgrouptag . nil)
                  ;; ("Learning Areas")
                  ;; (:grouptags)
                  ("computer_science" . ?c)
-                 ("machine_learning" . ?m)
+                 ;; ("machine_learning" . ?m) ;; lump in with cs
                  ("organization" . ?o) ;; TODO remove?
                  ("programs" . ?p)
                  (:endgrouptag . nil)
@@ -114,7 +117,7 @@
  org-log-done 'time
  org-log-into-drawer t
  org-log-redeadline t
- org-log-reschedule t
+ org-log-reschedule 'time
  org-link-descriptive t
  ;; split-height-threshold 0
  ;; split-width-threshold nil
@@ -122,8 +125,11 @@
  '(("n" "Note" entry (file +org-capture-notes-file) "* %u %^G %?")
    ("C" "Current Clock" plain (clock) "%?" :unnarrowed t)
    ("t" "To-Do" entry (file +org-capture-todo-file) "* TODO %? %^G %^{EFFORT}p \nSCHEDULED: %^t" :prepend t)
-   ("c" "Devenv" entry (file +org-capture-devenv-file) "* TODO %? %^G %^{EFFORT}p" :prepend t)
-   ("r" "Triage Note" entry (file +org-capture-todo-file) "* TRIAGE %?" :prepend t)
+   ("c" "New encrypted journal entry" entry
+    (file+olp+datetree "~/org/personal/journal.org.gpg")
+    "* %U - %?" :tree-type week)
+   ("d" "Devenv" entry (file +org-capture-devenv-file) "* TODO %? %^G %^{EFFORT}p" :prepend t)
+   ;; ("r" "Triage Note" entry (file +org-capture-todo-file) "* TRIAGE %?" :prepend t)
    ("l" "Learn" entry (file +org-capture-learn-file) "* LEARN %^{What category?}G %?" :prepend t)
    ("e" "Email" entry (file +org-capture-todo-file) "* TODO %A %(org-set-tags \"email\")" :prepend t :post-hook (lambda () (org-store-link)))
    ("g" "Gift Idea" entry (file +org-capture-gifts-file) "* %? %^{For who?}G") ;%(org-set-tags \"gift\") %^{For who?}G")
@@ -155,7 +161,23 @@ Goals
     :clock-resume t
     :unnarrowed t)
    ("jwr" "Weekly Review" entry (file+datetree +org-capture-journal-file) "* Weekly Review
-%?
+- Pre review [/]
+  - [ ] Clear off desk %?
+  - [ ] Catch up on email
+  - [ ] Clear Teams notifications & respond to messages
+- Housekeeping [/]
+  - [ ] Untriaged notes
+  - [ ] Overdue items
+  - [ ] Blocked items
+- Review [/]
+  - [ ] What went well?
+  - [ ] What slipped?
+  - [ ] What did I not need to do?
+  - [ ] What can I adjust or start? Create a plan.
+- Planning [/]
+  - Main priorities for next week
+    1.
+
 ** Agenda
 %(save-window-excursion (org-batch-agenda \"W\"))
 ** Clocktable
@@ -192,7 +214,25 @@ Goals
     :clock-keep t
     :immediate-finish t
     :jump-to-captured t)
-   ("jr" "Daily Review" entry (file+olp+datetree +org-capture-journal-file) "* %(format-time-string \"%-I:%M %p\"): Daily Review\n%?
+   ("jr" "Daily Review" entry (file+olp+datetree +org-capture-journal-file) "* %(format-time-string \"%-I:%M %p\"): Daily Review\n
+- Pre review [/]
+  - [ ] Clear off desk %?
+  - [ ] Catch up on email
+  - [ ] Clear Teams notifications & respond to messages
+- Housekeeping [/]
+  - [ ] Untriaged notes
+  - [ ] Overdue items
+  - [ ] Blocked items
+- Review
+  - Accomplished:
+  - Blockers:
+  - Didn't get to:
+  - Notes
+- [ ] Plan tomorrow
+  1.
+  2.
+  3.
+
 ** %(save-window-excursion (org-batch-agenda \"D\"))"
     :tree-type week
     :clock-in t
@@ -291,17 +331,43 @@ Goals
     :jump-to-captured t
     :clock-in t
     :clock-keep t)
-   ;; ("p" "Templates for projects")
-   ;; ("pt" "Project-local todo" entry (file+headline +org-capture-project-todo-file "Inbox") "* TODO %?" :prepend t)
-   ;; ("pn" "Project-local notes" entry (file+headline +org-capture-project-notes-file "Inbox") "* %U %?" :prepend t)
-   ;; ("pc" "Project-local changelog" entry (file+headline +org-capture-project-changelog-file "Unreleased") "* %U %?" :prepend t)
-                                        ;("c" "calfw2org" entry (file+headline +org-capture-todo-file "Inbox") "* %? \nSCHEDULED: %(cfw:org-capture-day)" :prepend t :time-prompt)
+   ("p" "Templates for projects")
+   ("pt" "Project-local todo" entry (file+headline +org-capture-project-todo-file "Inbox") "* TODO %?" :prepend t)
+   ("pn" "Project-local notes" entry (file+headline +org-capture-project-notes-file "Inbox") "* %U %?" :prepend t)
+   ("pc" "Project-local changelog" entry (file+headline +org-capture-project-changelog-file "Unreleased") "* %U %?" :prepend t)
+   ;; ("c" "calfw2org" entry (file+headline +org-capture-todo-file "Inbox") "* %? \nSCHEDULED: %(cfw:org-capture-day)" :prepend t :time-prompt)
    ("c" "calfw2org" entry (file+headline +org-capture-todo-file "Inbox") "* %? \nSCHEDULED: %(cfw:org-capture-day)")
-   ("p" "Centralized templates for projects")
-   ("pi" "Project idea" entry #'+org-capture-central-project-todo-file "* IDEA %?" :heading "Ideas")
-   ("pt" "Project todo" entry #'+org-capture-central-project-todo-file "* TODO %?" :heading "Tasks" :prepend nil)
-   ("pn" "Project notes" entry #'+org-capture-central-project-notes-file "* %U %?" :heading "Notes" :prepend t)
-   ("pc" "Project changelog" entry #'+org-capture-central-project-changelog-file "* %U %?" :heading "Changelog" :prepend t)))
+   ("P" "Centralized templates for projects")
+   ("Pi" "Project idea" entry #'+org-capture-central-project-todo-file "* IDEA %?" :heading "Ideas")
+   ("Pt" "Project todo" entry #'+org-capture-central-project-todo-file "* TODO %?" :heading "Tasks" :prepend nil)
+   ("Pn" "Project notes" entry #'+org-capture-central-project-notes-file "* %U %?" :heading "Notes" :prepend t)
+   ("Pc" "Project changelog" entry #'+org-capture-central-project-changelog-file "* %U %?" :heading "Changelog" :prepend t)
+   ))
+
+(with-eval-after-load 'org-capture
+  (defun org-hugo-new-subtree-post-capture-template ()
+    "Returns `org-capture' template string for new Hugo post.
+See `org-capture-templates' for more information."
+    (let* ((title (read-from-minibuffer "Post Title: ")) ;Prompt to enter the post title
+           (fname (org-hugo-slug title)))
+      (mapconcat #'identity
+                 `(
+                   ,(concat "* TODO " title)
+                   ":PROPERTIES:"
+                   ,(concat ":EXPORT_FILE_NAME: " fname)
+                   ":END:"
+                   "%?\n")          ;Place the cursor here finally
+                 "\n")))
+
+  (add-to-list 'org-capture-templates
+               '("h"                ;`org-capture' binding + h
+                 "Hugo post"
+                 entry
+                 ;; It is assumed that below file is present in `org-directory'
+                 ;; and that it has a "Blog Ideas" heading. It can even be a
+                 ;; symlink pointing to the actual location of all-posts.org!
+                 (file+olp "all-posts.org" "Blog Ideas")
+                 (function org-hugo-new-subtree-post-capture-template))))
 
 ;; Save Org buffers after refiling!
 (advice-add 'org-refile :after 'org-save-all-org-buffers)
@@ -354,18 +420,24 @@ Goals
 ;; )
 
 ;; Make captures full screen
-(defun stag-misanthropic-capture (&rest _)
-  (delete-other-windows))
-(advice-add  #'org-capture-place-template :after 'stag-misanthropic-capture)
+;; (defun stag-misanthropic-capture (&rest _)
+;;   (delete-other-windows))
+;; (advice-add  #'org-capture-place-template :after 'stag-misanthropic-capture)
 
 ;; Agenda
 ;; (after! 'org-agenda
 (require 'org-agenda)
 (setq org-agenda-files '("~/org/")
-      org-agenda-skip-deadline-if-done t
-      org-deadline-warning-days 0
       org-agenda-skip-scheduled-if-done t
+      org-agenda-skip-deadline-if-done t
+      org-agenda-start-day "0d"
+      org-agenda-time-grid '((daily today require-timed) (800 1000 1200 1400 1600 1800 2000) "" "")
+      ;; org-agenda-block-separator nil
+      ;; org-agenda-compact-blocks t
+      org-agenda-start-with-log-mode t
+      org-deadline-warning-days 0
       org-agenda-columns-add-appointments-to-effort-sum t
+      ;; org-clock-clocktable-default-properties '(:scope agenda :maxlevel 4 :emphasize nil :block thisweek :fileskip0 t :link nil :level nil :hidefiles t :filetitle t :compact t :narrow 70!)
       org-clock-clocktable-default-properties '(:scope agenda-with-archives :maxlevel 4 :emphasize nil :block thisweek :fileskip0 t :link nil :level nil :hidefiles t :filetitle t :compact t :narrow 70!)
       org-agenda-prefix-format
       '((agenda . " %i %-12:c%?-12t%-6e % s")
@@ -377,29 +449,128 @@ Goals
 ;; (defun org-agenda-not-done () (org-agenda-skip-entry-if 'notregexp "^\\*\\* DONE "))
 ;; (defun org-agenda-not-done () (org-agenda-skip-entry-if 'notregexp "DONE"))
 (defun org-agenda-not-done () (org-agenda-skip-entry-if 'nottodo 'done))
+(require 'org-super-agenda)
+(org-super-agenda-mode)
+
+;; (setq org-super-agenda-groups
+;;       '((:discard (:tag "work"))
+;;         (:name "Scheduled" :time-grid t :transformer (--> it (upcase it)))
+;;         (:name "Overdue" :deadline past)
+;;         (:name "Due today" :deadline today)
+;;         (:name "Scheduled earlier" :scheduled past)
+;;         (:name "Due soon" :deadline future)
+;;         (:name "Habits" :habit t)
+;;         (:name "Today" :scheduled today)
+;;         (:name "Important" :priority "A")
+;;         (:name "Quick Picks" :effort< "0:30")
+;;         (:name "Done today" :and (:regexp "State \"DONE\"" :log t))
+;;         (:name "Clocked today" :log t)))
+;; (org-search-view)
 (setq org-agenda-custom-commands
-      '(("c" "Simple agenda view"
+      '(
+        ("h" "Agenda" ((agenda "" ((org-super-agenda-groups
+                                    '(
+                                      (:name "Scheduled" :time-grid t :transformer (--> it (upcase it)))
+                                      (:discard (:tag "work"))
+                                      (:name "Habits" :habit t)
+                                      (:name "Triage" :todo "TRIAGE")
+                                      (:name "Blocked" :todo "BLOCKED")
+                                      (:name "Overdue" :deadline past)
+                                      (:name "Due today" :deadline today)
+                                      (:name "Scheduled earlier" :scheduled past)
+                                      (:name "Due soon" :deadline future)
+                                      (:name "Today" :scheduled today)
+                                      (:name "Important" :priority "A")
+                                      (:name "Quick Picks" :effort< "0:30")
+                                      (:name "Done today" :and (:regexp "State \"DONE\"" :log t))
+                                      (:name "Clocked today" :log t)))
+                                   (org-agenda-span 4)
+                                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                                   ))))
+        ("w" "Work Agenda" ((agenda "" ((org-super-agenda-groups
+                                         '(
+                                           (:name "Scheduled" :time-grid t :transformer (--> it (upcase it)))
+                                           (:name "Habits" :habit t)
+                                           (:name "Triage" :todo "TRIAGE")
+                                           (:name "Blocked" :todo "BLOCKED")
+                                           (:name "Overdue" :deadline past)
+                                           (:name "Due today" :deadline today)
+                                           (:name "Scheduled earlier" :scheduled past)
+                                           (:name "Due soon" :deadline future)
+                                           (:name "Today" :scheduled today)
+                                           (:name "Important" :priority "A")
+                                           (:name "Quick Picks" :effort< "0:30")
+                                           (:name "Done today" :and (:regexp "State \"DONE\"" :log t))
+                                           (:name "Clocked today" :log t)))
+                                        (org-agenda-span 4)
+                                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                                        ))))
+
+        ("b" "Blocked" ((todo "BLOCKED")))
+        ("c" "Simple agenda view"
          (
           ;; Todos I haven't finished writing
           (todo "TRIAGE")
-          ;; things I probably shouldn't forget about
-          (tags "PRIORITY=\"A\""
-                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                 (org-agenda-overriding-header "High-priority unfinished tasks:")))
           ;; This week
           (agenda ""
                   ((org-agenda-span 'week)
+                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
                    (org-agenda-start-day "0d")))
           ;; (agenda "" ((org-agenda-start-day "0d") (org-agenda-span 1)))
           ;; (agenda "" ((org-agenda-start-day "+1d") (org-agenda-span 6)))
           ;; (alltodo "")
-          ))
-        ("d" "Today"
-         ((todo "TRIAGE")
+          ;; things I probably shouldn't forget about
           (tags "PRIORITY=\"A\""
                 ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
                  (org-agenda-overriding-header "High-priority unfinished tasks:")))
-          (agenda "" ((org-agenda-start-day "0d") (org-agenda-span 1)))
+          (todo "BLOCKED")
+          (todo ""
+                ((org-agenda-overriding-header "\nUnscheduled TODO")
+                 (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp))))
+          ))
+        ("d" "Today"
+         ((todo "TRIAGE")
+          (agenda "" ((org-super-agenda-groups
+                       '(
+                         (:name "Done today" :and (:regexp "State \"DONE\"" :log t))
+                         ;; (:name "Habits" :habit t) ;; Not sure why this is causing an error
+                         (:name "Scheduled" :time-grid t)
+                         (:name "Clocked today" :log t)
+                         (:discard (:tag "work"))
+                         (:name "Overdue" :deadline past)
+                         (:name "Due today" :deadline today)
+                         (:name "Scheduled earlier" :scheduled past)
+                         (:name "Quick Picks" :effort< "0:30")
+                         (:name "Blocked" :todo "BLOCKED")
+                         (:name "Today" :scheduled today)
+                         ))
+                      (org-agenda-start-day "0d")
+                      (org-agenda-span 1)))
+          ;; (tags "PRIORITY=\"A\""
+          ;;       ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+          ;;        (org-agenda-overriding-header "High-priority unfinished tasks:")))
+          ;; (todo "BLOCKED")
+          ))
+        ("D" "Today w/ work"
+         ((todo "TRIAGE")
+          (agenda "" ((org-super-agenda-groups
+                       '((:name "Done today" :and (:regexp "State \"DONE\"" :log t))
+                         ;; (:name "Habits" :habit t) ;; Not sure why this is causing an error
+                         (:name "Scheduled" :time-grid t)
+                         (:name "Clocked today" :log t)
+                         (:name "Overdue" :deadline past)
+                         (:name "Due today" :deadline today)
+                         (:name "Scheduled earlier" :scheduled past)
+                         (:name "Quick Picks" :effort< "0:30")
+                         (:name "Blocked" :todo "BLOCKED")
+                         (:name "Today" :scheduled today)
+                         ))
+                      (org-agenda-start-day "0d")
+                      (org-agenda-span 1)))
+          ;; (tags "PRIORITY=\"A\""
+          ;;       ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+          ;;        (org-agenda-overriding-header "High-priority unfinished tasks:")))
+          ;; (todo "BLOCKED")
           ))
         ("y" "Yesterday review"
          agenda ""
@@ -443,10 +614,10 @@ Goals
           ;; (org-agenda-start-with-log-mode '(closed clock))
           ;; (org-agenda-skip-function #'org-agenda-not-done)
           ))
-        ("w" "Weekly plan"
-         agenda ""
-         ((org-agenda-span 'week)
-          (org-agenda-start-day "0d")))
+        ;; ("w" "Weekly plan"
+        ;;  agenda ""
+        ;;  ((org-agenda-span 'week)
+        ;;   (org-agenda-start-day "0d")))
         ("W" "Weekly review"
          agenda ""
          (
@@ -466,22 +637,22 @@ Goals
           (org-agenda-start-with-log-mode 'only)
           (org-agenda-log-mode-items '(closed clock))
           (org-agenda-skip-function #'org-agenda-not-done)))
-        ("F" "Fortnite review"
-         agenda ""
-         ((org-agenda-start-day "-13d")
-          (org-agenda-span 14)
-          (org-agenda-archives-mode t)
-          (org-agenda-start-on-weekday 1)
-          (org-agenda-skip-archived-trees nil)
-          (org-export-with-archived-trees t)
-          (org-agenda-skip-deadline-if-done t)
-          (org-agenda-skip-scheduled-if-done t)
-          (org-agenda-hide-tags-regexp ".*")
-          (org-agenda-use-time-grid nil)
-          ;; (org-agenda-start-with-log-mode '(closed clock))
-          (org-agenda-start-with-log-mode 'only)
-          (org-agenda-log-mode-items '(closed clock))
-          (org-agenda-skip-function #'org-agenda-not-done)))
+        ;; ("F" "Fortnite review"
+        ;;  agenda ""
+        ;;  ((org-agenda-start-day "-13d")
+        ;;   (org-agenda-span 14)
+        ;;   (org-agenda-archives-mode t)
+        ;;   (org-agenda-start-on-weekday 1)
+        ;;   (org-agenda-skip-archived-trees nil)
+        ;;   (org-export-with-archived-trees t)
+        ;;   (org-agenda-skip-deadline-if-done t)
+        ;;   (org-agenda-skip-scheduled-if-done t)
+        ;;   (org-agenda-hide-tags-regexp ".*")
+        ;;   (org-agenda-use-time-grid nil)
+        ;;   ;; (org-agenda-start-with-log-mode '(closed clock))
+        ;;   (org-agenda-start-with-log-mode 'only)
+        ;;   (org-agenda-log-mode-items '(closed clock))
+        ;;   (org-agenda-skip-function #'org-agenda-not-done)))
         ;; https://emacs.stackexchange.com/questions/58875/how-do-i-add-appointments-to-effort-sum
         ("j" "Planning Table"
          agenda ""
@@ -578,6 +749,9 @@ Goals
 (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
 (add-to-list 'org-structure-template-alist '("ru" . "src rust"))
 (add-to-list 'org-structure-template-alist '("py" . "src python"))
+(add-to-list 'org-structure-template-alist '("y" . "src yaml"))
+(add-to-list 'org-structure-template-alist '("j" . "src json"))
+(add-to-list 'org-structure-template-alist '("x" . "src xml"))
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((emacs-lisp . nil)
