@@ -93,7 +93,9 @@
 ;; (package! khoj :recipe (:host github :repo "khoj-ai/khoj" :files (:defaults "src/interface/emacs/khoj.el")))
 (package! org-super-agenda)
 (package! org-todoist
-  :recipe (:host github
+  :recipe (
+           ;; :local-repo "/home/aus/projects/org-todoist/"
+           :host github
            :repo "lillenne/org-todoist"
            :branch "main"
            :files ("org-todoist.el")))

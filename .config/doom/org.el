@@ -2,6 +2,12 @@
 
 ;; (after! 'org
 (require 'org)
+(defun ak/from-org-dir (TEXT)
+  (require 's)
+  (if (stringp TEXT)
+      (expand-file-name (if (s-ends-with? ".org" TEXT t) TEXT (concat TEXT ".org"))
+                        org-directory)))
+
 ;; quick shortcuts
 (defmacro ak/goto (suffix key)
   "Generates goto function for primary org files"
@@ -18,13 +24,16 @@
 (ak/goto "gifts" "g")
 (ak/goto "journal" "j")
 (ak/goto "learn" "l")
-(ak/goto "stories" "w")
+(ak/goto "work" "w")
 (ak/goto "todoist" "q")
 (ak/goto "todo" "t")
 (ak/goto "reading-list" "r")
 (ak/goto "memories" "M")
 (ak/goto "meetings" "m")
 (map! :leader "j s" #'ak/to-sprint)
+(map! :leader "j e c" #'(lambda () (interactive) (find-file "/home/aus/org/calendar.org")))
+(map! :leader "j e w" #'(lambda () (interactive) (find-file "/home/aus/org/calendar_work.org")))
+(map! :leader "j e f" #'(lambda () (interactive) (find-file "/home/aus/org/calendar_family.org")))
 
 ;; Org basics
 (setq org-directory "~/org/"
@@ -122,9 +131,17 @@
  ;; split-height-threshold 0
  ;; split-width-threshold nil
  org-capture-templates
- '(("n" "Note" entry (file +org-capture-notes-file) "* %u %^G %?")
+ `(("n" "Note" entry (file +org-capture-notes-file) "* %u %^G %?")
+   ("a" "Appointments")
+   ("aa" "Appointment" entry (file ,(ak/from-org-dir "calendar.org"))
+    "* %?\n:PROPERTIES:\n:calendar-id:\t%(getenv \"GMAIL\")\n:END:\n:org-gcal:\n%^T--%^T\n:END:\n\n" :jump-to-captured t)
+   ("af" "Family Appointment" entry (file ,(ak/from-org-dir "calendar_family.org"))
+    "* %?\n:PROPERTIES:\n:calendar-id:\t%(getenv \"GCAL_FAMILY\")\n:END:\n:org-gcal:\n%^T--%^T\n:END:\n\n" :jump-to-captured t)
    ("C" "Current Clock" plain (clock) "%?" :unnarrowed t)
    ("t" "To-Do" entry (file +org-capture-todo-file) "* TODO %? %^G %^{EFFORT}p \nSCHEDULED: %^t" :prepend t)
+   ("q" "Todoist")
+   ("qq" "Inbox" entry (file+olp ,(org-todoist-file) ,org-todoist-project-headline "Inbox" "Default") "* TODO %? %^G %^{EFFORT}p \nSCHEDULED: %^t")
+   ;; ("qt" "Select") ;; TODO dynamically select todoist project / section
    ("c" "New encrypted journal entry" entry
     (file+olp+datetree "~/org/personal/journal.org.gpg")
     "* %U - %?" :tree-type week)
@@ -134,15 +151,15 @@
    ("e" "Email" entry (file +org-capture-todo-file) "* TODO %A %(org-set-tags \"email\")" :prepend t :post-hook (lambda () (org-store-link)))
    ("g" "Gift Idea" entry (file +org-capture-gifts-file) "* %? %^{For who?}G") ;%(org-set-tags \"gift\") %^{For who?}G")
    ("w" "Work")
-   ("ww" "Work todo" entry (file+headline +org-capture-stories-file "Todo") "* TODO %? %^{EFFORT}p \nSCHEDULED: %^t" :prepend t)
-   ("wr" "PR Review" entry (file+headline +org-capture-stories-file "PRs") "* TODO %^{What?} :%^{Who|ron|jeremy|bo|jared|peter}:
+   ("ww" "Work todo" entry (file+headline +org-capture-work-file "Todo") "* TODO %? %^{EFFORT}p \nSCHEDULED: %^t" :prepend t)
+   ("wr" "PR Review" entry (file+headline +org-capture-work-file "PRs") "* TODO %^{What?} :%^{Who|ron|jeremy|bo|jared|peter}:
 %u
 %?"
     :clock-in t
     :clock-keep t
     :jump-to-captured t
     :immediate-finish t)
-   ("wR" "PR Later" entry (file+headline +org-capture-stories-file "PRs") "* TODO %^{What?} :%^{Who|ron|jeremy|bo|jared|peter}:\nSCHEDULED: %^t"
+   ("wR" "PR Later" entry (file+headline +org-capture-work-file "PRs") "* TODO %^{What?} :%^{Who|ron|jeremy|bo|jared|peter}:\nSCHEDULED: %^t"
     :immediate-finish t)
    ("i" "Idea" entry (file +org-capture-todo-file) "* IDEA %? %^G")
    ("j" "Journal")

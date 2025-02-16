@@ -21,14 +21,11 @@
 ;;    (funcall fn recipe)))
 
 
-(load! "org.el")
 ;; (load! "jupyter.el")
 (load! "calendar.el")
 ;; (load! "timeblock.el")
 (load! "todoist.el")
 ;; (setq todoist-show-all t)
-(defvar ak/use-mu4e t)
-(when ak/use-mu4e (load! "mu4e.el"))
 ;; (defvar ak/use-lsp-bridge nil)
 ;; (when ak/use-lsp-bridge (load! "lsp-bridge.el"))
 ;; (defvar ak/use-ellama t)
@@ -93,6 +90,7 @@
 
 (load! "banner.el")
 (load! "bindings.el")
+(load! "org.el")
 (load! "polish.el")
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an

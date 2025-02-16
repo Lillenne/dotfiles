@@ -14,32 +14,32 @@
 (setq icalendar-import-format-description "") ; parser fails on the description element for many teams meetings
 (defun my/update-calendar ()
   (ignore-errors
-  (unless (or (null ak/calendar-cache-update-time)
-           (< (- (float-time) (if (ak/calendar-cache-update-time) (ak/calendar-cache-update-time) 0)) ak/calendar-cache-duration-secs ))
-    (cfw:ical-data-cache-clear-all)
-    (if (not (f-exists-p ak/calendar-cache)) (mkdir ak/calendar-cache))
-    (if (f-exists-p diary-file)
-        (delete-file diary-file)
+    (unless (or (null ak/calendar-cache-update-time)
+                (< (- (float-time) (if (ak/calendar-cache-update-time) (ak/calendar-cache-update-time) 0)) ak/calendar-cache-duration-secs ))
+      (cfw:ical-data-cache-clear-all)
+      (if (not (f-exists-p ak/calendar-cache)) (mkdir ak/calendar-cache))
+      (if (f-exists-p diary-file)
+          (delete-file diary-file)
         (make-empty-file diary-file))
-    (defun my/import (url name)
-      (let ((path (my/make-cal-path name)))
-        (if (f-exists-p path)
-            (delete-file path))
-        (url-copy-file url path)
-        (icalendar-import-file path diary-file) ; errors parsing work calendar diary sexp
-        ))
-    (f-write-text (number-to-string (float-time)) 'utf-8 ak/calendar-cache-update-time) ; vs current time string
-    (my/import ak/work-cal-ics "work.ics")
-    (my/import ak/personal-cal-ics "personal.ics")
-    (kill-matching-buffers ".*ics" nil t)
-    )
-  ))
+      (defun my/import (url name)
+        (let ((path (my/make-cal-path name)))
+          (if (f-exists-p path)
+              (delete-file path))
+          (url-copy-file url path)
+          (icalendar-import-file path diary-file) ; errors parsing work calendar diary sexp
+          ))
+      (f-write-text (number-to-string (float-time)) 'utf-8 ak/calendar-cache-update-time) ; vs current time string
+      (my/import ak/work-cal-ics "work.ics")
+      (my/import ak/personal-cal-ics "personal.ics")
+      (kill-matching-buffers ".*ics" nil t)
+      )
+    ))
 ;; (defvar my/calendars '((getenv "WORK_CALENDAR") (getenv "PERSONAL_CALENDAR")))
-    ;; (dolist (cur-cal my/calendars)
-    ;;   (let (cache-path (my/make-cal-path cur-cal)))
-    ;;     (url-copy-file cur-cal cache-path)
-    ;;     (icalendar-import-file cache-path diary-file)
-    ;;   )
+;; (dolist (cur-cal my/calendars)
+;;   (let (cache-path (my/make-cal-path cur-cal)))
+;;     (url-copy-file cur-cal cache-path)
+;;     (icalendar-import-file cache-path diary-file)
+;;   )
 
 (setq cfw:org-capture-template '("c" "calfw2org" entry (file+headline +org-capture-todo-file "Inbox") "* %? \nSCHEDULED: %(cfw:org-capture-day)"))
 (require 'calfw-cal)
@@ -56,5 +56,47 @@
     (cfw:cal-create-source "Gray") ; diary source ;helpful since it shows recurring events. Must disable descriptions
     ;; (cfw:ical-create-source "Work" (my/make-cal-path "work.ics") "Gray")
     ;; (cfw:ical-create-source "Personal" (my/make-cal-path "personal.ics")"IndianRed")
-   )))
+    )))
 (map! :leader "o C" #'ak/calendar)
+
+(setq org-gcal-client-id (getenv "GCAL_CLIENT_ID")
+      org-gcal-client-secret (getenv "GCAL_CLIENT_SECRET")
+      org-gcal-fetch-file-alist `((,(getenv "GMAIL") .  "~/org/calendar.org")
+                                  (,(getenv "GCAL_WORK") .  "~/org/calendar_work.org")
+                                  (,(getenv "GCAL_FAMILY") .  "~/org/calendar_family.org"))
+      org-gcal-update-cancelled-events-with-todo t
+      org-gcal-cancelled-todo-keyword "CANCELED"
+      org-gcal-recurring-events-mode 'nested)
+(require 'org-gcal)
+
+;; Run ‘org-gcal-sync’ regularly not at startup, but at 8 AM every day,
+;; starting the next time 8 AM arrives.
+(run-at-time
+ (let* ((now-decoded (decode-time))
+        (today-8am-decoded
+         (append '(0 0 8) (nthcdr 3 now-decoded)))
+        (now (encode-time now-decoded))
+        (today-8am (encode-time today-8am-decoded)))
+   (if (time-less-p now today-8am)
+       today-8am
+     (time-add today-8am (* 24 60 60))))
+ (* 24 60 60)
+ (defun my-org-gcal-sync-clear-token ()
+   "Sync calendar, clearing tokens first."
+   (interactive)
+   (require 'org-gcal)
+   (when org-gcal--sync-lock
+     (warn "%s" "‘my-org-gcal-sync-clear-token’: ‘org-gcal--sync-lock’ not nil - calling ‘org-gcal--sync-unlock’.")
+     (org-gcal--sync-unlock))
+   (org-gcal-sync-tokens-clear)
+   (org-gcal-sync)
+   nil))
+
+(setq plstore-cache-passphrase-for-symmetric-encryption t)
+(require 'plstore)
+(map! :leader "t e e" #'org-gcal-post-at-point)
+(map! :leader "t e d" #'org-gcal-delete-at-point)
+(map! :leader "t e t" #'org-gcal-sync)
+
+;; (add-to-list 'plstore-encrypt-to '("GPG-key-id"))
+;; https://github.com/kidd/org-gcal.el?tab=readme-ov-file#Installation
