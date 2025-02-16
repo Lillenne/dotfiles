@@ -7,7 +7,10 @@ return {
   ---@type AstroUIOpts
   opts = {
     -- change colorscheme
+    -- colorscheme = "doom-one",
+    -- colorscheme = "onedark_vivid",
     colorscheme = "onedark",
+    -- colorscheme = "github_dark_dimmed",
     -- AstroUI allows you to easily modify highlight groups easily for any and all colorschemes
     highlights = {
       init = { -- this table overrides highlights in all themes
