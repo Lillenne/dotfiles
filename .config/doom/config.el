@@ -5,15 +5,12 @@
 
 (setenv "LSP_USE_PLISTS" "true") ; remember to add this to /etc/environment or .config/emacs/early-init.el
 (setq gc-cons-threshold 2000000) ; increase gc threshold to improve performance
-(require 'load-env-vars)
-(load-env-vars (expand-file-name "~/.dotvars.gpg"))
 (setq auth-sources '("~/.authinfo.gpg"))
 (setq doom-font (font-spec :family "JetBrainsMono Nerd Font Mono" :size 20))
 (setq doom-theme 'doom-one)
 (add-to-list 'default-frame-alist '(fullscreen . maximized)) ;;start fullscreen
 (setq display-line-numbers-type 'relative)
 (setq find-file-visit-truename t)
-(setq user-full-name (getenv "NAME"))
 (setq delete-by-moving-to-trash nil)
 (setq embark-confirm-act-all nil)
 
@@ -26,8 +23,6 @@
 
 ;; (load! "jupyter.el")
 (load! "git.el")
-;; (load! "calendar.el")
-(load! "mu4e.el")
 ;; (load! "timeblock.el")
 (load! "todoist.el")
 ;; (setq todoist-show-all t)
@@ -35,8 +30,8 @@
 ;; (when ak/use-lsp-bridge (load! "lsp-bridge.el"))
 ;; (defvar ak/use-ellama t)
 ;; (when ak/use-ellama (load! "ellama.el"))
-(defvar ak/use-lsp-mode t)
-(when ak/use-lsp-mode (load! "debug.el")(load! "company.el"))
+(load! "debug.el")
+(load! "company.el")
 (load! "evil.el")
 
 ;; (after! org
@@ -97,7 +92,17 @@
 (load! "banner.el")
 (load! "bindings.el")
 (load! "org.el")
-(load! "polish.el")
+(defvar my/config-loaded nil)
+(defun my/after-frame (_)
+  (run-at-time 3.5 nil (defun my/load-config ()
+                         (let ((inhibit-message t))
+                           (require 'load-env-vars)
+                           (unless my/config-loaded
+                             (setq my/config-loaded t)
+                             (load-env-vars (expand-file-name "~/.dotvars.gpg"))
+                             (load! "polish.el"))))))
+(add-to-list 'after-make-frame-functions #'my/after-frame)
+
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
