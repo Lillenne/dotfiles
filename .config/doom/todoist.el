@@ -17,4 +17,4 @@
 (map! :leader "t q u" #'org-todoist-unassign-task)
 (map! :leader "t q @" #'org-todoist-tag-user)
 (setq org-todoist-show-n-levels -1)
-(setq ak/todoist-timer (run-at-time nil 180 #'org-todoist-background-sync))
+(setq ak/todoist-timer (run-at-time nil 600 #'org-todoist-background-sync))
