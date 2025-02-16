@@ -2,6 +2,8 @@
 
 ;; (map! :map 'override "C-i" #'better-jumper-jump-forward) ;; this bind for some reason keeps messing other stuff up?
 
+(map! "C-c n" #'dotnet-new-dispatch)
+
 (defun vterm-vsplit () (interactive) (split-window-horizontally) (other-window 1) (+vterm/here default-directory))
 (map! :leader "o v" #'vterm-vsplit)
 (map! :leader "k" #'+workspace/close-window-or-workspace)

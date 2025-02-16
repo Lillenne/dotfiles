@@ -99,7 +99,19 @@
            :repo "lillenne/org-todoist"
            :branch "main"
            :files ("org-todoist.el")))
+
+(package! dotnet-new
+  :recipe (
+           :host github
+           :repo "lillenne/dotnet-new"
+           ;; :local-repo "/home/aus/projects/dotnet-new/"
+           :branch "main"
+           :files ("dotnet-new.el")))
 ;; (package! forge)
 
 ;; (package! conda)
 ;; (package! move-text)
+
+;; transient package issue: https://github.com/doomemacs/doomemacs/issues/8194
+;; (package! transient :pin "00fabc76")
+;; (package! magit :pin "7adad8c8")

@@ -22,3 +22,7 @@
 
 (advice-add 'magit-process-environment
             :filter-return #'my/magit-process-environment)
+;; (setq transient-display-buffer-action '(display-buffer-in-side-window
+;;                                         (side . bottom)
+;;                                         (dedicated . t)
+;;                                         (inhibit-same-window . t)))

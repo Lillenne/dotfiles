@@ -109,7 +109,8 @@
 ;; org crypt
 (require 'org-crypt)
 (org-crypt-use-before-save-magic)
-(setq org-crypt-key nil) ;; use symmetric encryption
+(setq org-crypt-key "0x7C9F982201FF5847!") ;; use symmetric encryption
+;; (setq org-crypt-key nil) ;; use symmetric encryption
 
 (setq
  org-icalendar-combined-agenda-file (expand-file-name "org.ics" org-directory)
@@ -126,7 +127,10 @@
  org-refile-allow-creating-parent-nodes 'confirm
  org-todo-keywords '((sequence "TODO(t)" "NEXT(n)"  "TRIAGE(r)" "INVESTIGATE(v/@)" "SOMEDAY(o)" "LEARN(l)" "IDEA(i)" "STARTED(s)" "BLOCKED(b@)" "|" "DONE(d)" "CANCELED(k@)")
                      (sequence "[ ](T)" "[-](S)" "[?](W)" "|" "[X](D)"))
- org-archive-default-command #'org-archive-set-tag
+ org-archive-default-command #'org-archive-subtree
+ ;; org-archive-location "~/org/archive.org::datetree/"
+ org-archive-location "~/org/archive.org_archive::* %s"
+ ;; org-archive-default-command #'org-archive-set-tag
  ;; prefix tag string with @ or use stargroup / endgroup vs grouptag for mutually exclusive
  org-tag-alist '(("work" . ?w)
                  ;; TODO limit tags
@@ -508,7 +512,12 @@ See `org-capture-templates' for more information."
 ;; Agenda
 ;; (after! 'org-agenda
 (require 'org-agenda)
-(setq org-agenda-files '("~/org/")
+(defun ak/from-org-dir-all (&rest args)
+  (let ((collect '()))
+    (dolist (arg args)
+      (push (ak/from-org-dir arg) collect))
+    collect))
+(setq org-agenda-files `(,org-directory)
       org-agenda-skip-scheduled-if-done t
       org-agenda-skip-deadline-if-done t
       org-agenda-start-day "0d"
@@ -636,27 +645,27 @@ See `org-capture-templates' for more information."
           ;;        (org-agenda-overriding-header "High-priority unfinished tasks:")))
           ;; (todo "BLOCKED")
           ))
-        ("D" "Today w/ work"
-         ((todo "TRIAGE")
-          (agenda "" ((org-super-agenda-groups
-                       '((:name "Done today" :and (:regexp "State \"DONE\"" :log t))
-                         ;; (:name "Habits" :habit t) ;; Not sure why this is causing an error
-                         (:name "Scheduled" :time-grid t)
-                         (:name "Clocked today" :log t)
-                         (:name "Overdue" :deadline past)
-                         (:name "Due today" :deadline today)
-                         (:name "Scheduled earlier" :scheduled past)
-                         (:name "Quick Picks" :effort< "0:30")
-                         (:name "Blocked" :todo "BLOCKED")
-                         (:name "Today" :scheduled today)
-                         ))
-                      (org-agenda-start-day "0d")
-                      (org-agenda-span 1)))
-          ;; (tags "PRIORITY=\"A\""
-          ;;       ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-          ;;        (org-agenda-overriding-header "High-priority unfinished tasks:")))
-          ;; (todo "BLOCKED")
-          ))
+        ;; ("D" "Today w/ work"
+        ;;  ((todo "TRIAGE")
+        ;;   (agenda "" ((org-super-agenda-groups
+        ;;                '((:name "Done today" :and (:regexp "State \"DONE\"" :log t))
+        ;;                  ;; (:name "Habits" :habit t) ;; Not sure why this is causing an error
+        ;;                  (:name "Scheduled" :time-grid t)
+        ;;                  (:name "Clocked today" :log t)
+        ;;                  (:name "Overdue" :deadline past)
+        ;;                  (:name "Due today" :deadline today)
+        ;;                  (:name "Scheduled earlier" :scheduled past)
+        ;;                  (:name "Quick Picks" :effort< "0:30")
+        ;;                  (:name "Blocked" :todo "BLOCKED")
+        ;;                  (:name "Today" :scheduled today)
+        ;;                  ))
+        ;;               (org-agenda-start-day "0d")
+        ;;               (org-agenda-span 1)))
+        ;;   ;; (tags "PRIORITY=\"A\""
+        ;;   ;;       ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+        ;;   ;;        (org-agenda-overriding-header "High-priority unfinished tasks:")))
+        ;;   ;; (todo "BLOCKED")
+        ;;   ))
         ("y" "Yesterday review"
          agenda ""
          ((org-agenda-start-day "-1d")

@@ -5,7 +5,8 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages '(org-todoist ts s package-lint))
  '(safe-local-variable-values
-   '((eval and buffer-file-name
+   '((org-list-indent-offset . 2)
+     (eval and buffer-file-name
       (not
        (eq major-mode 'package-recipe-mode))
       (or

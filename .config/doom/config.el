@@ -6,15 +6,15 @@
 (setenv "LSP_USE_PLISTS" "true") ; remember to add this to /etc/environment or .config/emacs/early-init.el
 (setq gc-cons-threshold 2000000) ; increase gc threshold to improve performance
 (require 'load-env-vars)
-(setq auth-sources '("~/.authinfo.gpg"))
 (load-env-vars (expand-file-name "~/.dotvars.gpg"))
+(setq auth-sources '("~/.authinfo.gpg"))
 (setq doom-font (font-spec :family "JetBrainsMono Nerd Font Mono" :size 20))
 (setq doom-theme 'doom-one)
 (add-to-list 'default-frame-alist '(fullscreen . maximized)) ;;start fullscreen
 (setq display-line-numbers-type 'relative)
 (setq find-file-visit-truename t)
 (setq user-full-name (getenv "NAME"))
-(setq delete-by-moving-to-trash t)
+(setq delete-by-moving-to-trash nil)
 (setq embark-confirm-act-all nil)
 
 ;; Enable when gnu repo is down  https://www.reddit.com/r/DoomEmacs/comments/1dohgxv/gitsavannahgnuorg_is_down/
@@ -26,7 +26,7 @@
 
 ;; (load! "jupyter.el")
 (load! "git.el")
-(load! "calendar.el")
+;; (load! "calendar.el")
 (load! "mu4e.el")
 ;; (load! "timeblock.el")
 (load! "todoist.el")

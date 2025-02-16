@@ -4,29 +4,46 @@
 (require 'smtpmail)
 (require 'mu4e)
 (require 'org)
-(setq +org-capture-emails-file "todo.org")
-(defvar ak/email-address (getenv "EMAIL_ADDRESS"))
-(defvar ak/business-email-address (getenv "BUSINESS_EMAIL_ADDRESS"))
-(setq mu4e-split-view 'vertical
-      mu4e-headers-visible-columns 120)
+(require 's)
+(setq +org-capture-emails-file "todo.org"
+      mu4e-split-view 'vertical
+      mu4e-headers-visible-columns 120
+      mu4e-get-mail-command "mbsync -a"
+      mu4e-change-filenames-when-moving t   ; needed for mbsync
+      mu4e-compose-format-flowed t
+      mu4e-sent-messages-behavior 'trash   ; handled by imap
+      mu4e-refile-folder "/Archive"
+      mu4e-update-interval 60              ; update every 1 minute
+      message-send-mail-function 'smtpmail-send-it
+      message-cite-function #'mu4e-message-cite-nothing
+      smtpmail-auth-credentials "~/.authinfo.gpg"
+      smtpmail-stream-type 'starttls
+      smtpmail-smtp-server "127.0.0.1"
+      smtpmail-smtp-service 1025
+      mu4e-attachment-dir "~/mail/downloads/")
 
-(set-email-account! "Pixalyzer"
-                    `((mu4e-sent-folder . "/aus-pix/Sent")
-                      (mu4e-drafts-folder . "/aus-pix/Drafts")
-                      (mu4e-trash-folder  . "/aus-pix/Trash")
-                      (mu4e-refile-folder . "/aus-pm/Archive")
-                      (smtpmail-smtp-user . ,ak/business-email-address)
-                      (user-mail-address . ,ak/business-email-address))
-                    t)
-;; This one last since that seems to become the primary one
-(set-email-account! "Personal"
-                    `((mu4e-sent-folder . "/aus-pm/Sent")
-                      (mu4e-drafts-folder . "/aus-pm/Drafts")
-                      (mu4e-trash-folder  . "/aus-pm/Trash")
-                      (mu4e-refile-folder . "/aus-pm/Archive")
-                      (smtpmail-smtp-user . ,ak/email-address)
-                      (user-mail-address . ,ak/email-address))
-                    t)
+(defun my/set-email-account (name folder env-var &optional user-name)
+  (let ((addr (getenv env-var)))
+    (unless (s-blank? addr)
+      (set-email-account! name
+                          `((mu4e-sent-folder . ,(expand-file-name "Sent" folder))
+                            (mu4e-drafts-folder . ,(expand-file-name "Drafts" folder))
+                            (mu4e-trash-folder  . ,(expand-file-name "Trash" folder))
+                            (mu4e-refile-folder . ,(expand-file-name "Archive" folder))
+                            (smtpmail-smtp-user . ,addr)
+                            (user-mail-address . ,addr)
+                            (user-full-name . ,(if user-name user-name user-full-name)))
+                          t))))
+
+(my/set-email-account "Pixalyzer" "/pix" "P_EMAIL_ADDRESS")
+(my/set-email-account "Shopping" "/shopping" "S_EMAIL_ADDRESS" "Austin")
+(my/set-email-account "Lillenne" "/lillenne" "L_EMAIL_ADDRESS" "Lillenne")
+(my/set-email-account "Dev" "/dev" "D_EMAIL_ADDRESS")
+(my/set-email-account "Aus" "/auspm" "EMAIL_ADDRESS")
+
+(defvar ak/mail-folders '("/pix" "/shopping" "/lillenne" "/dev" "/auspm"))
+(defun ak/mail-query (subfolder)
+  (mapconcat (lambda (root-box) (s-concat "m:" root-box subfolder)) ak/mail-folders " or "))
 
 ;; https://github.com/djcb/mu/issues/1136
 (setf (alist-get 'trash mu4e-marks)
@@ -53,23 +70,6 @@
 ;; (mu4e~headers-defun-mark-for spam)
 ;; (define-key mu4e-headers-mode-map (kbd "X") 'mu4e-headers-mark-for-spam)
 
-
-(setq   mu4e-get-mail-command "mbsync -a"
-        mu4e-change-filenames-when-moving t   ; needed for mbsync
-        mu4e-compose-format-flowed t
-        mu4e-sent-messages-behavior 'trash   ; handled by imap
-        mu4e-refile-folder "/Archive"
-        mu4e-update-interval 60)              ; update every 1 minute
-
-;; Send mail
-(setq message-send-mail-function 'smtpmail-send-it
-      message-cite-function #'mu4e-message-cite-nothing
-      smtpmail-auth-credentials "~/.authinfo.gpg"
-      smtpmail-stream-type 'starttls
-      smtpmail-smtp-server "127.0.0.1"
-      smtpmail-smtp-service 1025)
-
-;; TODO gmail context?
 ;; (setq smtpmail-servers-requiring-authorization ".*")
 ;; (setq +mu4e-gmail-accounts '((ak/email-address. "/")))
 ;; ;;don't need to run cleanup after indexing for gmail
@@ -91,5 +91,9 @@
 ;; (add-to-list 'gnutls-trustfiles (expand-file-name "~/.config/protonmail/bridge/certnas.pem"))
 
 ;; TODO
-(add-to-list 'mu4e-bookmarks
-             '(:name "All Inboxes" :query "m:/aus-pm/INBOX or m:/aus-pix/INBOX" :key ?i))
+(setq mu4e-bookmarks
+      `((:name "All Inboxes" :query ,(ak/mail-query "/Inbox") :key ?i)
+        (:name "All Archive" :query ,(ak/mail-query "/Archive") :key ?a)
+        (:name "All Sent" :query ,(ak/mail-query "/Sent") :key ?s)
+        (:name "All Drafts" :query ,(ak/mail-query "/Drafts") :key ?d)
+        (:name "All Trash" :query ,(ak/mail-query "/Trash") :key ?t)))

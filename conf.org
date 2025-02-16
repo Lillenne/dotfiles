@@ -204,8 +204,9 @@ doom gc
 #+end_src
 ** Mail
 #+begin_src bash
+mkdir -p ~/mail/{shopping,lillenne,auspm,dev,pix,downloads}
 install isync mu
-mu init --maildir ~/.pmail --my-address $EMAIL_ADDRESS
+mu init --maildir ~/mail --my-address $EMAIL_ADDRESS
 mu index
 #+end_src
 ** Autostart
