@@ -3,6 +3,9 @@ if [ -n "${EMAIL_ADDRESS+''}" ]; then return 1; fi
 if [ -n "${SMB_USERNAME+''}" ]; then return 1; fi
 if [ -n "${SMB_PASSWORD+''}" ]; then return 1; fi
 
+echo MAKEFLAGS="-j$(nproc)" >> /etc/makepkg.conf
+echo MAKEFLAGS="-j$(nproc)" | sudo tee -a /etc/environment
+
 sudo pacman -Syu
 
 if [ -f "/etc/wsl.conf" ]; then
@@ -12,6 +15,7 @@ else
 fi
 
 sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd ..
+yay --editmenu --save
 
 install() {
     yay -Sy --needed $*
@@ -78,14 +82,11 @@ sudo mv gdu_linux_amd64 /usr/local/bin/gdu
 
 echo "LSP_USE_PLISTS=true" | sudo tee -a /etc/environment > /dev/null
 export LSP_USE_PLISTS=true
+echo "WEBKIT_DISABLE_DMABUF_RENDERER=1" | sudo tee -a /etc/environment
+export "WEBKIT_DISABLE_DMABUF_RENDERER=1"
 install libxpm libjpeg libpng libtiff giflib librsvg libxml2 gnutls gtk3 webkit2gtk imagemagick pandoc-bin cmake
+yay -S emacs-git mu
 mkdir ~/org
-git clone git://git.sv.gnu.org/emacs.git --depth=1
-cd emacs
-./autogen
-./configure --with-native-compilation=aot  --with-xwidgets --with-tree-sitter --with-json --with-imagemagick --with-pgtk --with-mailutils CFLAGS="-O2 -pipe -march=native -fomit-frame-pointer"
-make -j$(nproc)
-sudo make install
 
 git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs
 ~/.config/emacs/bin/doom install

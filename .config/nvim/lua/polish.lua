@@ -11,6 +11,7 @@
 --
 
 vim.api.nvim_set_keymap("i", "<C-s>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", {})
+vim.api.nvim_set_option("clipboard", "unnamed")
 
 -- Set up custom filetypes
 -- vim.filetype.add {

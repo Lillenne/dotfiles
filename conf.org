@@ -14,6 +14,11 @@ if [ -n "${EMAIL_ADDRESS+''}" ]; then return 1; fi
 if [ -n "${SMB_USERNAME+''}" ]; then return 1; fi
 if [ -n "${SMB_PASSWORD+''}" ]; then return 1; fi
 #+end_src
+* Setup Arch
+#+BEGIN_SRC bash
+echo MAKEFLAGS="-j$(nproc)" >> /etc/makepkg.conf
+echo MAKEFLAGS="-j$(nproc)" | sudo tee -a /etc/environment
+#+END_SRC
 * Setup yay AUR helper & base / git
 #+begin_src bash
 sudo pacman -Syu
@@ -25,6 +30,7 @@ else
 fi
 
 sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd ..
+yay --editmenu --save
 
 install() {
     yay -Sy --needed $*
@@ -129,15 +135,20 @@ Set lsp mode to use plists for optimal perf
 #+begin_src bash
 echo "LSP_USE_PLISTS=true" | sudo tee -a /etc/environment > /dev/null
 export LSP_USE_PLISTS=true
+echo "WEBKIT_DISABLE_DMABUF_RENDERER=1" | sudo tee -a /etc/environment
+export "WEBKIT_DISABLE_DMABUF_RENDERER=1"
 install libxpm libjpeg libpng libtiff giflib librsvg libxml2 gnutls gtk3 webkit2gtk imagemagick pandoc-bin cmake
+yay -S emacs-git mu
 mkdir ~/org
+#+end_src
+
+alternative:
 git clone git://git.sv.gnu.org/emacs.git --depth=1
 cd emacs
 ./autogen
-./configure --with-native-compilation=aot  --with-xwidgets --with-tree-sitter --with-json --with-imagemagick --with-pgtk --with-mailutils CFLAGS="-O2 -pipe -march=native -fomit-frame-pointer"
+./configure --with-native-compilation=aot  --with-xwidgets --with-tree-sitter --with-json --with-imagemagick --with-mailutils -CFLAGS="-O2 -pipe -march=native -fomit-frame-pointer"
 make -j$(nproc)
 sudo make install
-#+end_src
 ** Doom
 #+begin_src bash
 git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs
@@ -220,3 +231,12 @@ mount /mnt/smb
 czkawka
 darktable
 vial
+* Syncthing
+  sudo firewall-cmd --permanent --add-port=22000/tcp
+  sudo firewall-cmd --permanent --add-port=22000/udp
+  sudo firewall-cmd --permanent --add-port=21027/udp
+  sudo firewall-cmd --reload
+  install syncthing
+  systemctl enable --now syncthing@${user}.service
+
+  on android, need to go syncthing app -> web gui -> send & receive & advances -> ignore permissions
