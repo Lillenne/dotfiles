@@ -21,7 +21,7 @@
 
 ;; (evil-visual-mark-mode)
 
-;; (require 'evil-replace-with-register)
-;; ;; change default key bindings (if you want) HERE
-;; ;; (setq evil-replace-with-register-key (kbd "gr"))
-;; (evil-replace-with-register-install)
+(require 'evil-replace-with-register)
+;; change default key bindings (if you want) HERE
+(setq evil-replace-with-register-key (kbd "gr"))
+(evil-replace-with-register-install)

@@ -64,9 +64,9 @@
 ;; (package! evil-visual-mark-mode
 ;;   :recipe (:host github :repo "roman/evil-visual-mark-mode"
 ;;            :files ("evil-visual-mark-mode.el")))
-;; (package! evil-ReplaceWithRegister
-;;   :recipe (:host github :repo "Dewdrops/evil-ReplaceWithRegister"
-;;            :files ("evil-replace-with-register.el")))
+(package! evil-ReplaceWithRegister
+  :recipe (:host github :repo "Dewdrops/evil-ReplaceWithRegister"
+           :files ("evil-replace-with-register.el")))
 
 ;; (when (package! lsp-bridge
 ;;         :recipe (:host github

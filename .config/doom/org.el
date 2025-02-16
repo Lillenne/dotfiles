@@ -81,7 +81,8 @@
 (setq org-todo-keywords
 '((sequence "TODO(t)" "PROJ(p)" "LOOP(r)" "STRT(s)" "WAIT(w)" "HOLD(h)" "IDEA(i)" "|" "DONE(d)" "KILL(k)")
  (sequence "[ ](T)" "[-](S)" "[?](W)" "|" "[X](D)")
- (sequence "|" "OKAY(o)" "YES(y)" "NO(n)")))
+ (sequence "|" "OKAY(o)" "YES(y)" "NO(n)")
+ (sequence "LEARN(l)" "LEARNED(L)")))
 
 (setq org-startup-with-inline-images t) ;set images in org mode inline
 (setq org-log-done 'time)
@@ -186,3 +187,10 @@ e.g. Friday, February  9, 2024 | 7:29 AM "
   (insert (format-time-string "%A, %B %e, %Y | %-I:%M %p")))
 
 (map! :leader "i D" 'ak/today-date-time)
+
+;; https://emacs.stackexchange.com/questions/72147/org-mode-adding-creation-date-property-upon-heading-creation
+(add-hook 'org-insert-heading-hook
+    (lambda()
+    (save-excursion
+              (org-back-to-heading)
+              (org-set-property "CREATED" (format-time-string "[%Y-%m-%d %a %H:%M]")))))

@@ -11,7 +11,7 @@
 
 ;; C#
 (require 'dap-netcore)
-;; (setq dap-netcore-install-dir "/home/aus/.local/share/nvim/mason/packages/" )
+(setq dap-netcore-install-dir "/home/aus/.local/share/nvim/mason/packages/" )
 
 ;; Rust
 (require 'dap-gdb-lldb)
