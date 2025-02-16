@@ -5,7 +5,7 @@ import = ["/home/aus/.config/alacritty/themes/themes/carbonfox.yml"]
 draw_bold_text_with_bright_colors = true
 
 [font]
-size = 14
+size = 12
 
 [font.bold]
 family = "JetBrainsMono Nerd Font"
@@ -52,5 +52,5 @@ columns = 150
 lines = 50
 
 [window.padding]
-x = 10
-y = 10
+x = 0
+y = 0
