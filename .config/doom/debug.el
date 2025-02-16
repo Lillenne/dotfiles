@@ -1,7 +1,7 @@
 ;;; debug.el -*- lexical-binding: t; -*-
 
 
-;(setenv "LSP_USE_PLISTS" "true") ; this may be too late to have effect. Supposedly needs to happen in early init
+;(setenv "LSP_USE_PLISTS" "true") ; move this to .config/emacs/early-init.el
 ;; Set up debugging for c#
 ;; Enabling only some features
 ;; (defvar my-cs-dbg nil)
@@ -74,14 +74,18 @@
 
 ;; LSP testing
 (setq lsp-auto-execute-action nil)
-(setq lsp-idle-delay 0.05)
-(setq read-process-output-max (* 1024 1024)) ;; 1mb
+(setq lsp-idle-delay 0.3)
+(setq read-process-output-max 1048576) ;; <= cat /proc/sys/fs/pipe-max-size
 (setq lsp-log-io nil) ; if set to true can cause a performance hit
 (setq lsp-signature-cycle t)
 (setq lsp-rust-analyzer-diagnostics-enable-experimental t)
 (setq lsp-rust-analyzer-binding-mode-hints t)
 (setq lsp-rust-analyzer-display-chaining-hints t)
 (setq lsp-rust-analyzer-display-reborrow-hints t)
+
+(with-eval-after-load 'lsp-mode
+  (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration))
+; set next error ge gE
 
 ;; (require 'web-mode)
 ;; (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))

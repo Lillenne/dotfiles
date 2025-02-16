@@ -8,21 +8,22 @@
 ;;(setq company-require-match nil)
 ;;(setq company-require-match t)
 
-(with-eval-after-load 'company
-  (define-key company-active-map (kbd "RET") nil)
-  (define-key company-active-map (kbd "<return>") nil)
-  (define-key company-active-map (kbd "TAB") #'company-complete-selection)
-  (define-key company-active-map (kbd "<tab>") #'company-complete-selection)
-  (define-key company-active-map (kbd "<backtab>") #'company-quickhelp-manual-begin)
-  )
+;; (with-eval-after-load 'company
+;;   (define-key company-active-map (kbd "RET") nil)
+;;   (define-key company-active-map (kbd "<return>") nil)
+;;   (define-key company-active-map (kbd "TAB") #'company-complete-selection)
+;;   (define-key company-active-map (kbd "<tab>") #'company-complete-selection)
+;;   (define-key company-active-map (kbd "<backtab>") #'company-quickhelp-manual-begin)
+;;   )
 (eval-after-load 'company
   '(define-key company-active-map (kbd "C-c h") #'company-quickhelp-manual-begin))
 
 (use-package company
   :after lsp-mode
   :hook (lsp-mode . company-mode)
-  :bind (:map company-active-map
-         ("<tab>" . company-complete-selection))
+  :bind
+  ;; (:map company-active-map
+  ;;        ("<tab>" . company-complete-selection))
         (:map lsp-mode-map
          ("<tab>" . company-indent-or-complete-common))
   :custom

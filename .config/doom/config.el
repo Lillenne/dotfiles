@@ -8,10 +8,10 @@
 
 (defvar ak/use-mu4e nil)
 (when ak/use-mu4e (load! "mu4e.el"))
-(defvar ak/use-lsp-mode nil)
+(defvar ak/use-lsp-mode t)
 (when ak/use-lsp-mode (load! "debug.el")(load! "company.el"))
 
-(defvar ak/use-lsp-bridge t)
+(defvar ak/use-lsp-bridge nil)
 (when ak/use-lsp-bridge (load! "lsp-bridge.el"))
 
 (defvar ak/use-ellama t)
@@ -41,13 +41,15 @@
                (window-height . 0.3)))
 (evil-owl-mode)
 
-(use-package evil-snipe
-  :config
-  (evil-snipe-mode +1)
-  ;(evil-snipe-override-mode +1) // overrides default ft etc
-  (setq evil-snipe-scope 'whole-visible)
-  (setq evil-snipe-auto-scroll t)
-  (setq evil-snipe-use-vim-sneak-bindings t))
+;; ;; bind `function.inner`(function block without name and args) to `f` for use in things like `vif`, `yif`
+;; (define-key evil-inner-text-objects-map "f" (evil-textobj-tree-sitter-get-textobj "function.inner"))
+
+;; ;; You can also bind multiple items and we will match the first one we can find
+;; (define-key evil-outer-text-objects-map "a" (evil-textobj-tree-sitter-get-textobj ("conditional.outer" "loop.outer")))
+
+
+(setq evil-snipe-scope 'whole-visible)
+(setq evil-snipe-auto-scroll t)
 
 (use-package evil-quickscope
   :config (global-evil-quickscope-always-mode 1))
@@ -69,8 +71,14 @@
     (or (f-descendant-of? project-root (expand-file-name "/home/aus/.rustup"))
         (f-descendant-of? project-root "/home/aus/.cargo")
         (doom-project-ignored-p project-root)))
+  (setq projectile-ignored-project-function #'my-projectile-ignore-project)
+  (add-to-list 'projectile-globally-ignored-file-suffixes ".onnx")
+)
 
-  (setq projectile-ignored-project-function #'my-projectile-ignore-project))
+(use-package elpy
+  :ensure t
+  :init
+  (elpy-enable))
 
 ;; if having trouble with treesitter language grammars, use treesit-install-language-grammar
 
