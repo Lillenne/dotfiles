@@ -24,10 +24,16 @@
 (setq org-roam-directory "~/org/")
 (org-roam-db-autosync-mode)
 (setq find-file-visit-truename t)
-;;(defun ak/todo-is-done () )
-;;(defun ak/tdd () (interactive) (print (ak/todo-is-done)))
 
-;;(add-hook 'org-after-todo-state-change-hook (ak/todo-is-done))
+;; note, need to create the headings before they are refiled properly
+(defun ak/move-to-hold (heading &optional file)
+        ;; Only refile if the target file is different than the current file
+        (unless (equal (file-truename (expand-file-name (concat heading ".org") org-directory)) (file-truename (buffer-file-name)))
+        (let ((fp (if (equal file nil) (expand-file-name "Tabled.org" org-directory) (expand-file-name file org-directory)))
+                (org-refile-keep nil)
+                (org-after-refile-insert-hook #'save-buffer))
+                (org-refile nil nil (list heading fp nil (org-find-exact-headline-in-buffer heading (find-file-noselect fp) t))))))
+
 (defun my/org-roam-copy-todo-to-today ()
   (interactive)
   (let ((org-refile-keep t) ;; Set this to nil to delete the original!
@@ -45,16 +51,16 @@
     ;; Only refile if the target file is different than the current file
     (unless (equal (file-truename today-file)
                    (file-truename (buffer-file-name)))
-      (org-refile nil nil (list "Tasks" today-file nil pos))) ())
-        ;;(call-interactively #'org-archive-to-archive-sibling)
-        )
+      (org-refile nil nil (list "Tasks" today-file nil pos))) ()))
 
 (setq org-after-todo-state-change-hook nil)
 
 (add-hook 'org-after-todo-state-change-hook
              (lambda ()
-               (when (or (equal org-state "[X]") (equal org-state "DONE"))
-                 (my/org-roam-copy-todo-to-today))))
+               (when (or (equal org-state "[X]") (equal org-state "DONE")) (my/org-roam-copy-todo-to-today))
+               (when (equal org-state "HOLD") (ak/move-to-hold "Tabled"))
+               (when (equal org-state "WAIT") (ak/move-to-hold "Wait"))
+               ))
 ;; (add-to-list 'org-after-todo-state-change-hook
 ;;              (lambda ()
 ;;                (when (or (equal org-state "[X]") (equal org-state "DONE"))
@@ -226,6 +232,8 @@
 (map! :leader "f O" 'find-file-other-window)
 (defun ak/goto-todo () (interactive) (find-file (+org-capture-todo-file)))
 (map! :leader "f t" 'ak/goto-todo)
+(map! :leader "f g" 'consult-ripgrep)
+(map! :leader "f G" 'consult-git-grep)
 
 (require 'evil-owl)
 (setq evil-owl-max-string-length 500)
