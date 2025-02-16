@@ -6,6 +6,7 @@ return {
       require("orgmode").setup {
         org_agenda_files = { "~/org/*" },
         org_default_notes_file = "~/org/notes.org",
+        org_startup_folded = "showeverything",
       }
     end,
   },

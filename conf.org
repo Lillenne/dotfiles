@@ -270,3 +270,5 @@ lat=44
 
 https://bbs.archlinux.org/viewtopic.php?id=177473
 redshift -P -O 4500
+* misc 
+  yay -S luajit-tiktoken-bin

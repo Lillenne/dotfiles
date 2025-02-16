@@ -76,7 +76,9 @@ return {
     opts = {
       lazy = false,
       exclude_dirs = { "~/cargo/*" },
-      -- manual_mode = true, -- don't auto chdir
+      -- detection_methods = { "pattern" }, -- not "lsp" to hopefully correctly change when changing projects
+      patterns = { ".git" },
+      manual_mode = true, -- don't auto chdir
 
       -- Show hidden files in telescope
       -- show_hidden = true,
@@ -95,7 +97,7 @@ return {
   { import = "astrocommunity.terminal-integration.vim-tpipeline" },
   { import = "astrocommunity.utility.telescope-fzy-native-nvim" },
   -- try these later
-  -- { import = "astrocommunity.test.neotest" }, -- conflicting bindings with roam
+  { import = "astrocommunity.test.neotest" }, -- conflicting bindings with roam
   --https://github.com/jvgrootveld/telescope-zoxide
   --https://github.com/wakatime/vim-wakatime
   -- { import = "astrocommunity.split-and-window.edgy-nvim" },
