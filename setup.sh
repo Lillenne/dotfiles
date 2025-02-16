@@ -76,7 +76,7 @@ curl -L https://github.com/dundee/gdu/releases/latest/download/gdu_linux_amd64.t
 chmod +x gdu_linux_amd64
 sudo mv gdu_linux_amd64 /usr/local/bin/gdu
 
-echo "\nLSP_USE_PLISTS=true" | sudo tee -a /etc/environment > /dev/null
+echo "LSP_USE_PLISTS=true" | sudo tee -a /etc/environment > /dev/null
 export LSP_USE_PLISTS=true
 install libxpm libjpeg libpng libtiff giflib librsvg libxml2 gnutls gtk3 webkit2gtk imagemagick pandoc-bin cmake
 mkdir ~/org
@@ -140,7 +140,7 @@ sudo chown nobody:nobody /mnt/smb -R
 sudo chmod 777 /mnt/nfs -R
 sudo chmod 777 /mnt/smb -R
 echo "nas.pixalyzer.com:/mnt/wd/nfs /mnt/nfs nfs defaults 0 0" | sudo tee -a /etc/fstab > /dev/null
-echo "//nas.pixalyzer.com/smb /mnt/smb cifs _netdev,nofail,credential=/root/.smbcredentials 0 0" | sudo tee -a /etc/fstab > /dev/null
+echo "//nas.pixalyzer.com/smb /mnt/smb cifs _netdev,nofail,credentials=/root/.smbcredentials 0 0" | sudo tee -a /etc/fstab > /dev/null
 sudo systemctl daemon-reload
 mount /mnt/nfs
 mount /mnt/smb

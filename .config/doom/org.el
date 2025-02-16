@@ -1,7 +1,7 @@
 ;;; org.el -*- lexical-binding: t; -*-
 
 (setq org-directory "~/org/")
-(setq org-roam-directory "~/org/")
+(setq org-roam-directory "~/org/roam")
 (org-roam-db-autosync-mode)
 
 ;; (add-hook 'org-agenda-mode-hook #'olivetti-mode)
@@ -145,8 +145,8 @@ e.g. Friday, February  9, 2024 | 7:29 AM "
 ;; not sure why this doesn't work with variables
 (setq org-roam-capture-templates
 '(
-("i" "sprint-item" plain (file "/home/aus/org/sprint-items/templates/template.org") :target (file "sprint-items/%<%Y%m%d%H%M%S>-${slug}.org") :unnarrowed t)
-("s" "sprint" plain (file "/home/aus/org/sprints/templates/template.org") :target (file "sprints/%<%Y%m%d%H%M%S>-${slug}.org") :unnarrowed t)
+("i" "sprint-item" plain (file "/home/aus/org/roam/sprint-items/templates/template.org") :target (file "sprint-items/%<%Y%m%d%H%M%S>-${slug}.org") :unnarrowed t)
+("s" "sprint" plain (file "/home/aus/org/roam/sprints/templates/template.org") :target (file "sprints/%<%Y%m%d%H%M%S>-${slug}.org") :unnarrowed t)
 ("d" "default" plain "%?" :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n") :unnarrowed t)
 ("m" "Meetings")
 ("mm" "Scheduled meeting" entry "* ${slug} %^G \nScheduled: %U\nFor: %^{When is the meeting?}T\n- Attendees: %^{Attendees}, Austin\n- Prep/Links: \n  - [ ] %?\n- Notes:"
