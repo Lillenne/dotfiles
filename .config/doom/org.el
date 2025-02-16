@@ -4,7 +4,17 @@
 (setq org-roam-directory "~/org/roam")
 (setq +org-capture-todo-file "~/org/todos.org")
 (org-roam-db-autosync-mode)
-(set-company-backend! 'org-mode '(:separate company-yasnippet company-files company-dabbrev company-ispell) 'company-capf) ; prioritize files / snippets in org
+
+;; fix for yasnippet tab key in org mode
+(defun my/org-tab-conditional ()
+  (interactive)
+  (if (yas-active-snippets)
+      (yas-next-field-or-maybe-expand)
+    (org-cycle)))
+
+(map! :after evil-org
+      :map evil-org-mode-map
+      :i "<tab>" #'my/org-tab-conditional)
 
 ;; note, need to create the headings before they are refiled properly
 (defun ak/move-to-hold (heading &optional file)
@@ -135,12 +145,15 @@
 ; add id to all captures
 ;; (add-hook 'org-capture-mode-hook #'org-id-get-create) ;https://www.reddit.com/r/orgmode/comments/eln9kb/capture_with_automatic_id_creation/
 
-(after! 'org
-  (require 'org-tempo) ;; This is needed as of Org 9.2
-  (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
-  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
-  (add-to-list 'org-structure-template-alist '("ru" . "src rust"))
-  (add-to-list 'org-structure-template-alist '("py" . "src python")))
+(require 'org-tempo) ;; This is needed as of Org 9.2
+(add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+(add-to-list 'org-structure-template-alist '("ru" . "src rust"))
+(add-to-list 'org-structure-template-alist '("py" . "src python"))
+(set-company-backend! 'org-mode '(:separate company-org-block company-files company-dabbrev company-ispell) 'company-capf)
+;; (defun org-babel-edit-prep:rust (babel-info)
+;;   (setq-local buffer-file-name (->> babel-info caddr (alist-get :tangle)))
+;;   (lsp))
 
 (map! :leader "i b" #'tempo-template-org-src)
 

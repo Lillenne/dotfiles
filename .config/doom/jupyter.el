@@ -7,6 +7,7 @@
   :config
   (setq elpy-autodoc-delay 0.3)
   (require 'pyvenv)
+  ; notebook mode hook maybe?
   (pyvenv-activate "/home/aus/micromamba/envs/ml/")
   (setq elpy-rpc-virtualenv-path 'current)
   (set-company-backend! 'elpy-mode 'elpy-company-backend)
