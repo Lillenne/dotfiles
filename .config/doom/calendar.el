@@ -94,9 +94,10 @@
 
 (setq plstore-cache-passphrase-for-symmetric-encryption t)
 (require 'plstore)
-(map! :leader "t e e" #'org-gcal-post-at-point)
-(map! :leader "t e d" #'org-gcal-delete-at-point)
-(map! :leader "t e t" #'org-gcal-sync)
+(map! :leader (:prefix ("t e" . "org-gcal")
+                       "e" #'org-gcal-post-at-point
+                       "d" #'org-gcal-delete-at-point
+                       "s" #'org-gcal-sync))
 
 ;; (add-to-list 'plstore-encrypt-to '("GPG-key-id"))
 ;; https://github.com/kidd/org-gcal.el?tab=readme-ov-file#Installation

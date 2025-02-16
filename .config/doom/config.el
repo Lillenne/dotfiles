@@ -2,10 +2,12 @@
 
 ;;TODO check out grip mode +grip flag for md mode https://github.com/seagle0128/grip-mode
                                         ;(remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-shortmenu)
+
+(setenv "LSP_USE_PLISTS" "true") ; remember to add this to /etc/environment or .config/emacs/early-init.el
 (setq gc-cons-threshold 2000000) ; increase gc threshold to improve performance
 (require 'load-env-vars)
-(load-env-vars (expand-file-name "~/.dotvars"))
-(setq doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 20))
+(load-env-vars (expand-file-name "~/.dotvars.gpg"))
+(setq doom-font (font-spec :family "JetBrainsMono Nerd Font Mono" :size 20))
 (setq doom-theme 'doom-one)
 (add-to-list 'default-frame-alist '(fullscreen . maximized)) ;;start fullscreen
 (setq display-line-numbers-type 'relative)
