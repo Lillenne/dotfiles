@@ -99,7 +99,7 @@
        gist              ; interacting with github gists
        lookup              ; navigate your code and its documentation
        (lsp +peek)               ; M-x vscode
-       magit             ; a git porcelain for Emacs
+       (magit +forge)             ; a git porcelain for Emacs
        ;;make              ; run make tasks from Emacs
        ;;pass              ; password manager for nerds
        pdf               ; pdf enhancements
@@ -159,7 +159,7 @@
        ;;nim               ; python + lisp at the speed of c
        ;;nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
-       (org +journal +roam2 +pandoc +pomodoro +dragndrop +crypt +noter +present +pretty +hugo)               ; organize your plain life in plain text
+       (org +roam2 +pandoc +dragndrop +crypt +noter +pretty +hugo)               ; organize your plain life in plain text
        ;;php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
@@ -201,4 +201,4 @@
 
        :config
        ;;literate
-       (default +bindings +smartparens))
+       (default +bindings +gnupg +smartparens))

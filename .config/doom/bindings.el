@@ -34,7 +34,6 @@
 (map! :leader "j d" #'sp-down-sexp)
 
 (map! :leader "f o" #'consult-recent-file)
-;;(map! "C-/" #'comment-dwim) ; replaced by evil-nerd-commenter
 (map! :leader "f O" #'find-file-other-window)
 (defun ak/to-sprint ()
   "Creates a new sprint heading"

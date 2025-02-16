@@ -99,5 +99,25 @@
                        "d" #'org-gcal-delete-at-point
                        "s" #'org-gcal-sync))
 
+;; (defun ak/org-gcal-remove-description (_calendar-id event _update-mode)
+;;   "Removes the paragraph elements under the org gcal drawer.
+;; Most of my meetings are Teams meetings that throw errors when parsing with cfw."
+;;   (org-element-context)
+;;   (when-let* ((stime (plist-get (plist-get event :start)
+;;                                 :dateTime))
+;;               (etime (plist-get (plist-get event :end)
+;;                                 :dateTime))
+;;               (diff (float-time
+;;                      (time-subtract (org-gcal--parse-calendar-time-string etime)
+;;                                     (org-gcal--parse-calendar-time-string stime))))
+;;               (minutes (floor (/ diff 60))))
+;;     (let ((effort (org-entry-get (point) org-effort-property)))
+;;       (unless effort
+;;         (message "need to set effort - minutes %S" minutes)
+;;         (org-entry-put (point)
+;;                        org-effort-property
+;;                        (apply #'format "%d:%02d" (cl-floor minutes 60)))))))
+;; (add-hook 'org-gcal-after-update-entry-functions #'my-org-gcal-set-effort)
+
 ;; (add-to-list 'plstore-encrypt-to '("GPG-key-id"))
 ;; https://github.com/kidd/org-gcal.el?tab=readme-ov-file#Installation
