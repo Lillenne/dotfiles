@@ -4,6 +4,11 @@
                                         ;(remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-shortmenu)
 
 (setenv "LSP_USE_PLISTS" "true") ; remember to add this to /etc/environment or .config/emacs/early-init.el
+(defvar my/config-loaded-frame-delay 3.5)
+(defvar my/config-loaded-hook nil "Hook run at `my/config-loaded-frame-delay' seconds after a frame has been loaded.
+The hook may be delayed because some functions (e.g., gpg decryption) may need user input via emacs.")
+(add-hook 'my/config-loaded-hook
+          (lambda () (setq user-full-name (getenv "NAME"))))
 (setq gc-cons-threshold 2000000) ; increase gc threshold to improve performance
 (setq auth-sources '("~/.authinfo.gpg"))
 (setq doom-font (font-spec :family "JetBrainsMono Nerd Font Mono" :size 20))
@@ -25,6 +30,8 @@
 (load! "git.el")
 ;; (load! "timeblock.el")
 (load! "todoist.el")
+(load! "mu4e.el")
+;; (load! "calendar.el")
 ;; (setq todoist-show-all t)
 ;; (defvar ak/use-lsp-bridge nil)
 ;; (when ak/use-lsp-bridge (load! "lsp-bridge.el"))
@@ -92,15 +99,17 @@
 (load! "banner.el")
 (load! "bindings.el")
 (load! "org.el")
+(load! "polish.el")
 (defvar my/config-loaded nil)
+(defun my/load-config ()
+  (let ((inhibit-message t))
+    (require 'load-env-vars)
+    (unless my/config-loaded
+      (setq my/config-loaded t)
+      (load-env-vars (expand-file-name "~/.dotvars.gpg")))))
+(add-hook 'my/config-loaded-hook #'my/load-config -1)
 (defun my/after-frame (_)
-  (run-at-time 3.5 nil (defun my/load-config ()
-                         (let ((inhibit-message t))
-                           (require 'load-env-vars)
-                           (unless my/config-loaded
-                             (setq my/config-loaded t)
-                             (load-env-vars (expand-file-name "~/.dotvars.gpg"))
-                             (load! "polish.el"))))))
+  (run-at-time my/config-loaded-frame-delay nil (defun my/config-loaded-hook-run-fn () (run-hooks 'my/config-loaded-hook))))
 (add-to-list 'after-make-frame-functions #'my/after-frame)
 
 

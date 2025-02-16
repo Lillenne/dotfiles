@@ -9,3 +9,9 @@
 (map! :leader "t q u" #'org-todoist-unassign-task)
 (map! :leader "t q @" #'org-todoist-tag-user)
 (setq org-todoist-show-n-levels -1)
+
+(add-hook 'my/config-loaded-hook
+          (lambda ()
+            (setq org-todoist-api-token (getenv "TODOIST_TOKEN"))
+            (when (string= (s-trim (shell-command-to-string "hostname")) "dark")
+              (defvar ak/todoist-timer (run-at-time 30 900 #'org-todoist-background-sync)))))

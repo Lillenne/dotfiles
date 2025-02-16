@@ -35,11 +35,13 @@
                             (user-full-name . ,(if user-name user-name user-full-name)))
                           t))))
 
-(my/set-email-account "Pixalyzer" "/pix" "P_EMAIL_ADDRESS")
-(my/set-email-account "Shopping" "/shopping" "S_EMAIL_ADDRESS" "Austin")
-(my/set-email-account "Lillenne" "/lillenne" "L_EMAIL_ADDRESS" "Lillenne")
-(my/set-email-account "Dev" "/dev" "D_EMAIL_ADDRESS")
-(my/set-email-account "Aus" "/auspm" "EMAIL_ADDRESS")
+(add-hook 'my/config-loaded-hook
+          (lambda ()
+            (my/set-email-account "Pixalyzer" "/pix" "P_EMAIL_ADDRESS")
+            (my/set-email-account "Shopping" "/shopping" "S_EMAIL_ADDRESS" "Austin")
+            (my/set-email-account "Lillenne" "/lillenne" "L_EMAIL_ADDRESS" "Lillenne")
+            (my/set-email-account "Dev" "/dev" "D_EMAIL_ADDRESS")
+            (my/set-email-account "Aus" "/auspm" "EMAIL_ADDRESS")))
 
 (defvar ak/mail-folders '("/pix" "/shopping" "/lillenne" "/dev" "/auspm"))
 (defun ak/mail-query (subfolder)
