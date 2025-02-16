@@ -1,7 +1,8 @@
 ;;; debug.el -*- lexical-binding: t; -*-
 
 (setenv "LSP_USE_PLISTS" "true") ; remember to add this to /etc/environment or .config/emacs/early-init.el
-(setq lsp-use-plists t)
+(setq lsp-use-plists t) ; note, csharp-roslyn doesn't seem to work with this parameter
+(setenv "DOTNET_ROOT" "/usr/share/dotnet/") ; arch path for dotnet. Is being overridden somewhere -- need to find
 (global-docstr-mode 1)
 
 ;; Debugging

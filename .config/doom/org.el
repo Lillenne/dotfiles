@@ -8,23 +8,81 @@
       (expand-file-name (if (s-ends-with? ".org" TEXT t) TEXT (concat TEXT ".org"))
                         org-directory)))
 
+(defvar +org-capture-meetings-file (ak/from-org-dir "meetings"))
+
+(defun ak/find-calendar ()
+  (interactive)
+  (find-file (ak/from-org-dir "calendar")))
+
+(defun ak/find-calendar-family ()
+  (interactive)
+  (find-file (ak/from-org-dir "calendar_family")))
+
+(defun ak/find-calendar-work ()
+  (interactive)
+  (find-file (ak/from-org-dir "calendar_work")))
+
+(defun ak/find-memories ()
+  (interactive)
+  (find-file (ak/from-org-dir "memories")))
+
+(defun ak/find-meetings ()
+  (interactive)
+  (find-file (ak/from-org-dir "meetings")))
+
+(defun ak/find-all-posts ()
+  (interactive)
+  (find-file (ak/from-org-dir "all-posts")))
+
+(defun ak/find-gifts ()
+  (interactive)
+  (find-file (ak/from-org-dir "gifts")))
+
+(defun ak/find-learn ()
+  (interactive)
+  (find-file (ak/from-org-dir "learn")))
+
+(defun ak/find-todo ()
+  (interactive)
+  (find-file (ak/from-org-dir "todo")))
+
+(defun ak/find-devenv ()
+  (interactive)
+  (find-file (ak/from-org-dir "devenv")))
+
+(defun ak/find-work ()
+  (interactive)
+  (find-file (ak/from-org-dir "work")))
+
+(defun ak/find-todoist ()
+  (interactive)
+  (find-file (ak/from-org-dir "todoist")))
+
+(defun ak/find-projects ()
+  (interactive)
+  (find-file (ak/from-org-dir "projects")))
+
+(defun ak/find-reading-list ()
+  (interactive)
+  (find-file (ak/from-org-dir "reading-list")))
+
 (map! :leader (:prefix ("j" . "Quick files")
                        "s" #'ak/to-sprint
-                       "m" #'(lambda () (interactive) (find-file (ak/from-org-dir "memories")))
-                       "M" #'(lambda () (interactive) (find-file (ak/from-org-dir "meetings")))
-                       "b" #'(lambda () (interactive) (find-file (ak/from-org-dir "all-posts")))
-                       "g" #'(lambda () (interactive) (find-file (ak/from-org-dir "gifts")))
-                       "l" #'(lambda () (interactive) (find-file (ak/from-org-dir "learn")))
-                       "t" #'(lambda () (interactive) (find-file (ak/from-org-dir "todo")))
-                       "d" #'(lambda () (interactive) (find-file (ak/from-org-dir "devenv")))
-                       "w" #'(lambda () (interactive) (find-file (ak/from-org-dir "work")))
-                       "q" #'(lambda () (interactive) (find-file (org-todoist-file)))
-                       "p" #'(lambda () (interactive) (find-file (ak/from-org-dir "projects")))
-                       "r" #'(lambda () (interactive) (find-file (ak/from-org-dir "reading-list"))))
-      (:prefix ("jc" . "Calendar")
-               "c" #'(lambda () (interactive) (find-file (ak/from-org-dir "calendar")))
-               "w" #'(lambda () (interactive) (find-file (ak/from-org-dir "calendar_work")))
-               "f" #'(lambda () (interactive) (find-file (ak/from-org-dir "calendar_family")))))
+                       "m" #'ak/find-memories
+                       "M" #'ak/find-meetings
+                       "b" #'ak/find-all-posts
+                       "g" #'ak/find-gifts
+                       "l" #'ak/find-learn
+                       "t" #'ak/find-todo
+                       "d" #'ak/find-devenv
+                       "w" #'ak/find-work
+                       "q" #'ak/find-todoist
+                       "p" #'ak/find-projects
+                       "r" #'ak/find-reading-list
+                       (:prefix ("jc" . "Calendar")
+                                "c" #'ak/find-calendar
+                                "w" #'ak/find-calendar-work
+                                "f" #'ak/find-calendar-family)))
 ;; Org basics
 (setq org-directory "~/org/"
       org-startup-folded 'show2levels
@@ -135,12 +193,12 @@
 
    ("d" "Devenv" entry (file +org-capture-devenv-file) "* TODO %? %^G %^{EFFORT}p" :prepend t)
    ;; ("r" "Triage Note" entry (file +org-capture-todo-file) "* TRIAGE %?" :prepend t)
-   ("l" "Learn" entry (file +org-capture-learn-file) "* LEARN %^{What category?}G %?" :prepend t)
-   ("e" "Email" entry (file +org-capture-todo-file) "* TODO %A %(org-set-tags \"email\")" :prepend t :post-hook (lambda () (org-store-link)))
-   ("g" "Gift Idea" entry (file +org-capture-gifts-file) "* %? %^{For who?}G") ;%(org-set-tags \"gift\") %^{For who?}G")
+   ("l" "Learn" entry (file ,(ak/from-org-dir "learn")) "* LEARN %^{What category?}G %?" :prepend t)
+   ("e" "Email" entry (file ,(ak/from-org-dir "todo")) "* TODO %A %(org-set-tags \"email\")" :prepend t :post-hook (lambda () (org-store-link)))
+   ("g" "Gift Idea" entry (file ,(ak/from-org-dir "gifts")) "* %? %^{For who?}G") ;%(org-set-tags \"gift\") %^{For who?}G")
    ("w" "Work")
-   ("ww" "Work todo" entry (file+headline +org-capture-work-file "Todo") "* TODO %? %^{EFFORT}p \nSCHEDULED: %^t" :prepend t)
-   ("wr" "PR Review" entry (file+headline +org-capture-work-file "PRs") "* TODO %^{What?} :%^{Who|ron|jeremy|bo|jared|peter}:
+   ("ww" "Work todo" entry (file+headline ,(ak/from-org-dir "work") "Todo") "* TODO %? %^{EFFORT}p \nSCHEDULED: %^t" :prepend t)
+   ("wr" "PR Review" entry (file+headline ,(ak/from-org-dir "work") "PRs") "* TODO %^{What?} :%^{Who|ron|jeremy|bo|jared|peter}:
 %u
 %?"
     :clock-in t
@@ -171,12 +229,15 @@ Goals
    ("jwr" "Weekly Review" entry (file+datetree +org-capture-journal-file) "* Weekly Review
 - Pre review [/]
   - [ ] Clear off desk %?
-  - [ ] Catch up on email
   - [ ] Clear Teams notifications & respond to messages
+  - [ ] Catch up on email
+    - [ ] Work
+    - [ ] Personal
 - Housekeeping [/]
   - [ ] Untriaged notes
   - [ ] Overdue items
   - [ ] Blocked items
+  - [ ] Unscheduled items
 - Review [/]
   - [ ] What went well?
   - [ ] What slipped?
@@ -283,10 +344,10 @@ Goals
     :unnarrowed t)
    ("M" "Memories" entry (file +org-capture-memories-file) "* %?")
    ("m" "Meetings")
-   ("mk" "Kim discussion point" entry (file+olp +org-capture-meetings-file "Kim" "Inbox")
+   ("mk" "Kim discussion point" entry (file+olp ,+org-capture-meetings-file "Kim" "Inbox")
     "* %?"
     :unnarrowed t)
-   ("mK" "Kim meeting notes" entry (file+olp+datetree +org-capture-meetings-file "Kim")
+   ("mK" "Kim meeting notes" entry (file+olp+datetree ,+org-capture-meetings-file "Kim")
     "* %?"
     :tree-type week
     :immediate-finish t
@@ -294,11 +355,20 @@ Goals
     :clock-in t
     :clock-keep t
     :unnarrowed t)
-   ("mx" "Sioux discussion point" entry (file+olp +org-capture-meetings-file "Sioux" "Inbox")
+   ("mx" "Sioux discussion point" entry (file+olp ,+org-capture-meetings-file "Sioux" "Inbox")
     "* %?"
     :unnarrowed t)
-   ("mX" "Sioux meeting notes" entry (file+olp+datetree +org-capture-meetings-file "Sioux")
-    "* %?"
+   ("mX" "Sioux meeting notes")
+   ("mXa" "My GenAI project" plain (file+olp+datetree ,+org-capture-meetings-file "Sioux" "My GenAI Project")
+    "%?"
+    :tree-type week
+    :immediate-finish t
+    :jump-to-captured t
+    :clock-in t
+    :clock-keep t
+    :unnarrowed t)
+   ("mXm" "Michelle's GenAI project" plain (file+olp+datetree +org-capture-meetings-file "Sioux" "Michelle's GenAI Project")
+    "%?"
     :tree-type week
     :immediate-finish t
     :jump-to-captured t
@@ -652,22 +722,25 @@ See `org-capture-templates' for more information."
           (org-agenda-start-with-log-mode 'only)
           (org-agenda-log-mode-items '(closed clock))
           (org-agenda-skip-function #'org-agenda-not-done)))
-        ;; ("F" "Fortnite review"
-        ;;  agenda ""
-        ;;  ((org-agenda-start-day "-13d")
-        ;;   (org-agenda-span 14)
-        ;;   (org-agenda-archives-mode t)
-        ;;   (org-agenda-start-on-weekday 1)
-        ;;   (org-agenda-skip-archived-trees nil)
-        ;;   (org-export-with-archived-trees t)
-        ;;   (org-agenda-skip-deadline-if-done t)
-        ;;   (org-agenda-skip-scheduled-if-done t)
-        ;;   (org-agenda-hide-tags-regexp ".*")
-        ;;   (org-agenda-use-time-grid nil)
-        ;;   ;; (org-agenda-start-with-log-mode '(closed clock))
-        ;;   (org-agenda-start-with-log-mode 'only)
-        ;;   (org-agenda-log-mode-items '(closed clock))
-        ;;   (org-agenda-skip-function #'org-agenda-not-done)))
+        ("f" "Fortnite review"
+         agenda ""
+         ((org-agenda-start-day "-7d") ; don't go more than 2 weeks back
+          (org-agenda-span 'fortnight)
+          ;; (org-agenda-span 21)
+          (org-agenda-archives-mode t)
+          (org-agenda-start-on-weekday 1) ; start on monday
+          ;; (org-agenda-start-on-weekday nil)
+          (org-agenda-skip-archived-trees nil)
+          (org-export-with-archived-trees t)
+          (org-agenda-skip-deadline-if-done t)
+          (org-agenda-skip-scheduled-if-done t)
+          ;; (org-agenda-hide-tags-regexp ".*")
+          (org-agenda-use-time-grid nil)
+          (org-agenda-start-with-log-mode '(closed clock))
+          (org-agenda-start-with-log-mode 'only)
+          (org-agenda-log-mode-items '(closed clock))
+          ;; (org-agenda-skip-function #'org-agenda-not-done)
+          ))
         ;; https://emacs.stackexchange.com/questions/58875/how-do-i-add-appointments-to-effort-sum
         ("j" "Planning Table"
          agenda ""
