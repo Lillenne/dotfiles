@@ -1,7 +1,22 @@
+#+title: Conf
+#+PROPERTY: header-args :tangle  "setup.sh"
+
+* Environmental Variables
+Required:
+- NAME
+- EMAIL_ADDRESS
+- SMB_USERNAME
+- SMB_PASSWORD
+
+#+begin_src bash
 if [ -n "${NAME+''}" ]; then return 1; fi
 if [ -n "${EMAIL_ADDRESS+''}" ]; then return 1; fi
 if [ -n "${SMB_USERNAME+''}" ]; then return 1; fi
 if [ -n "${SMB_PASSWORD+''}" ]; then return 1; fi
+#+end_src
+* Setup yay AUR helper & base / git
+#+begin_src bash
+sudo pacman -Syu
 
 if [ -f "/etc/wsl.conf" ]; then
     IS_WSL=1
@@ -9,22 +24,26 @@ else
     IS_WSL=0
 fi
 
-pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd ..
+sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd ..
 
 install() {
-    yay -S $* --needed -y
+    yay -Sy --needed $*
     echo "Installed $($*)\n" >> ~/install.log
 }
 
 install_native() {
-    if [ $IS_WSL -eq 1 ];
+    if [ $IS_WSL -eq 1 ]; then
        echo "ERR: On WSL. Did not install $($*)\n" >> ~/install.log
-       then return 1;
+       return 1;
     fi
 
     install $*
+    return 0
 }
-
+#+end_src
+* Setup WSL
+setup wsl, if needed
+#+begin_src bash
 if [ $IS_WSL -eq 1 ]; then
     cat <<EOF >> /etc/wsl.conf
 
@@ -33,21 +52,53 @@ if [ $IS_WSL -eq 1 ]; then
     appendWindowsPath=false
     EOF
 fi
+#+end_src
 
+* Programming languages
+** Rust
+#+begin_src bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-
+#+end_src
+** dotnet
+#+begin_src bash
 install dotnet-sdk
-
+#+end_src
+dotnet tool install --global dotnet-ef
+dotnet tool install --global csharp-ls
+** Python
+#+begin_src bash
 install micromamba-bin
-
-install_native wezterm ttf-jetbrains-mono ttf-jetbrains-mono-nerd
-
+micromamba shell init --shell bash --root-prefix=~/micromamba
+mm create -n ml
+mm activate ml
+mm install numpy pandas matplotlib jupyterlab pyright debugpy
+#+end_src
+* Terminal emulator (wezterm)
+#+begin_src bash
+install ttf-jetbrains-mono ttf-jetbrains-mono-nerd
+install_native wezterm
+#+end_src
+* Tree sitter
+** Core
+#+begin_src bash
 git clone https://github.com/tree-sitter/tree-sitter.git
 cd tree-sitter
 make -j$(nproc)
 sudo make install
 sudo ldconfig
+#+end_src
+** CLI
+cargo install tree-sitter-cli
+** Module
+sudo dnf install gnutls-devel jansson-devel -y
+git clone https://github.com/casouri/tree-sitter-module.git
+./tree-sitter-module/batch.sh
+* Neovim
+# setup tpm <C-SPC>I #in tmux
+# yay -S chafa ueberzugpp viu -y
+# yay -S catimg ueberzugpp jp2a chafa viu
 
+#+begin_src bash
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 install ripgrep findutils lazygit npm neovim yarn fd luarocks bottom
 sudo luarocks --lua-version=5.1 install magick
@@ -60,29 +111,43 @@ luarocks config variables.LUA_INCDIR /usr/include/luajit-2.1
 curl -L https://github.com/dundee/gdu/releases/latest/download/gdu_linux_amd64.tgz | tar xz
 chmod +x gdu_linux_amd64
 sudo mv gdu_linux_amd64 /usr/local/bin/gdu
-
-sudo echo LSP_USE_PLISTS=true >> /etc/environment
+#+end_src
+* Emacs
+** Build emacs
+Set lsp mode to use plists for optimal perf
+#+begin_src bash
+echo "\nLSP_USE_PLISTS=true" | sudo tee -a /etc/environment > /dev/null
 export LSP_USE_PLISTS=true
-install libxpm libjpeg libpng libtiff giflib librsvg libxml2 gnutls gtk3 webkit2gtk
+install libxpm libjpeg libpng libtiff giflib librsvg libxml2 gnutls gtk3 webkit2gtk imagemagick pandoc-bin cmake
+mkdir ~/org
 git clone git://git.sv.gnu.org/emacs.git --depth=1
 cd emacs
 ./autogen
 ./configure --with-native-compilation=aot  --with-xwidgets --with-tree-sitter --with-json --with-imagemagick --with-pgtk --with-mailutils CFLAGS="-O2 -pipe -march=native -fomit-frame-pointer"
 make -j$(nproc)
 sudo make install
-
+#+end_src
+** Doom
+#+begin_src bash
 git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs
 ~/.config/emacs/bin/doom install
-
+#+end_src
+** Mail
+#+begin_src bash
 if [ -n "${EMAIL_ADDRESS+''}" ]; then
         install isync
-        mbsync --all
+        #mbsync --all
         mu init --maildir ~/.mail --my-address $EMAIL_ADDRESS
 fi
-
+#+end_src
+** Autostart
+#+begin_src bash
 systemctl enable --user --now emacs
-sed -i s/EDITOR=.*/EDITOR=\"emacsclient\ -c\"/g test
-
+install sed
+sudo sed -i s/EDITOR=.*/EDITOR=\"emacsclient\ -c\"/g /etc/environment
+#+end_src
+* Clone dotfiles
+#+begin_src bash
 cat <<EOF> ~/.gitconfig
 [user]
 	email = $EMAIL_ADDRESS
@@ -97,25 +162,47 @@ echo ".dotfiles" >> .gitignore
 git clone --bare https://github.com/Lillenne/dotfiles.git $HOME/.dotfiles
 alias cfg='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 config reset --hard
-
+#+end_src
+* Sync .bashrc
+#+begin_src bash
 echo "source ~./.bash_additions" >> ~/.bashrc
-source ~./bashrc
-
+source ~/.bashrc
+#+end_src
+* Sync doom emacs
+#+begin_src bash
 doom sync
-
+#+end_src
+* OpenCV
+yay -S opencv-cuda
+* Docker registry
+#+begin_src bash
 install podman podman-docker podman-compose
-
+#+end_src
+* Ollama
+#+begin_src bash
 curl https://ollama.ai/install.sh | sh
-
+sudo firewall-cmd --zone=home --add-port=11434/tcp
+sudo firewall-cmd --zone=home --add-source=192.168.200.0/24
+sudo firewall-cmd --runtime-to-permanent
+install nvidia-container-toolkit
+docker run -d --network=host --gpus all -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:cuda
+#+end_src
+* Local shares
+#+begin_src bash
 install cifs-utils nfs-utils
 sudo mkdir /mnt
 sudo mkdir /mnt/nfs
 sudo mkdir /mnt/smb
-sudo chown nobody:nogroup /shares/nfs
-sudo chown nobody:nobody /shares -R
-sudo chmod 777 /shares -R
+sudo chown nobody:nobody /mnt/nfs
+sudo chown nobody:nobody /mnt -R
+sudo chmod 777 /mnt -R
 echo "nas.pixalyzer.com:/mnt/wd/nfs /shares/nfs nfs defaults 0 0" | sudo tee -a /etc/fstab > /dev/null
 echo "//nas.pixalyzer.com/smb /mnt/mountpoint cifs _netdev,nofail,username=aus 0 0" | sudo tee -a /etc/fstab > /dev/null
 sudo systemctl daemon-reload
 mount /mnt/nfs
 mount /mnt/smb
+#+end_src
+* other programs
+czkawka
+darktable
+vial

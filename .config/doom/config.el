@@ -4,7 +4,10 @@
 ;; lsp-bridge looking in ~/.emacs.d for omnisharp instead of doom's
 ;; need to change keybindings to support lsp-bridge
 
-;; (setq gc-cons-threshold 100000000) ; increase gc threshold to improve performance
+;(remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-shortmenu)
+;(setq fancy-splash-image "~/Downloads/Designcrop.png")
+;(setq fancy-splash-image (concat doom-private-dir "~/Downloads/Design.png"))
+
 (setq gc-cons-threshold 1000000) ; increase gc threshold to improve performance
 
 (defvar ak/use-mu4e nil)

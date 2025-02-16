@@ -1,14 +1,14 @@
-exec --no-startup-id ~/set_once.sh
+# exec --no-startup-id ~/set_once.sh
 # This file is a modified version based on default i3-config-wizard config
 # source is available here:
-# https://raw.githubusercontent.com/endeavouros-team/endeavouros-i3wm-setup/master/.config/i3/config
+# https://raw.githubusercontent.com/endeavouros-team/endeavouros-i3wm-setup/main/etc/skel/.config/i3/config
 # Maintainer: joekamprad [joekamprad //a_t// endeavouros.com]
 # https://endeavouros.com
 #
 # iconic font icon search: https://fontawesome.com/v4.7/cheatsheet/
 #
 # --> to update this run the following command (will backup existing setup file)
-# wget --backups=1 https://raw.githubusercontent.com/endeavouros-team/endeavouros-i3wm-setup/main/.config/i3/config -P ~/.config/i3/
+# wget --backups=1 https://raw.githubusercontent.com/endeavouros-team/endeavouros-i3wm-setup/main/etc/skel/.config/i3/config -P ~/.config/i3/
 #
 # Endeavouros-i3 config file
 # Source for complete framework of our i3 config and theming here: https://github.com/endeavouros-team/endeavouros-i3wm-setup
@@ -48,13 +48,13 @@ workspace_layout default
 ##############################
 
 #border indicator on windows:
-new_window pixel 2
+new_window pixel 1
 
 # thin borders
 # hide_edge_borders both
 
 # Set inner/outer gaps
-gaps inner 3
+gaps inner 6
 gaps outer 3
 
 # show window title bars (not officially supported with i3gaps)
@@ -71,61 +71,61 @@ bindsym $mod+Tab workspace next
 bindsym $mod+Shift+Tab workspace prev
 
 # switch to workspace
-bindsym $mod+0    workspace  $ws1
-bindsym $mod+1    workspace  $ws2
-bindsym $mod+2    workspace  $ws3
-bindsym $mod+3    workspace  $ws4
-bindsym $mod+4    workspace  $ws5
-bindsym $mod+5    workspace  $ws6
-bindsym $mod+6    workspace  $ws7
-bindsym $mod+7    workspace  $ws8
-bindsym $mod+8    workspace  $ws9
-bindsym $mod+9    workspace  $ws10
+bindcode $mod+10    workspace  $ws2
+bindcode $mod+11    workspace  $ws3
+bindcode $mod+12    workspace  $ws4
+bindcode $mod+13    workspace  $ws5
+bindcode $mod+14    workspace  $ws6
+bindcode $mod+15    workspace  $ws7
+bindcode $mod+16    workspace  $ws8
+bindcode $mod+17    workspace  $ws9
+bindcode $mod+18    workspace  $ws10
+bindcode $mod+19    workspace  $ws1
+
 
 # move focused container to workspace
-bindsym $mod+Shift+0    move container to workspace  $ws1
-bindsym $mod+Shift+1    move container to workspace  $ws2
-bindsym $mod+Shift+2    move container to workspace  $ws3
-bindsym $mod+Shift+3    move container to workspace  $ws4
-bindsym $mod+Shift+4    move container to workspace  $ws5
-bindsym $mod+Shift+5    move container to workspace  $ws6
-bindsym $mod+Shift+6    move container to workspace  $ws7
-bindsym $mod+Shift+7    move container to workspace  $ws8
-bindsym $mod+Shift+8    move container to workspace  $ws9
-bindsym $mod+Shift+9    move container to workspace  $ws10
+bindcode $mod+Shift+10    move container to workspace  $ws2
+bindcode $mod+Shift+11    move container to workspace  $ws3
+bindcode $mod+Shift+12    move container to workspace  $ws4
+bindcode $mod+Shift+13    move container to workspace  $ws5
+bindcode $mod+Shift+14    move container to workspace  $ws6
+bindcode $mod+Shift+15    move container to workspace  $ws7
+bindcode $mod+Shift+16    move container to workspace  $ws8
+bindcode $mod+Shift+17    move container to workspace  $ws9
+bindcode $mod+Shift+18    move container to workspace  $ws10
+bindcode $mod+Shift+19    move container to workspace  $ws1
 
-#resize window (you can also use the mouse for that):
-mode "resize" {
+# resize window (you can also use the mouse for that):
+#mode "resize" {
 # These bindings trigger as soon as you enter the resize mode
 # Pressing left will shrink the window's width.
 # Pressing right will grow the window's width.
 # Pressing up will shrink the window's height.
 # Pressing down will grow the window's height.
-       bindsym h resize shrink width 10 px or 10 ppt
-       bindsym k resize grow height 10 px or 10 ppt
-       bindsym j resize shrink height 10 px or 10 ppt
-       bindsym l resize grow width 10 px or 10 ppt
+#        bindsym h resize shrink width 10 px or 10 ppt
+#        bindsym j resize grow height 10 px or 10 ppt
+#        bindsym k resize shrink height 10 px or 10 ppt
+#        bindsym l resize grow width 10 px or 10 ppt
 
 # same bindings, but for the arrow keys
-	   bindsym Left resize shrink width 10 px or 10 ppt
-       bindsym Down resize grow height 10 px or 10 ppt
-       bindsym Up resize shrink height 10 px or 10 ppt
-       bindsym Right resize grow width 10 px or 10 ppt
+#        bindsym Left resize shrink width 10 px or 10 ppt
+#        bindsym Down resize grow height 10 px or 10 ppt
+#        bindsym Up resize shrink height 10 px or 10 ppt
+#        bindsym Right resize grow width 10 px or 10 ppt
 
 # back to normal: Enter or Escape
-	bindsym Return mode "default"
-       bindsym Escape mode "default"
-}
+#	     bindsym Return mode "default"
+#        bindsym Escape mode "default"
+#}
 
-bindsym $mod+r mode "resize"
+#bindsym $mod+r mode "resize"
 
 ######################################
 # keybindings for different actions: #
 ######################################
 
 # start a terminal
-bindsym $mod+Return exec --no-startup-id alacritty
-bindsym $mod+Shift+t exec --no-startup-id alacritty
+bindsym $mod+Return exec --no-startup-id wezterm
 
 # kill focused window
 bindsym $mod+q kill
@@ -137,7 +137,7 @@ bindsym $mod+Shift+q exec --no-startup-id ~/.config/i3/scripts/powermenu
 # lock with a picture:
 #bindsym $mod+l exec --no-startup-id i3lock -i  ~/.config/i3/i3-lock-screen.png -p default|win -t
 # lock by blurring the screen:
-# bindsym $mod+l exec --no-startup-id ~/.config/i3/scripts/blur-lock
+#bindsym $mod+l exec --no-startup-id ~/.config/i3/scripts/blur-lock
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
@@ -171,9 +171,9 @@ bindsym $mod+Up focus up
 bindsym $mod+Right focus right
 
 # move focused window
-bindsym $mod+Shift+h move left
-bindsym $mod+Shift+j move down
-bindsym $mod+Shift+k move up
+bindsym $mod+Shift+j move left
+bindsym $mod+Shift+k move down
+bindsym $mod+Shift+h move up
 bindsym $mod+Shift+l move right
 
 # alternatively, you can use the cursor keys:
@@ -194,7 +194,7 @@ bindsym $mod+f fullscreen toggle
 # change container layout (stacked, tabbed, toggle split)
 bindsym $mod+s layout stacking
 bindsym $mod+g layout tabbed
-bindsym $mod+c layout toggle split
+bindsym $mod+Shift+e layout toggle split
 
 # toggle tiling / floating
 bindsym $mod+Shift+space floating toggle
@@ -231,8 +231,8 @@ bindsym XF86AudioMute exec --no-startup-id ~/.config/i3/scripts/volume_brightnes
 bindsym XF86AudioMicMute exec amixer sset Capture toggle
 
 # audio control
-bindsym XF86AudioPlay exec --no-startup-id playerctl play
-bindsym XF86AudioPause exec --no-startup-id playerctl pause
+bindsym XF86AudioPlay exec --no-startup-id playerctl play-pause 
+# Above line will also work for pausing
 bindsym XF86AudioNext exec --no-startup-id playerctl next
 bindsym XF86AudioPrev exec --no-startup-id playerctl previous
 
@@ -240,18 +240,19 @@ bindsym XF86AudioPrev exec --no-startup-id playerctl previous
 bindsym $mod+p exec --no-startup-id /usr/local/bin/switch-audio-port
 
 ## App shortcuts
-bindsym $mod+w exec --no-startup-id /usr/bin/qutebrowser
+bindsym $mod+w exec --no-startup-id /usr/bin/firefox
 bindsym $mod+e exec --no-startup-id /usr/bin/thunar
 bindsym Print exec --no-startup-id scrot ~/%Y-%m-%d-%T-screenshot.png && notify-send "Screenshot saved to ~/$(date +"%Y-%m-%d-%T")-screenshot.png"
 
-# bind emacsclient
-bindsym $mod+Shift+e exec --no-startup-id emacsclient -c
-
-# bind neovim
-bindsym $mod+n exec "alacritty --class 'neovim,neovim' --hold -e nvim"; workspace 4
-
 # Power Profiles menu switcher (rofi)
 bindsym $mod+Shift+p exec --no-startup-id ~/.config/i3/scripts/power-profiles
+
+# bind emacsclient
+bindsym $mod+x exec --no-startup-id emacsclient -c
+
+# bind neovim
+#bindsym $mod+c exec "alacritty --class 'neovim,neovim' --hold -e nvim"; workspace 1
+bindsym $mod+c exec "wezterm -e nvim"; workspace 1
 
 ##########################################
 # configuration for workspace behaviour: #
@@ -259,16 +260,16 @@ bindsym $mod+Shift+p exec --no-startup-id ~/.config/i3/scripts/power-profiles
 
 # Define names for default workspaces for which we configure key bindings later on.
 # We use variables to avoid repeating the names in multiple places.
-set $ws1 "1:"
-set $ws2 "2"
-set $ws3 "3:"
-set $ws4 "4"
-set $ws5 "5"
-set $ws6 "6:"
-set $ws7 "7"
-set $ws8 "8"
-set $ws9 "9"
-set $ws10 "10"
+set $ws1 "0:"
+set $ws2 "1:"
+set $ws3 "2:"
+set $ws4 "3:"
+set $ws5 "4:"
+set $ws6 "5"
+set $ws7 "6"
+set $ws8 "7"
+set $ws9 "8"
+set $ws10 "9"
 
 # use workspaces on different displays:
 # where you have to replace VGA-0/HDMI-0 with the names for your displays
@@ -280,9 +281,10 @@ set $ws10 "10"
 #workspace $ws5 output HDMI-0
 
 # bind program to workspace and focus to them on startup:
+
 assign [class="alacritty"] $ws1
 assign [class="wezterm"] $ws1
-assign [class="(?i)qutebrowser"] $ws3
+assign [class="(?i)firefox"] $ws3
 assign [class="Thunar"] $ws7
 assign [class="Neovim"] $ws4
 assign [class="Emacs"] $ws4
@@ -290,7 +292,7 @@ assign [class="Emacs"] $ws4
 # automatic set focus new window if it opens on another workspace than the current:
 for_window [class=alacritty] focus
 for_window [class=wezterm] focus
-for_window [class=(?i)qutebrowser] focus
+for_window [class=(?i)firefox] focus
 for_window [class=Thunar] focus
 for_window [class=Emacs] focus
 
@@ -386,14 +388,15 @@ exec --no-startup-id /usr/bin/dunst
 # autotiling script
 # https://github.com/nwg-piotr/autotiling
 # `yay -S autotiling ;) (it is in AUR)
-exec_always --no-startup-id autotiling
+#exec_always --no-startup-id autotiling
 
 # Autostart apps as you like
+#exec --no-startup-id sleep 2 && xfce4-terminal
 exec --no-startup-id wezterm
 exec --no-startup-id emacsclient -c
-#exec --no-startup-id sleep 7 && firefox https://github.com/endeavouros-team/endeavouros-i3wm-setup/blob/main/force-knowledge.md
-exec --no-startup-id qutebrowser
+exec --no-startup-id firefox
 exec --no-startup-id thunar
+#exec --no-startup-id sleep 3 && thunar
 
 ###############
 # system tray #
@@ -405,7 +408,7 @@ exec --no-startup-id thunar
 #exec --no-startup-id blueberry-tray
 
 # networkmanager-applet
-exec --no-startup-id nm-applet
+#exec --no-startup-id nm-applet
 
 # clipman-applet
 #exec --no-startup-id xfce4-clipman
@@ -481,7 +484,7 @@ bar {
 # When strip_workspace_numbers is set to yes,
 # any workspace that has a name of the form
 # “[n][:][NAME]” will display only the name.
-strip_workspace_numbers no
+strip_workspace_numbers yes
 ##strip_workspace_name no
 
 		    colors {
