@@ -12,6 +12,7 @@
 (setq find-file-visit-truename t)
 (setq user-full-name (getenv "NAME"))
 (setq delete-by-moving-to-trash t)
+(setq embark-confirm-act-all nil)
 
 (load! "org.el")
 (load! "jupyter.el")
