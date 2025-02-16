@@ -28,7 +28,7 @@
 
 ;; Org basics
 (setq org-directory "~/org/"
-      ;; org-startup-folded 'show2levels
+      org-startup-folded 'show2levels
       )
 
 ;; (defun ak/new-sprint-headline ()
@@ -50,9 +50,10 @@
 (setq
  ;;org-agenda-sorting-strategy '(deadline-up priority-down tag-up)
  org-priority-lowest ?D
- org-clock-continuously nil ;; t to make clock start times the previous clock end times
+ org-clock-continuously t ;; t to make clock start times the previous clock end times, nil to stop
+ org-clock-idle-time '10
  ;; org-priority-faces nil
- org-id-link-to-org-use-id t
+ ;; org-id-link-to-org-use-id t ;; use ids for links. Sometimes creates them unnecessarily
  org-refile-allow-creating-parent-nodes (quote confirm)
  org-todo-keywords '((sequence "TODO(t)"  "TRIAGE(r)" "INVESTIGATE(v/@)" "SOMEDAY(o)" "LEARN(l)" "IDEA(i)" "STARTED(s)" "BLOCKED(b@/!)" "|" "DONE(d)" "CANCELED(k@)")
                      (sequence "[ ](T)" "[-](S)" "[?](W)" "|" "[X](D)"))
@@ -133,7 +134,8 @@
     :immediate-finish t)
    ("i" "Idea" entry (file +org-capture-todo-file) "* IDEA %? %^G")
    ("j" "Journal")
-   ("jP" "Weekly Plan" entry (file+datetree +org-capture-journal-file) "* Weekly Plan
+   ("jw" "Weeklies")
+   ("jwp" "Weekly Plan" entry (file+datetree +org-capture-journal-file) "* Weekly Plan
 Goals
 - %^{Goal|None}
 - %^{Goal|None}
@@ -146,7 +148,7 @@ Goals
     :after-finalize (lambda () (ak/complete-recurring-task "963e452d-1202-41bf-8361-5caa25ad6511"))
     :clock-resume t
     :unnarrowed t)
-   ("jR" "Weekly Review" entry (file+datetree +org-capture-journal-file) "* Weekly Review
+   ("jwr" "Weekly Review" entry (file+datetree +org-capture-journal-file) "* Weekly Review
 %?
 ** Agenda
 %(save-window-excursion (org-batch-agenda \"W\"))
@@ -168,6 +170,13 @@ Goals
     :immediate-finish t
     :after-finalize (lambda () (ak/complete-recurring-task "6323b0c4-6455-413c-9e05-e5420818b72e"))
     :jump-to-captured t)
+   ("jP" "Daily plan (other day)" entry (file+olp+datetree +org-capture-journal-file) "* Daily planning\n%?"
+    :tree-type week
+    :time-prompt t
+    :clock-in t
+    :clock-keep t
+    :immediate-finish t
+    :jump-to-captured t)
    ("js" "Standup notes" entry (file+olp+datetree +org-capture-journal-file) "* %(format-time-string \"%-I:%M %p\"): Standup notes\n%?\n** Yesterday:
 %(save-window-excursion (org-batch-agenda \"y\"))
 ** Today \n
@@ -184,6 +193,13 @@ Goals
     :clock-keep t
     :immediate-finish t
     :after-finalize (lambda () (ak/complete-recurring-task "57331d3b-c20d-43f5-ad21-2a3a40e88a98"))
+    :jump-to-captured t)
+   ("jR" "Daily Review (later)" entry (file+olp+datetree +org-capture-journal-file) "* Daily Review\n%?"
+    :tree-type week
+    :time-prompt t
+    :clock-in t
+    :clock-keep t
+    :immediate-finish t
     :jump-to-captured t)
    ("jn" "Now" entry (file+olp+datetree +org-capture-journal-file) "* %(format-time-string \"%-I:%M %p\"): %?"
     :tree-type week
@@ -228,7 +244,7 @@ Goals
     "* %?"
     :unnarrowed t)
    ("mX" "Sioux meeting notes" entry (file+olp+datetree +org-capture-meetings-file "Sioux")
-    "%?"
+    "* %?"
     :tree-type week
     :immediate-finish t
     :jump-to-captured t
