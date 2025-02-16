@@ -2,7 +2,14 @@
 
 (defun vterm-vsplit () (interactive) (split-window-horizontally) (other-window 1) (+vterm/here default-directory))
 (map! :leader "o v" #'vterm-vsplit)
-(map! :leader "d" #'+workspace/close-window-or-workspace)
+(map! :leader "k" #'+workspace/close-window-or-workspace)
+(map! :leader "t o" #'olivetti-mode)
+(map! :m "<C-up>" #'shrink-window)
+(map! :m "<C-down>" #'enlarge-window)
+(map! :m "<C-left>" #'shrink-window-horizontally)
+(map! :m "<C-right>" #'enlarge-window-horizontally)
+(setq-default olivetti-body-width .4)
+
 (map! :leader "f o" #'consult-recent-file)
 (map! "C-/" #'comment-dwim)
 (map! :leader "f O" #'find-file-other-window)
@@ -12,14 +19,12 @@
 (map! :leader "f G" #'consult-git-grep)
 (map! :leader "O" #'projectile-find-file-other-window)
 (map! :m "C-w b" #'split-window-vertically)
-;; (map :leader "j k" '(lambda ()
-;; ()
-;;                       ))
 (defvar ak/jupyter-buffer-name "*jupyter*")
 (defvar ak/jupyter-dir "~/jupyter")
 (defvar ak/jupyter-cmd "mj"); alias for setting up jupyter server
 (defvar ak/jupyter-post-cleanup-cmd "mda"); alias for setting up jupyter server
 (defvar ak/jupyter-url-or-port "8888"); alias for setting up jupyter server
+(require 'vterm)
 (defun ak/start-jupyter ()
   (interactive)
   (if (get-buffer ak/jupyter-buffer-name) (switch-to-buffer (get-buffer ak/jupyter-buffer-name)) ; todo regexp or similar to determine if started
@@ -30,7 +35,7 @@
                 (vterm-send-string ak/jupyter-cmd)
                 (vterm-send-return)
                 )
-                (sleep-for 0.8)
+                (sleep-for 0.5)
                 (ein:login ak/jupyter-url-or-port #'(lambda (buffer url-or-port) (switch-to-buffer buffer)))
                 )))
 (map! :leader "j s" #'ak/start-jupyter)
@@ -38,9 +43,8 @@
 (interactive)
 (when (get-buffer ak/jupyter-buffer-name)
 (save-window-excursion
-  (ein:stop nil ak/jupyter-url-or-port) ; is this working?
+  (ein:stop nil ak/jupyter-url-or-port)
   (switch-to-buffer (get-buffer ak/jupyter-buffer-name))
-;;(interrupt-process)
 (vterm-send-key "c" nil nil t)
 (vterm-send "y")
 (vterm-send-return)
