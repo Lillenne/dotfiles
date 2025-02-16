@@ -71,29 +71,29 @@ bindsym $mod+Tab workspace next
 bindsym $mod+Shift+Tab workspace prev
 
 # switch to workspace
-bindcode $mod+10    workspace  $ws2
-bindcode $mod+11    workspace  $ws3
-bindcode $mod+12    workspace  $ws4
-bindcode $mod+13    workspace  $ws5
-bindcode $mod+14    workspace  $ws6
-bindcode $mod+15    workspace  $ws7
-bindcode $mod+16    workspace  $ws8
-bindcode $mod+17    workspace  $ws9
-bindcode $mod+18    workspace  $ws10
-bindcode $mod+19    workspace  $ws1
+bindcode $mod+10    workspace  $ws1
+bindcode $mod+11    workspace  $ws2
+bindcode $mod+12    workspace  $ws3
+bindcode $mod+13    workspace  $ws4
+bindcode $mod+14    workspace  $ws5
+bindcode $mod+15    workspace  $ws6
+bindcode $mod+16    workspace  $ws7
+bindcode $mod+17    workspace  $ws8
+bindcode $mod+18    workspace  $ws9
+bindcode $mod+19    workspace  $ws10
 
 
 # move focused container to workspace
-bindcode $mod+Shift+10    move container to workspace  $ws2; workspace $ws2
-bindcode $mod+Shift+11    move container to workspace  $ws3; workspace  $ws3
-bindcode $mod+Shift+12    move container to workspace  $ws4; workspace  $ws4
-bindcode $mod+Shift+13    move container to workspace  $ws5; workspace  $ws5
-bindcode $mod+Shift+14    move container to workspace  $ws6; workspace  $ws6
-bindcode $mod+Shift+15    move container to workspace  $ws7; workspace  $ws7
-bindcode $mod+Shift+16    move container to workspace  $ws8; workspace  $ws8
-bindcode $mod+Shift+17    move container to workspace  $ws9; workspace  $ws9
-bindcode $mod+Shift+18    move container to workspace  $ws10; workspace  $ws10
-bindcode $mod+Shift+19    move container to workspace  $ws1; workspace  $ws1
+bindcode $mod+Shift+10    move container to workspace  $ws1; workspace $ws1
+bindcode $mod+Shift+11    move container to workspace  $ws2; workspace  $ws2
+bindcode $mod+Shift+12    move container to workspace  $ws3; workspace  $ws3
+bindcode $mod+Shift+13    move container to workspace  $ws4; workspace  $ws4
+bindcode $mod+Shift+14    move container to workspace  $ws5; workspace  $ws5
+bindcode $mod+Shift+15    move container to workspace  $ws6; workspace  $ws6
+bindcode $mod+Shift+16    move container to workspace  $ws7; workspace  $ws7
+bindcode $mod+Shift+17    move container to workspace  $ws8; workspace  $ws8
+bindcode $mod+Shift+18    move container to workspace  $ws9; workspace  $ws9
+bindcode $mod+Shift+19    move container to workspace  $ws10; workspace  $ws10
 
 # resize window (you can also use the mouse for that):
 #mode "resize" {
@@ -172,9 +172,9 @@ bindsym $mod+Up focus up
 bindsym $mod+Right focus right
 
 # move focused window
-bindsym $mod+Shift+j move left
-bindsym $mod+Shift+k move down
-bindsym $mod+Shift+h move up
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
 bindsym $mod+Shift+l move right
 
 # alternatively, you can use the cursor keys:
@@ -241,8 +241,9 @@ bindsym XF86AudioPrev exec --no-startup-id playerctl previous
 bindsym $mod+p exec --no-startup-id /usr/local/bin/switch-audio-port
 
 ## App shortcuts
-# bindsym $mod+w exec --no-startup-id /usr/bin/firefox
-bindsym $mod+w exec --no-startup-id /usr/bin/brave
+bindsym $mod+w exec --no-startup-id /usr/bin/firefox
+bindsym $mod+Shift+w exec --no-startup-id /usr/bin/firefox --private-window
+# bindsym $mod+w exec --no-startup-id /usr/bin/brave
 bindsym $mod+e exec --no-startup-id /usr/bin/thunar
 bindsym Print exec --no-startup-id scrot ~/%Y-%m-%d-%T-screenshot.png && notify-send "Screenshot saved to ~/$(date +"%Y-%m-%d-%T")-screenshot.png"
 
@@ -253,8 +254,16 @@ bindsym $mod+Shift+p exec --no-startup-id ~/.config/i3/scripts/power-profiles
 bindsym $mod+x exec --no-startup-id emacsclient -c
 bindsym $mod+Shift+a exec /home/aus/.config/emacs/bin/org-capture
 
+# Quick suspend win / alt  / p
+bindsym $mod+Mod1+p exec systemctl suspend
+bindsym $mod+Mod1+Shift+p exec systemctl hibernate
+
+bindsym $mod+m exec --no-startup-id exec signal-desktop
+
+
 # bind neovim
-bindsym $mod+c exec "alacritty --class 'neovim,neovim' --hold -e nvim"; workspace 1
+# bindsym $mod+c exec "alacritty --class 'neovim,neovim' --hold -e nvim"; workspace 1
+bindsym $mod+c exec "alacritty --class 'neovim,neovim' --hold -e nvim"
 #bindsym $mod+c exec "wezterm -e nvim"; workspace 1
 
 ##########################################
@@ -263,16 +272,16 @@ bindsym $mod+c exec "alacritty --class 'neovim,neovim' --hold -e nvim"; workspac
 
 # Define names for default workspaces for which we configure key bindings later on.
 # We use variables to avoid repeating the names in multiple places.
-set $ws1 "0:"
-set $ws2 "1:"
-set $ws3 "2:"
-set $ws4 "3:"
-set $ws5 "4:"
-set $ws6 "5"
-set $ws7 "6"
-set $ws8 "7"
-set $ws9 "8"
-set $ws10 "9"
+set $ws10 "0:"
+set $ws1 "1:"
+set $ws2 "2:"
+set $ws3 "3:E"
+set $ws4 "4"
+set $ws5 "5:"
+set $ws6 "6:"
+set $ws7 "7:?"
+set $ws8 "8"
+set $ws9 "9"
 
 # use workspaces on different displays:
 # where you have to replace VGA-0/HDMI-0 with the names for your displays
@@ -285,20 +294,23 @@ set $ws10 "9"
 
 # bind program to workspace and focus to them on startup:
 
-assign [class="alacritty"] $ws1
-assign [class="wezterm"] $ws1
-assign [class="(?i)firefox"] $ws3
-assign [class="(?i)brave"] $ws3
-assign [class="Thunar"] $ws7
-assign [class="Neovim"] $ws4
-assign [class="Emacs"] $ws4
+assign [class="Alacritty"] $ws10
+# assign [class="wezterm"] $ws10
+assign [class="Signal"] $ws1
+assign [class="(?i)firefox"] $ws2
+assign [class="(?i)brave"] $ws2
+assign [class="Thunar"] $ws6
+assign [class="neovim"] $ws3
+assign [class="Emacs"] $ws3
 
 # automatic set focus new window if it opens on another workspace than the current:
-for_window [class=alacritty] focus
-for_window [class=wezterm] focus
+for_window [class=Alacritty] focus
+for_window [class=Signal] focus
+# for_window [class=wezterm] focus
 for_window [class=(?i)firefox] focus
 for_window [class=(?i)brave] focus
 for_window [class=Thunar] focus
+for_window [class=neovim] focus
 for_window [class=Emacs] focus
 
 ##############
@@ -400,11 +412,13 @@ exec --no-startup-id /usr/bin/dunst
 #exec --no-startup-id sleep 2 && xfce4-terminal
 # exec --no-startup-id wezterm
 exec --no-startup-id alacritty
-# exec --no-startup-id sleep 10 && emacsclient -c
-exec --no-startup-id brave
-# exec --no-startup-id firefox
+exec --no-startup-id signal-desktop
+
+# exec --no-startup-id brave
+exec --no-startup-id firefox
 # exec --no-startup-id thunar
 exec --no-startup-id redshift -P -O 4500 # reduce blue light
+exec --no-startup-id emacsclient -c
 #exec --no-startup-id sleep 3 && thunar
 
 ###############

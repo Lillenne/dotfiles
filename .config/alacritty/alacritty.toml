@@ -1,4 +1,4 @@
-import = ["/home/aus/.config/alacritty/themes/themes/carbonfox.yml"]
+# import = ["/home/aus/.config/alacritty/themes/themes/carbonfox.yml"]
 #tabspaces = 4
 
 [colors]

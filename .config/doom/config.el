@@ -29,7 +29,7 @@
 (setq todoist-token (getenv "TODOIST_TOKEN"))
 (load! "todoist.el")
 ;; (setq todoist-show-all t)
-(defvar ak/use-mu4e nil)
+(defvar ak/use-mu4e t)
 (when ak/use-mu4e (load! "mu4e.el"))
 (defvar ak/use-lsp-bridge nil)
 (when ak/use-lsp-bridge (load! "lsp-bridge.el"))
@@ -38,6 +38,10 @@
 (defvar ak/use-lsp-mode t)
 (when ak/use-lsp-mode (load! "debug.el")(load! "company.el"))
 (load! "evil.el")
+
+(after! org
+  :config (setq khoj-server-url "https://khoj.pixalyzer.com"
+                khoj-org-directories '("~/org/roam" "~/org")))
 
 (defun ak/is-minibuf () (minibuffer-window-active-p (current-buffer)))
 (defun ak/is-only-window () (equal (length (window-list-1)) 1))

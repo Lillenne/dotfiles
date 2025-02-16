@@ -89,3 +89,5 @@
 (unpin! org-roam)
 (package! org-roam-ui)
 (package! org-roam-timestamps)
+
+(package! khoj :recipe (:host github :repo "khoj-ai/khoj" :files (:defaults "src/interface/emacs/khoj.el")))
