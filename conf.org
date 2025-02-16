@@ -272,3 +272,7 @@ https://bbs.archlinux.org/viewtopic.php?id=177473
 redshift -P -O 4500
 * misc 
   yay -S luajit-tiktoken-bin
+* direnv
+yay -S direnv
+direnv allow in the dir
+uses .envrc files, or .env if confured in .config/direnv/direnv.toml https://direnv.net/man/direnv.toml.1.html#codeloaddotenvcode
