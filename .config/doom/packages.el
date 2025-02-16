@@ -85,3 +85,7 @@
 ;; (package! company-org-block)
 ;; (package! company-quickhelp)
 (package! docstr)
+
+(unpin! org-roam)
+(package! org-roam-ui)
+(package! org-roam-timestamps)
