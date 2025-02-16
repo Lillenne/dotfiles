@@ -55,7 +55,7 @@
                              (cdr org-capture-templates)))
 
 ;;start fullscreen
-(add-to-list 'default-frame-alist '(fullscreen . maximized))
+;;(add-to-list 'default-frame-alist '(fullscreen . maximized))
 
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
@@ -226,3 +226,6 @@
 (defvar my-load-debug nil)
 ;;(setq my-load-debug t)
 (when my-load-debug (load! debug.el))
+
+(eval-after-load 'company
+  '(define-key company-active-map (kbd "C-c h") #'company-quickhelp-manual-begin))
