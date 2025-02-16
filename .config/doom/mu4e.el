@@ -10,14 +10,6 @@
 (setq mu4e-split-view 'vertical
       mu4e-headers-visible-columns 120)
 
-(set-email-account! "pm"
-                    `((mu4e-sent-folder . "/aus-pm/Sent")
-                      (mu4e-drafts-folder . "/aus-pm/Drafts")
-                      (mu4e-trash-folder  . "/aus-pm/Trash")
-                      (mu4e-refile-folder . "/aus-pm/Archive")
-                      (smtpmail-smtp-user . ,ak/email-address)
-                      (user-mail-address . ,ak/email-address))
-                    t)
 (set-email-account! "Pixalyzer"
                     `((mu4e-sent-folder . "/aus-pix/Sent")
                       (mu4e-drafts-folder . "/aus-pix/Drafts")
@@ -25,6 +17,15 @@
                       (mu4e-refile-folder . "/aus-pm/Archive")
                       (smtpmail-smtp-user . ,ak/business-email-address)
                       (user-mail-address . ,ak/business-email-address))
+                    t)
+;; This one last since that seems to become the primary one
+(set-email-account! "Personal"
+                    `((mu4e-sent-folder . "/aus-pm/Sent")
+                      (mu4e-drafts-folder . "/aus-pm/Drafts")
+                      (mu4e-trash-folder  . "/aus-pm/Trash")
+                      (mu4e-refile-folder . "/aus-pm/Archive")
+                      (smtpmail-smtp-user . ,ak/email-address)
+                      (user-mail-address . ,ak/email-address))
                     t)
 
 ;; https://github.com/djcb/mu/issues/1136

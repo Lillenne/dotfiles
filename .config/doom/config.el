@@ -25,6 +25,7 @@
 
 ;; (load! "jupyter.el")
 (load! "calendar.el")
+(load! "mu4e.el")
 ;; (load! "timeblock.el")
 (load! "todoist.el")
 ;; (setq todoist-show-all t)
@@ -51,6 +52,7 @@
         (doom-project-ignored-p project-root)))
   (setq projectile-ignored-project-function #'my-projectile-ignore-project)
   (add-to-list 'projectile-globally-ignored-file-suffixes ".onnx")
+  ;; (map! :leader "SPC" #'(lambda () (interactive) (projectile-find-file t))) ;; Having projectile cache issues
   )
 
 (defun ak/copy-full-path-dired () (interactive)

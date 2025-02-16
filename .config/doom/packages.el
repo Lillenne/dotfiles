@@ -94,9 +94,9 @@
 (package! org-super-agenda)
 (package! org-todoist
   :recipe (
-           ;; :local-repo "/home/aus/projects/org-todoist/"
-           :host github
-           :repo "lillenne/org-todoist"
+           :local-repo "/home/aus/projects/org-todoist/"
+           ;; :host github
+           ;; :repo "lillenne/org-todoist"
            :branch "main"
            :files ("org-todoist.el")))
 
