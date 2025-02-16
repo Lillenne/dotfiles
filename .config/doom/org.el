@@ -55,8 +55,8 @@
  org-icalendar-timezone "America/Los_Angeles"
  ;;org-agenda-sorting-strategy '(deadline-up priority-down tag-up)
  org-priority-lowest ?D
- org-clock-continuously t ;; t to make clock start times the previous clock end times, nil to stop
- org-clock-idle-time '10
+ org-clock-continuously nil ;; t to make clock start times the previous clock end times, nil to stop
+ org-clock-idle-time '30
  ;; org-priority-faces nil
  ;; org-id-link-to-org-use-id t ;; use ids for links. Sometimes creates them unnecessarily
  org-refile-allow-creating-parent-nodes (quote confirm)
