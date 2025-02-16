@@ -53,7 +53,7 @@
 (package! ob-mermaid)
 (package! evil-owl)
 (package! evil-quickscope)
-(package! olivetti)
+;;(package! olivetti)
 ;;(package! evil-textobj-anyblock :disable t)
 ;;(package! evil-textobj-tree-sitter)
 (package! company-quickhelp)
