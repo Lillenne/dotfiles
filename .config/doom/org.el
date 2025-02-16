@@ -6,7 +6,13 @@
 (setq org-agenda-files '("~/org/"
                          "~/org/roam/"
                          "~/org/roam/daily/"))
+(setq org-tag-alist '(("pixel_shift") ("confluence") ("career") ("autolighting") ("autofocus") ("image_pipeline") ("syn_imgs") ("cicd") ("acqu_app_mantis") ("engr_tool_mantis")))
 (org-roam-db-autosync-mode)
+
+;; Make captures full screen
+(defun stag-misanthropic-capture (&rest r)
+  (delete-other-windows))
+(advice-add  #'org-capture-place-template :after 'stag-misanthropic-capture)
 
 ;; fix for yasnippet tab key in org mode
 (defun my/org-tab-conditional ()
@@ -59,13 +65,14 @@
 
 (add-hook 'org-after-todo-state-change-hook
           (lambda ()
-            (when (equal org-state "DONE") (my/org-roam-copy-todo-to-today t))
-            (when (equal org-state "[X]") (my/org-roam-copy-todo-to-today))
+            (when (equal org-state "DONE") (my/org-roam-copy-todo-to-today))
+            ;; (when (equal org-state "[X]") (my/org-roam-copy-todo-to-today))
             (when (equal org-state "HOLD") (ak/move-to-hold "Tabled"))
             (when (equal org-state "WAIT") (ak/move-to-hold "Wait"))
             (when (equal org-state "KILL") (ak/move-to-hold "Canceled"))
             ;; (when (equal org-state "STRT") (ak/move-to-hold "Started" "in-progress.org"))
             ) 100)
+;; Note: by commenting out the above I have removed the archive and copy to today functionality. Use spc msA to archive manually
 
                                         ;how to do tags for meetings? make it a roam capture?
 
@@ -101,8 +108,29 @@
          (file+headline +org-capture-notes-file "Inbox")
          "* %u %?\n%i\n%a" :prepend t)
         ("t" "Personal todo" entry (file+headline +org-capture-todo-file "Inbox") "* TODO %?\n%i\n%a" :prepend t)
-        ("i" "Personal todo w/o link" entry (file+headline +org-capture-todo-file "Inbox") "* TODO %?" :prepend t)
+        ("T" "Personal todo w/o link" entry (file+headline +org-capture-todo-file "Inbox") "* TODO %?" :prepend t)
+        ("i" "Idea" entry (file "/home/aus/org/ideas.org") "* IDEA %?")
         ("m" "Meetings")
+        ("mk" "Kim discussion point" entry (file+headline "/home/aus/org/1v1s/kim.org" "Inbox")
+         "* %?"
+         :target (file "kim.org")
+         :tree-type week
+         :unnarrowed t)
+        ("mK" "Kim meeting notes" entry (file+olp+datetree "/home/aus/org/1v1s/kim.org")
+         "* %?"
+         :target (file "kim.org")
+         :tree-type week
+         :unnarrowed t)
+        ("ms" "Steven discussion point" entry (file+headline "/home/aus/org/1v1s/steven.org" "Inbox")
+         "* %?"
+         :target (file "steven.org")
+         :tree-type week
+         :unnarrowed t)
+        ("mS" "Steven meeting notes" entry (file+olp+datetree "/home/aus/org/1v1s/steven.org")
+         "* %?"
+         :target (file "steven.org")
+         :tree-type week
+         :unnarrowed t)
         ("mm" "Scheduled Meeting" entry (file+olp+datetree "/home/aus/org/meetings.org")
          "* %^{What are we discussing?} %^G \nScheduled: %U\nFor: %^{When is the meeting?}t\n- Attendees: %^{Attendees}, Austin\n- Prep/Links: \n  - [ ] %?\n- Notes:"
          :target (file "meetings.org")
@@ -192,8 +220,23 @@ e.g. Friday, February  9, 2024 | 7:29 AM "
 (map! :leader "i D" 'ak/today-date-time)
 
 ;; https://emacs.stackexchange.com/questions/72147/org-mode-adding-creation-date-property-upon-heading-creation
-(add-hook 'org-insert-heading-hook
-          (lambda()
-            (save-excursion
-              (org-back-to-heading)
-              (org-set-property "CREATED" (format-time-string "[%Y-%m-%d %a %H:%M]")))))
+;;(add-hook 'org-insert-heading-hook
+;;         (lambda()
+;;            (save-excursion
+;;              (org-back-to-heading)
+;;              (org-set-property "CREATED" (format-time-string "[%Y-%m-%d %a %H:%M]")))))
+(defun ak/complete-time ()
+  "Inserts a string in the following format"
+  (interactive)
+  (insert (concat (concat " <" (format-time-string "%A, %B %e, %Y | %-I:%M %p")) " >")))
+
+(map! :leader "i C" 'ak/complete-time)
+
+(defun ak/remove-incomplete-checkboxes () (interactive)
+       (beginning-of-buffer)
+       (while (re-search-forward "\\[ \\] " nil t)
+         (replace-match "" nil nil)))
+
+(map! :leader "n r d x" 'ak/remove-incomplete-checkboxes)
+
+(add-to-list 'org-modules 'org-habit t)
