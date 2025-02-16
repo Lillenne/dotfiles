@@ -13,8 +13,13 @@ alias tat="tmux a -t"
 alias tl="tmux ls"
 alias tm="tmux"
 
-export PATH="${PATH:+${PATH}:}~/.local/share/bob/nvim-bin"
-export PATH="${PATH:+${PATH}:}~/.cargo/bin"
-export PATH="${PATH:+${PATH}:}~/.config/emacs/bin"
+export PATH="${PATH:+${PATH}:}/home/aus/.local/share/bob/nvim-bin"
+export PATH="${PATH:+${PATH}:}/home/aus/.cargo/bin"
+export PATH="${PATH:+${PATH}:}/home/aus/.config/emacs/bin"
+export PATH="${PATH:+${PATH}:}/home/aus/.dotnet/tools"
+export PATH="${PATH:+${PATH}:}/home/aus/.dotnet"
+
+# Toolbox App
+export PATH="${PATH:+${PATH}:}/home/aus/.local/share/JetBrains/Toolbox/scripts"
 
 export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+${LD_LIBRARY_PATH}:}/usr/local/lib64"

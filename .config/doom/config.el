@@ -1,9 +1,9 @@
 ;;; init.el -*- lexical-binding: t; -*-
 
 ;;TODO check out grip mode +grip flag for md mode https://github.com/seagle0128/grip-mode
-;(remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-shortmenu)
-;(setq fancy-splash-image "")
-
+                                        ;(remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-shortmenu)
+                                        ;(setq fancy-splash-image "")
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e/")
 (setq gc-cons-threshold 1000000) ; increase gc threshold to improve performance
 (require 'load-env-vars)
 (load-env-vars "/home/aus/.dotvars")
@@ -22,6 +22,7 @@
 (load! "timeblock.el")
 (require 'todoist)
 (setq todoist-token (getenv "TODOIST_TOKEN"))
+(load! "todoist.el")
 ;; (setq todoist-show-all t)
 
 (defvar ak/use-mu4e t)
@@ -46,12 +47,15 @@
         (doom-project-ignored-p project-root)))
   (setq projectile-ignored-project-function #'my-projectile-ignore-project)
   (add-to-list 'projectile-globally-ignored-file-suffixes ".onnx")
-)
+  )
 
 (defun ak/copy-full-path-dired () (interactive)
        (kill-new (expand-file-name (dired-copy-filename-as-kill))))
 (defun ak/copy-full-path () (interactive)
        (kill-new (expand-file-name (buffer-file-name))))
+
+
+(load! "banner.el")
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
