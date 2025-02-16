@@ -10,6 +10,8 @@
      "683b3fe1689da78a4e64d3ddfce90f2c19eb2d8ab1bab1738a63d8263119c3f4" default))
  '(ein:output-area-inlined-images t)
  '(magit-todos-insert-after '(bottom) nil nil "Changed by setter of obsolete option `magit-todos-insert-at'")
+ '(org-hyperscheduler-inbox-file "~/org/todos.org")
+ '(org-hyperscheduler-readonly-mode nil)
  '(org-timeblock-display-time t)
  '(org-timeblock-show-future-repeats t)
  '(package-selected-packages '(eglot web-mode cape use-package))

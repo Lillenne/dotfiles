@@ -5,10 +5,6 @@
 (defvar ak/personal-cal-ics (getenv "PERSONAL_CALENDAR"))
 ; todo automatically sync calendar? daily?
 
-; todo adjust org-timeblock-mode-map, interactions with evil mode
-(map! :leader "o s" #'org-timeblock)
-(map! :leader "o S" #'org-timeblock-quit)
-
 (require 'calfw-cal)
 (require 'calfw-ical)
 (require 'calfw-org)
