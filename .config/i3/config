@@ -247,6 +247,9 @@ bindsym Print exec --no-startup-id scrot ~/%Y-%m-%d-%T-screenshot.png && notify-
 # bind emacsclient
 bindsym $mod+Shift+e exec --no-startup-id emacsclient -c
 
+# bind neovim
+bindsym $mod+n exec "alacritty --class 'neovim,neovim' --hold -e nvim"; workspace 4
+
 # Power Profiles menu switcher (rofi)
 bindsym $mod+Shift+p exec --no-startup-id ~/.config/i3/scripts/power-profiles
 
@@ -280,7 +283,8 @@ set $ws10 "10"
 assign [class="alacritty"] $ws1
 assign [class="(?i)qutebrowser"] $ws3
 assign [class="Thunar"] $ws7
-assign [class="Emacs"] $ws4
+assign [class="Neovim"] $ws4
+assign [class="Emacs"] $ws5
 #assign [class="thunderbird"] $ws4
 #assign [class="TelegramDesktop"] $ws5
 

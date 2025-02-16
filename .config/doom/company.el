@@ -1,10 +1,10 @@
 ;;; company.el -*- lexical-binding: t; -*-
 
-(company-quickhelp-mode)
-
-(with-eval-after-load 'company
-  (define-key company-active-map (kbd "<tab>") #'company-complete)
-  (define-key company-active-map (kbd "<C-right>") #'company-indent-or-complete-common)
-  (define-key company-active-map (kbd "<backtab>") #'company-quickhelp-manual-begin)
-  (setq company-minimum-prefix-length 1)
-  (setq company-idle-delay 0.0))
+(after! company
+        (setq company-minimum-prefix-length 1)
+        (setq company-idle-delay 0.1)
+        (require 'company-quickhelp)
+        (setq company-quickhelp-delay 0.75)
+        (add-hook 'company-tng-mode-hook (lambda () (company-quickhelp-mode nil))) ; enable quickhelp only after tng
+        ;; (company-quickhelp-mode) ;;sometimes doesn't work with tng
+        )

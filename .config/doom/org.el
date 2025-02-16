@@ -4,7 +4,7 @@
 (setq org-roam-directory "~/org/")
 (org-roam-db-autosync-mode)
 
-(add-hook 'org-agenda-mode-hook #'olivetti-mode)
+;; (add-hook 'org-agenda-mode-hook #'olivetti-mode)
 
 ;; note, need to create the headings before they are refiled properly
 (defun ak/move-to-hold (heading &optional file)
@@ -93,9 +93,9 @@
    (csharp . t)
    (shell . t)
    (bash . t)
-   ;;(mermaid . t)
+   (mermaid . t)
    ))
-;;(setq ob-mermaid-cli-path "/usr/local/bin/mmdc")
+(setq ob-mermaid-cli-path "/usr/bin/mmdc")
 
 ; add @ to prompt a note + others
 (setq org-todo-keywords
@@ -158,7 +158,7 @@ e.g. Friday, February  9, 2024 | 7:29 AM "
 ; add id to all captures
 (add-hook 'org-capture-mode-hook #'org-id-get-create) ;https://www.reddit.com/r/orgmode/comments/eln9kb/capture_with_automatic_id_creation/
 
-(add-hook 'org-mode-hook (lambda () (when (and (ak/is-only-window) (not (ak/is-minibuf))) (olivetti-mode))) 95)
+;; (add-hook 'org-mode-hook (lambda () (when (and (ak/is-only-window) (not (ak/is-minibuf))) (olivetti-mode))) 95)
 
 ;; <el<tab> etc. snippets -> code blocks
 (with-eval-after-load 'org

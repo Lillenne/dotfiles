@@ -4,10 +4,10 @@
 (map! :leader "o v" #'vterm-vsplit)
 (map! :leader "k" #'+workspace/close-window-or-workspace)
 (map! :leader "t o" #'olivetti-mode)
-(map! :m "<C-up>" #'shrink-window)
-(map! :m "<C-down>" #'enlarge-window)
-(map! :m "<C-left>" #'shrink-window-horizontally)
-(map! :m "<C-right>" #'enlarge-window-horizontally)
+(map! :m "<C-S-up>" #'shrink-window)
+(map! :m "<C-S-down>" #'enlarge-window)
+(map! :m "<C-S-left>" #'shrink-window-horizontally)
+(map! :m "<C-S-right>" #'enlarge-window-horizontally)
 (setq-default olivetti-body-width .4)
 
 (map! :leader "f o" #'consult-recent-file)
@@ -23,7 +23,7 @@
 (defvar ak/jupyter-dir "~/jupyter")
 (defvar ak/jupyter-cmd "mj"); alias for setting up jupyter server
 (defvar ak/jupyter-post-cleanup-cmd "mda"); alias for setting up jupyter server
-(defvar ak/jupyter-url-or-port "8888"); alias for setting up jupyter server
+(defvar ak/jupyter-url-or-port "http://localhost:8888/lab"); alias for setting up jupyter server
 (require 'vterm)
 (defun ak/start-jupyter ()
   (interactive)
@@ -35,7 +35,7 @@
                 (vterm-send-string ak/jupyter-cmd)
                 (vterm-send-return)
                 )
-                (sleep-for 0.5)
+                (sleep-for 0.8)
                 (ein:login ak/jupyter-url-or-port #'(lambda (buffer url-or-port) (switch-to-buffer buffer)))
                 )))
 (map! :leader "j s" #'ak/start-jupyter)
