@@ -28,6 +28,10 @@ install_native() {
     return 0
 }
 
+localectl set-locale LANG=en_US.UTF-8
+unset LANG
+source /etc/profile.d/locale.sh
+
 if [ $IS_WSL -eq 1 ]; then
     cat <<EOF >> /etc/wsl.conf
 
@@ -35,6 +39,8 @@ if [ $IS_WSL -eq 1 ]; then
     interop=false
     appendWindowsPath=false
     EOF
+
+    install xclip
 fi
 
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -43,9 +49,9 @@ install dotnet-sdk
 
 install micromamba-bin
 micromamba shell init --shell bash --root-prefix=~/micromamba
-mm create -n ml
-mm activate ml
-mm install numpy pandas matplotlib jupyterlab pyright debugpy
+micromamba create -n ml
+micromamba activate ml
+micromamba install numpy pandas matplotlib jupyterlab pyright debugpy
 
 install ttf-jetbrains-mono ttf-jetbrains-mono-nerd
 install_native wezterm
@@ -55,6 +61,7 @@ cd tree-sitter
 make -j$(nproc)
 sudo make install
 sudo ldconfig
+cd ..
 
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 install ripgrep findutils lazygit npm neovim yarn fd luarocks bottom
@@ -106,9 +113,9 @@ EOF
 echo ".dotfiles" >> .gitignore
 git clone --bare https://github.com/Lillenne/dotfiles.git $HOME/.dotfiles
 alias cfg='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
-config reset --hard
+cfg reset --hard
 
-echo "source ~./.bash_additions" >> ~/.bashrc
+echo "source ~/.bash_additions" >> ~/.bashrc
 source ~/.bashrc
 
 doom sync
@@ -116,21 +123,24 @@ doom sync
 install podman podman-docker podman-compose
 
 curl https://ollama.ai/install.sh | sh
-sudo firewall-cmd --zone=home --add-port=11434/tcp
-sudo firewall-cmd --zone=home --add-source=192.168.200.0/24
-sudo firewall-cmd --runtime-to-permanent
-install nvidia-container-toolkit
-docker run -d --network=host --gpus all -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:cuda
+if [ $IS_WSL -eq 0]; then
+    sudo firewall-cmd --zone=home --add-port=11434/tcp
+    sudo firewall-cmd --zone=home --add-source=192.168.200.0/24
+    sudo firewall-cmd --runtime-to-permanent
+    install nvidia-container-toolkit
+    docker run -d --network=host --gpus all -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:cuda
+fi
 
 install cifs-utils nfs-utils
 sudo mkdir /mnt
 sudo mkdir /mnt/nfs
 sudo mkdir /mnt/smb
 sudo chown nobody:nobody /mnt/nfs
-sudo chown nobody:nobody /mnt -R
-sudo chmod 777 /mnt -R
-echo "nas.pixalyzer.com:/mnt/wd/nfs /shares/nfs nfs defaults 0 0" | sudo tee -a /etc/fstab > /dev/null
-echo "//nas.pixalyzer.com/smb /mnt/mountpoint cifs _netdev,nofail,username=aus 0 0" | sudo tee -a /etc/fstab > /dev/null
+sudo chown nobody:nobody /mnt/smb -R
+sudo chmod 777 /mnt/nfs -R
+sudo chmod 777 /mnt/smb -R
+echo "nas.pixalyzer.com:/mnt/wd/nfs /mnt/nfs nfs defaults 0 0" | sudo tee -a /etc/fstab > /dev/null
+echo "//nas.pixalyzer.com/smb /mnt/smb cifs _netdev,nofail,credential=/root/.smbcredentials 0 0" | sudo tee -a /etc/fstab > /dev/null
 sudo systemctl daemon-reload
 mount /mnt/nfs
 mount /mnt/smb
