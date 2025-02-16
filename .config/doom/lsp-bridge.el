@@ -1,5 +1,7 @@
 ;;; lsp-bridge.el -*- lexical-binding: t; -*-
 
+;; lsp-bridge looking in ~/.emacs.d for omnisharp instead of doom's
+;; need to change keybindings to support lsp-bridge
 ; Install dependencies prior to use:
 ; yay -S python-epc python-orjson python-sexpdata python-six python-setuptools python-paramiko python-rapidfuzz
 ; pip3 install epc orjson sexpdata six setuptools paramiko rapidfuzz
