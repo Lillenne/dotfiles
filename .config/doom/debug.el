@@ -1,6 +1,7 @@
 ;;; debug.el -*- lexical-binding: t; -*-
 
 (setenv "LSP_USE_PLISTS" "true") ; remember to add this to /etc/environment or .config/emacs/early-init.el
+(setq lsp-use-plists t)
 (global-docstr-mode 1)
 
 ;; Debugging
@@ -62,7 +63,7 @@
  lsp-signature-auto-activate '(:on-trigger-char :on-server-request :after-completion)
  )
 (setq lsp-auto-execute-action nil)
-(setq lsp-idle-delay 0.3)
+(setq lsp-idle-delay 0.5)
 (setq read-process-output-max 1048576) ;; <= cat /proc/sys/fs/pipe-max-size
 (setq lsp-log-io nil)
 (setq lsp-signature-cycle t)
