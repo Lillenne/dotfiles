@@ -1,6 +1,6 @@
 ;;; banner.el -*- lexical-binding: t; -*-
 
-(global-hide-mode-line-mode)
+;; (global-hide-mode-line-mode)
                                         ;(setq fancy-splash-image "")
 ;; (setq-default mode-line-format nil)
 ;; (setq-default evil-mode-line-format nil)

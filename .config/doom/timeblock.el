@@ -3,7 +3,7 @@
 (setq org-hyperscheduler-inbox-file "/home/aus/org/todos.org")
 (setq org-hyperscheduler-readonly-mode nil)
 
-; todo adjust org-timeblock-mode-map, interactions with evil mode
+                                        ; todo adjust org-timeblock-mode-map, interactions with evil mode
 (map! :leader "o s s" #'org-timeblock)
 (map! :leader "o s r" #'org-timeblock-redraw-buffers)
 (map! :leader "o s q" #'org-timeblock-quit)
@@ -19,7 +19,7 @@
   ;;       		   :host github
   ;;       		   :repo "ichernyshovvv/org-timeblock")
   :init
-  ; note, not enabled when switching back to buffer
+                                        ; note, not enabled when switching back to buffer
   (defun my/org-timeblock-evil-map ()
     "Set the keybindings for 'org-timeblock' to be compatible with evil mode"
     (evil-define-key 'normal org-timeblock-mode-map

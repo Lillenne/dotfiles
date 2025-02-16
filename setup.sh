@@ -45,7 +45,8 @@ source /etc/profile.d/locale.sh
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 install dotnet-sdk
-dotnet tool install --global csharp-ls
+#dotnet tool install --global csharp-ls
+echo "DOTNET_CLI_TELEMETRY_OPTOUT=true" | sudo tee -a /etc/environment > /dev/null
 
 install micromamba-bin
 micromamba shell init --shell bash --root-prefix=~/micromamba
@@ -102,6 +103,8 @@ cat <<EOF> ~/.gitconfig
 [pull]
 	rebase = true
 EOF
+
+install texlive-core texlive-bin texlive-science gnuplot jupyter
 
 echo "LSP_USE_PLISTS=true" | sudo tee -a /etc/environment > /dev/null
 export LSP_USE_PLISTS=true

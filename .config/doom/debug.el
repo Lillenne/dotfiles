@@ -1,6 +1,7 @@
 ;;; debug.el -*- lexical-binding: t; -*-
 
 (setenv "LSP_USE_PLISTS" "true") ; remember to add this to /etc/environment or .config/emacs/early-init.el
+(global-docstr-mode 1)
 
 ;; Debugging
 (with-eval-after-load 'dap-mode
@@ -46,12 +47,19 @@
 
 ;; LSP testing
 (setq
- lsp-enable-symbol-highlighting nil
+ ;;lsp-enable-symbol-highlighting nil
  lsp-ui-doc-show-with-mouse nil
+ lsp-ui-doc-include-signature t
+ lsp-ui-doc-enable t
+ lsp-ui-doc-delay 0.2
+ lsp-signature-function #'lsp-signature-posframe
+ ;; lsp-signature-doc-lines nil
+ lsp-headerline-breadcrumb-enable t
  lsp-lens-enable nil
- lsp-modeline-code-actions-enable nil
- lsp-modeline-diagnostics-enable nil
- lsp-modeline-workspace-status-enable nil
+ lsp-modeline-code-actions-enable t
+ lsp-modeline-diagnostics-enable t
+ lsp-modeline-workspace-status-enable t
+ lsp-signature-auto-activate '(:on-trigger-char :on-server-request :after-completion)
  )
 (setq lsp-auto-execute-action nil)
 (setq lsp-idle-delay 0.3)

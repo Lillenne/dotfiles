@@ -12,6 +12,9 @@
 (map! :m "<C-S-left>" #'shrink-window-horizontally)
 (map! :m "<C-S-right>" #'enlarge-window-horizontally)
 
+(map! :leader "j u" #'sp-up-sexp)
+(map! :leader "j d" #'sp-down-sexp)
+
 (map! :leader "f o" #'consult-recent-file)
 ;;(map! "C-/" #'comment-dwim) ; replaced by evil-nerd-commenter
 (map! :leader "f O" #'find-file-other-window)
