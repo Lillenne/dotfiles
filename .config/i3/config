@@ -280,6 +280,7 @@ set $ws10 "10"
 assign [class="alacritty"] $ws1
 assign [class="(?i)nyxt"] $ws3
 assign [class="Thunar"] $ws7
+assign [class="Emacs"] $ws4
 #assign [class="thunderbird"] $ws4
 #assign [class="TelegramDesktop"] $ws5
 
@@ -287,6 +288,7 @@ assign [class="Thunar"] $ws7
 for_window [class=alacritty] focus
 for_window [class=(?i)nyxt] focus
 for_window [class=Thunar] focus
+for_window [class=Emacs] focus
 #for_window [class=Thunderbird] focus
 #for_window [class=TelegramDesktop] focus
 
