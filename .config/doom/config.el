@@ -12,6 +12,7 @@
 
 (defvar ak/use-mu4e nil)
 (when ak/use-mu4e (load! "mu4e.el"))
+(load! "calendar.el")
 (defvar ak/use-lsp-mode t)
 (when ak/use-lsp-mode (load! "debug.el")(load! "company.el"))
 
