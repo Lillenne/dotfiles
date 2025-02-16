@@ -48,14 +48,14 @@ workspace_layout default
 ##############################
 
 #border indicator on windows:
-new_window pixel 1
+new_window pixel 2
 
 # thin borders
 # hide_edge_borders both
 
 # Set inner/outer gaps
-gaps inner 1
-gaps outer 1
+gaps inner 3
+gaps outer 3
 
 # show window title bars (not officially supported with i3gaps)
 #default_border normal
@@ -240,7 +240,7 @@ bindsym XF86AudioPrev exec --no-startup-id playerctl previous
 bindsym $mod+p exec --no-startup-id /usr/local/bin/switch-audio-port
 
 ## App shortcuts
-bindsym $mod+w exec --no-startup-id /usr/bin/nyxt
+bindsym $mod+w exec --no-startup-id /usr/bin/qutebrowser
 bindsym $mod+e exec --no-startup-id /usr/bin/thunar
 bindsym Print exec --no-startup-id scrot ~/%Y-%m-%d-%T-screenshot.png && notify-send "Screenshot saved to ~/$(date +"%Y-%m-%d-%T")-screenshot.png"
 
@@ -278,7 +278,7 @@ set $ws10 "10"
 
 # bind program to workspace and focus to them on startup:
 assign [class="alacritty"] $ws1
-assign [class="(?i)nyxt"] $ws3
+assign [class="(?i)qutebrowser"] $ws3
 assign [class="Thunar"] $ws7
 assign [class="Emacs"] $ws4
 #assign [class="thunderbird"] $ws4
@@ -286,7 +286,7 @@ assign [class="Emacs"] $ws4
 
 # automatic set focus new window if it opens on another workspace than the current:
 for_window [class=alacritty] focus
-for_window [class=(?i)nyxt] focus
+for_window [class=(?i)qutebrowser] focus
 for_window [class=Thunar] focus
 for_window [class=Emacs] focus
 #for_window [class=Thunderbird] focus
@@ -388,8 +388,9 @@ exec_always --no-startup-id autotiling
 
 # Autostart apps as you like
 exec --no-startup-id alacritty
+exec --no-startup-id emacsclient -c
 #exec --no-startup-id sleep 7 && firefox https://github.com/endeavouros-team/endeavouros-i3wm-setup/blob/main/force-knowledge.md
-exec --no-startup-id nyxt
+exec --no-startup-id qutebrowser
 exec --no-startup-id thunar
 
 ###############
