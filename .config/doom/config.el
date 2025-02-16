@@ -24,6 +24,35 @@
 (setq org-roam-directory "~/org/")
 (org-roam-db-autosync-mode)
 (setq find-file-visit-truename t)
+(defun my/org-roam-copy-todo-to-today ()
+  (interactive)
+  (let ((org-refile-keep t) ;; Set this to nil to delete the original!
+        (org-roam-dailies-capture-templates
+         '(("t" "tasks" entry "%?"
+            :if-new (file+head+olp "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n" ("Tasks")))))
+        (org-after-refile-insert-hook #'save-buffer)
+        today-file
+        pos)
+    (save-window-excursion
+      (org-roam-dailies--capture (current-time) t)
+      (setq today-file (buffer-file-name))
+      (setq pos (point)))
+
+    ;; Only refile if the target file is different than the current file
+    (unless (equal (file-truename today-file)
+                   (file-truename (buffer-file-name)))
+      (org-refile nil nil (list "Tasks" today-file nil pos)))))
+
+(add-to-list 'org-after-todo-state-change-hook
+             (lambda ()
+               (when (or (equal org-state "[X]") (equal org-state "DONE"))
+                 (my/org-roam-copy-todo-to-today))))
+
+;; replace the todo template
+;; complete w/ rest of templates
+(setq org-capture-templates (cons
+                             '("t" "Personal todo" entry (file+headline +org-capture-todo-file "Inbox") "* TODO %?\n%i\n%a" :prepend t)
+                             (cdr org-capture-templates)))
 
 ;;start fullscreen
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
@@ -67,7 +96,7 @@
    (python . t)
    (csharp . t)
    ;;(mermaid . t)
-))
+   ))
 ;;(setq ob-mermaid-cli-path "/usr/local/bin/mmdc")
 
 (setq org-startup-with-inline-images t) ;set images in org mode inline
@@ -76,18 +105,18 @@
 (defvar my-use-mu4e)
 (setq my-use-mu4e nil)
 (when my-use-mu4e
-        ;;(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e/")
-        (set-email-account! "austin"
-                        '((mu4e-sent-folder       . "/[Gmail]/Sent Mail")
+  ;;(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e/")
+  (set-email-account! "austin"
+                      '((mu4e-sent-folder       . "/[Gmail]/Sent Mail")
                         (mu4e-drafts-folder     . "/[Gmail]/Drafts")
                         (mu4e-trash-folder      . "/[Gmail]/Trash")
                         (mu4e-refile-folder     . "/[Gmail]/All Mail")
                         (smtpmail-smtp-user     . "austinkearns47@gmail.com")
                         (user-full-name . "Austin Kearns")
                         (mu4e-compose-signature . "---\nAustin Kearns"))
-                        t)
-        (require 'smtpmail)
-        (setq message-send-mail-function 'smtpmail-send-it
+                      t)
+  (require 'smtpmail)
+  (setq message-send-mail-function 'smtpmail-send-it
         starttls-use-gnutls t
         ;; smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
         ;; smtpmail-auth-credentials
@@ -95,27 +124,27 @@
         ;;smtpmail-default-smtp-server "smtp.gmail.com"
         smtpmail-smtp-server "smtp.gmail.com"
         smtpmail-smtp-service 587)
-        (setq smtpmail-servers-requiring-authorization ".*")
-        (setq mu4e-compose-format-flowed t)
-        (setq mu4e-sent-messages-behavior 'delete)
-        (setq +mu4e-gmail-accounts '(("austinkearns47@gmail.com" . "/")))
-        ;;don't need to run cleanup after indexing for gmail
-        (setq mu4e-index-cleanup nil
+  (setq smtpmail-servers-requiring-authorization ".*")
+  (setq mu4e-compose-format-flowed t)
+  (setq mu4e-sent-messages-behavior 'delete)
+  (setq +mu4e-gmail-accounts '(("austinkearns47@gmail.com" . "/")))
+  ;;don't need to run cleanup after indexing for gmail
+  (setq mu4e-index-cleanup nil
         ;; because gmail uses labels as folders we can use lazy check since
         ;; messages don't really "move"
         mu4e-index-lazy-check t)
-        (setq mu4e-maildir-shortcuts
+  (setq mu4e-maildir-shortcuts
         '(("/Inbox"             . ?i)
-        ("/[Gmail]/Sent Mail" . ?s)
-        ("/[Gmail]/Trash"     . ?t)
-        ("/[Gmail]/Drafts"    . ?d)
-        ("/[Gmail]/All Mail"  . ?a)))
+          ("/[Gmail]/Sent Mail" . ?s)
+          ("/[Gmail]/Trash"     . ?t)
+          ("/[Gmail]/Drafts"    . ?d)
+          ("/[Gmail]/All Mail"  . ?a)))
 
-        (setq mu4e-change-filenames-when-moving t)
-        (setq mu4e-update-interval (* 3 60))
-        (setq mu4e-get-mail-command "mbsync -a")
-        (mu4e t)
-       )
+  (setq mu4e-change-filenames-when-moving t)
+  (setq mu4e-update-interval (* 3 60))
+  (setq mu4e-get-mail-command "mbsync -a")
+  (mu4e t)
+  )
 
 (company-quickhelp-mode)
 ;;(setq company-frontends '(company-pseudo-tooltip-frontend company-preview-frontend))
@@ -184,12 +213,12 @@
 (evil-owl-mode)
 
 (use-package evil-snipe
-        :config
-        (evil-snipe-mode +1)
-        (evil-snipe-override-mode +1)
-        (setq evil-snipe-scope 'buffer)
-        (setq evil-snipe-auto-scroll t)
-        (setq evil-snipe-use-vim-sneak-bindings t))
+  :config
+  (evil-snipe-mode +1)
+  (evil-snipe-override-mode +1)
+  (setq evil-snipe-scope 'buffer)
+  (setq evil-snipe-auto-scroll t)
+  (setq evil-snipe-use-vim-sneak-bindings t))
 
 (use-package evil-quickscope
   :config (global-evil-quickscope-always-mode 1))
