@@ -6,3 +6,6 @@
 !.config/qutebrowser/config.py
 !.config/qutebrowser/theme.py
 !.config/qutebrowser/quickmarks
+.gitsecret/keys/random_seed
+!*.secret
+.dotvars

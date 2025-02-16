@@ -5,6 +5,8 @@
 (setq org-timeblock-inbox-file "~/org/todos.org")
 (setq +org-capture-todo-file "~/org/todos.org")
 (org-roam-db-autosync-mode)
+;; (set-company-backend! 'org-mode 'company-yasnippet 'company-files 'company-dabbrev)
+(set-company-backend! 'org-mode '(:separate company-yasnippet company-files company-dabbrev company-ispell) 'company-capf)
 
 ;; (add-hook 'org-agenda-mode-hook #'olivetti-mode)
 

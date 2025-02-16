@@ -1,63 +1,42 @@
 #+title: Conf
 #+PROPERTY: header-args :tangle setup.sh
 
-* Environmental Variables
-Required:
-- NAME
-- EMAIL_ADDRESS
-- SMB_USERNAME
-- SMB_PASSWORD
-
+* Setup yay AUR helper & base / git
 #+begin_src bash
-if [ -n "${NAME+''}" ]; then return 1; fi
-if [ -n "${EMAIL_ADDRESS+''}" ]; then return 1; fi
-if [ -n "${SMB_USERNAME+''}" ]; then return 1; fi
-if [ -n "${SMB_PASSWORD+''}" ]; then return 1; fi
+sudo pacman -Syu
+sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd ..
+yay --editmenu --save
+yay -S git-secret -y
 #+end_src
-* Setup Arch
+* Setup Arch makeflags
+Speeds things up on multiprocessor systems
 #+BEGIN_SRC bash
 echo MAKEFLAGS="-j$(nproc)" >> /etc/makepkg.conf
 echo MAKEFLAGS="-j$(nproc)" | sudo tee -a /etc/environment
 #+END_SRC
-* Setup yay AUR helper & base / git
+* Install functions & WSL accommodations
 #+begin_src bash
-sudo pacman -Syu
-
 if [ -f "/etc/wsl.conf" ]; then
     IS_WSL=1
 else
     IS_WSL=0
 fi
 
-sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd ..
-yay --editmenu --save
-
 install() {
     yay -Sy --needed $*
-    echo "Installed $($*)\n" >> ~/install.log
+    echo "Installed $($*)" >> ~/install.log
 }
 
 install_native() {
     if [ $IS_WSL -eq 1 ]; then
-       echo "ERR: On WSL. Did not install $($*)\n" >> ~/install.log
-       return 1;
+       echo "ERR: On WSL. Did not install $($*)" >> ~/install.log
+       return 0;
     fi
 
     install $*
     return 0
 }
-#+end_src
-* Set locale
-#+begin_src bash
-localectl set-locale LANG=en_US.UTF-8
-unset LANG
-source /etc/profile.d/locale.sh
-#+end_src
-* Setup WSL
-setup wsl, if needed
-Commands to run on windows:
-wsl --set-default Arch
-#+begin_src bash
+
 if [ $IS_WSL -eq 1 ]; then
     cat <<EOF >> /etc/wsl.conf
 
@@ -70,6 +49,14 @@ if [ $IS_WSL -eq 1 ]; then
 fi
 #+end_src
 
+if WSL, need to run:
+wsl --set-default Arch
+* Set locale
+#+begin_src bash
+localectl set-locale LANG=en_US.UTF-8
+unset LANG
+source /etc/profile.d/locale.sh
+#+end_src
 * Programming languages
 ** Rust
 #+begin_src bash
@@ -78,9 +65,9 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ** dotnet
 #+begin_src bash
 install dotnet-sdk
+dotnet tool install --global csharp-ls
 #+end_src
 dotnet tool install --global dotnet-ef
-dotnet tool install --global csharp-ls
 ** Python
 #+begin_src bash
 install micromamba-bin
@@ -105,16 +92,10 @@ sudo ldconfig
 cd ..
 #+end_src
 ** CLI
+#+begin_src bash
 cargo install tree-sitter-cli
-** Module
-sudo dnf install gnutls-devel jansson-devel -y
-git clone https://github.com/casouri/tree-sitter-module.git
-./tree-sitter-module/batch.sh
+#+end_src
 * Neovim
-# setup tpm <C-SPC>I #in tmux
-# yay -S chafa ueberzugpp viu -y
-# yay -S catimg ueberzugpp jp2a chafa viu
-
 #+begin_src bash
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 install ripgrep findutils lazygit npm neovim yarn fd luarocks bottom
@@ -129,16 +110,58 @@ curl -L https://github.com/dundee/gdu/releases/latest/download/gdu_linux_amd64.t
 chmod +x gdu_linux_amd64
 sudo mv gdu_linux_amd64 /usr/local/bin/gdu
 #+end_src
+* Clone dotfiles
+#+begin_src bash
+
+echo ".dotfiles" >> .gitignore
+git clone --bare https://github.com/Lillenne/dotfiles.git $HOME/.dotfiles
+alias cfg='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+cfg reset --hard
+
+echo "source ~/.bash_additions" >> ~/.bashrc
+source ~/.bashrc
+#+end_src
+* Environmental Variables
+Required to be in ~/.dotvars:
+- NAME
+- EMAIL_ADDRESS
+- SMB_USERNAME
+- SMB_PASSWORD
+- SMB_SHARE_LOCATION
+- NFS_SHARE_LOCATION
+- WORK_CALENDAR
+- PERSONAL_CALENDAR
+
+TODO check for secret file and unencrypt
+#+begin_src bash
+if [ -f "~/.dotvars.secret" ]; then return 1; fi
+cfg secret reveal
+set -o allexport
+source ~/.dotvars
+set +o allexport
+
+cat <<EOF> ~/.gitconfig
+[user]
+	name = $NAME
+	email = $EMAIL_ADDRESS
+[credential]
+	helper = store
+[pull]
+	rebase = true
+EOF
+#+end_src
 * Emacs
 ** Build emacs
+Note, must modify the PACKAGEBUILD to be AOT & include xwidgets
 Set lsp mode to use plists for optimal perf
+Disable webkit dmabuf renderer for now due to bug which breaks xwidgets
 #+begin_src bash
 echo "LSP_USE_PLISTS=true" | sudo tee -a /etc/environment > /dev/null
 export LSP_USE_PLISTS=true
 echo "WEBKIT_DISABLE_DMABUF_RENDERER=1" | sudo tee -a /etc/environment
 export "WEBKIT_DISABLE_DMABUF_RENDERER=1"
 install libxpm libjpeg libpng libtiff giflib librsvg libxml2 gnutls gtk3 webkit2gtk imagemagick pandoc-bin cmake
-yay -S emacs-git mu
+install emacs-git
 mkdir ~/org
 #+end_src
 
@@ -150,49 +173,25 @@ cd emacs
 make -j$(nproc)
 sudo make install
 ** Doom
+Clone and init doom emacs, but don't build yet since we will change the config files
 #+begin_src bash
 git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs
 ~/.config/emacs/bin/doom install
+cfg reset --hard
+doom sync
+doom gc
 #+end_src
 ** Mail
 #+begin_src bash
-if [ -n "${EMAIL_ADDRESS+''}" ]; then
-        install isync
-        #mbsync --all
-        mu init --maildir ~/.mail --my-address $EMAIL_ADDRESS
-fi
+install isync mu
+mu init --maildir ~/.pmail --my-address $EMAIL_ADDRESS
+mu index
 #+end_src
 ** Autostart
 #+begin_src bash
 systemctl enable --user --now emacs
 install sed
-sudo sed -i s/EDITOR=.*/EDITOR=\"emacsclient\ -c\"/g /etc/environment
-#+end_src
-* Clone dotfiles
-#+begin_src bash
-cat <<EOF> ~/.gitconfig
-[user]
-	email = $EMAIL_ADDRESS
-	name = $NAME
-[credential]
-	helper = store
-[pull]
-	rebase = true
-EOF
-
-echo ".dotfiles" >> .gitignore
-git clone --bare https://github.com/Lillenne/dotfiles.git $HOME/.dotfiles
-alias cfg='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
-cfg reset --hard
-#+end_src
-* Sync .bashrc
-#+begin_src bash
-echo "source ~/.bash_additions" >> ~/.bashrc
-source ~/.bashrc
-#+end_src
-* Sync doom emacs
-#+begin_src bash
-doom sync
+sudo sed -i s/EDITOR=.*/EDITOR=\"emacsclient\"/g /etc/environment
 #+end_src
 * OpenCV
 yay -S opencv-cuda
@@ -201,7 +200,7 @@ yay -S opencv-cuda
 install podman podman-docker podman-compose
 #+end_src
 * Ollama
-#+begin_src bash
+Pull and expose ollama
 curl https://ollama.ai/install.sh | sh
 if [ $IS_WSL -eq 0]; then
     sudo firewall-cmd --zone=home --add-port=11434/tcp
@@ -210,8 +209,8 @@ if [ $IS_WSL -eq 0]; then
     install nvidia-container-toolkit
     docker run -d --network=host --gpus all -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:cuda
 fi
-#+end_src
 * Local shares
+Reminder, needs the .smbcredentials file to be copied over
 #+begin_src bash
 install cifs-utils nfs-utils
 sudo mkdir /mnt
@@ -221,8 +220,8 @@ sudo chown nobody:nobody /mnt/nfs
 sudo chown nobody:nobody /mnt/smb -R
 sudo chmod 777 /mnt/nfs -R
 sudo chmod 777 /mnt/smb -R
-echo "nas.pixalyzer.com:/mnt/wd/nfs /mnt/nfs nfs defaults 0 0" | sudo tee -a /etc/fstab > /dev/null
-echo "//nas.pixalyzer.com/smb /mnt/smb cifs _netdev,nofail,credentials=/root/.smbcredentials 0 0" | sudo tee -a /etc/fstab > /dev/null
+echo "$(NFS_SHARE_LOCATION):/mnt/wd/nfs /mnt/nfs nfs defaults 0 0" | sudo tee -a /etc/fstab > /dev/null
+echo "//$(SMB_SHARE_LOCATION)/smb /mnt/smb cifs _netdev,nofail,credentials=/root/.smbcredentials 0 0" | sudo tee -a /etc/fstab > /dev/null
 sudo systemctl daemon-reload
 mount /mnt/nfs
 mount /mnt/smb
@@ -232,11 +231,25 @@ czkawka
 darktable
 vial
 * Syncthing
-  sudo firewall-cmd --permanent --add-port=22000/tcp
-  sudo firewall-cmd --permanent --add-port=22000/udp
-  sudo firewall-cmd --permanent --add-port=21027/udp
-  sudo firewall-cmd --reload
+#+begin_src bash
+  sudo firewall-cmd --zone=home --add-port=22000/tcp
+  sudo firewall-cmd --zone=home --add-port=22000/udp
+  sudo firewall-cmd --zone=home --add-port=21027/udp
+  sudo firewall-cmd --runtime-to-permanent
   install syncthing
   systemctl enable --now syncthing@${user}.service
-
+#+end_src
   on android, need to go syncthing app -> web gui -> send & receive & advances -> ignore permissions
+* What I need to do manually
+- Copy .smbcredentials file to /root/.smbcredentials
+- Decrypt the .dotvars file prior to running the script
+- Add permission on folders on android syncthing app
+- Manually run mbsync -a
+** Git secret
+- When init cfg repo
+  [[https://sobolevn.me/git-secret/][how to use git secret]]
+  cfg secret init
+  cfg secret tell -m
+  cfg secret add
+  cfg secret hide
+  cfg add .gitsecret
