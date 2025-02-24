@@ -9,6 +9,7 @@
                         org-directory)))
 
 (defvar +org-capture-meetings-file (ak/from-org-dir "meetings"))
+(defvar +org-capture-memories-file (ak/from-org-dir "memories"))
 
 (defun ak/find-calendar ()
   (interactive)
@@ -24,7 +25,7 @@
 
 (defun ak/find-memories ()
   (interactive)
-  (find-file (ak/from-org-dir "memories")))
+  (find-file +org-capture-memories-file))
 
 (defun ak/find-meetings ()
   (interactive)
@@ -83,6 +84,7 @@
                                 "c" #'ak/find-calendar
                                 "w" #'ak/find-calendar-work
                                 "f" #'ak/find-calendar-family)))
+
 ;; Org basics
 (setq org-directory "~/org/"
       org-startup-folded 'show2levels
@@ -165,7 +167,6 @@
                  ;; (:grouptags)
                  ("althea" . ?A)
                  ("tophi" . ?T)
-                 ("nori" . ?N)
                  ("henrik" . ?H)
                  ("soren" . ?S)
                  ("pat" . ?P)
@@ -174,7 +175,7 @@
                  ("ma" . ?M)
                  ("kenny" . ?K)
                  (:endgrouptag . nil))
- org-startup-with-inline-images t
+ org-startup-with-inline-images nil
  org-log-done 'time
  org-log-into-drawer t
  org-log-redeadline t

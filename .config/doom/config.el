@@ -2,7 +2,7 @@
 
 ;;TODO check out grip mode +grip flag for md mode https://github.com/seagle0128/grip-mode
                                         ;(remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-shortmenu)
-
+(remove-hook 'doom-first-buffer-hook #'global-flycheck-mode)
 (setenv "LSP_USE_PLISTS" "true") ; remember to add this to /etc/environment or .config/emacs/early-init.el
 (defvar my/config-loaded-frame-delay 3.5)
 (defvar my/config-loaded-hook nil "Hook run at `my/config-loaded-frame-delay' seconds after a frame has been loaded.
@@ -108,9 +108,10 @@ The hook may be delayed because some functions (e.g., gpg decryption) may need u
       (setq my/config-loaded t)
       (load-env-vars (expand-file-name "~/.dotvars.gpg")))))
 (add-hook 'my/config-loaded-hook #'my/load-config -1)
-(defun my/after-frame (_)
-  (run-at-time my/config-loaded-frame-delay nil (defun my/config-loaded-hook-run-fn () (run-hooks 'my/config-loaded-hook))))
-(add-to-list 'after-make-frame-functions #'my/after-frame)
+;; (defun my/after-frame (_)
+;;   (run-at-time my/config-loaded-frame-delay nil (defun my/config-loaded-hook-run-fn () (run-hooks 'my/config-loaded-hook))))
+;; (add-to-list 'after-make-frame-functions #'my/after-frame)
+(add-hook 'doom-first-buffer-hook (defun my/config-loaded-hook-run-fn () (run-hooks 'my/config-loaded-hook)))
 
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an

@@ -77,7 +77,7 @@
 ;;   (package! markdown-mode)
 ;;   (package! yasnippet))
 
-(package! elpy)
+;; (package! elpy)
 ;; (package! todoist :recipe (:host github :repo "abrochard/emacs-todoist" :files ("todoist.el")))
 ;; (unpin! (:editor snippets))
 ;; (unpin! (:completion corfu))
@@ -86,7 +86,7 @@
 ;; (package! company-quickhelp)
 (package! docstr)
 
-(unpin! org-roam)
+;; (unpin! org-roam)
 (package! org-roam-ui)
 (package! org-roam-timestamps)
 
@@ -115,3 +115,6 @@
 ;; transient package issue: https://github.com/doomemacs/doomemacs/issues/8194
 ;; (package! transient :pin "00fabc76")
 ;; (package! magit :pin "7adad8c8")
+
+;; (unpin! consult)
+;; (unpin! flycheck)
