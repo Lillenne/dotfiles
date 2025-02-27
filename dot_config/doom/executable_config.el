@@ -4,7 +4,9 @@
                                         ;(remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-shortmenu)
 ;; (remove-hook 'doom-first-buffer-hook #'global-flycheck-mode)
 (setenv "LSP_USE_PLISTS" "true") ; remember to add this to /etc/environment or .config/emacs/early-init.el
-(defvar my/config-loaded-frame-delay 3.5)
+(require 's)
+(defvar my/is-main-pc (string= (s-trim (shell-command-to-string "hostname")) "dark"))
+(defvar my/config-loaded-frame-delay 0.5)
 (defvar my/config-loaded-hook nil "Hook run at `my/config-loaded-frame-delay' seconds after a frame has been loaded.
 The hook may be delayed because some functions (e.g., gpg decryption) may need user input via emacs.")
 (add-hook 'my/config-loaded-hook
@@ -33,6 +35,7 @@ The hook may be delayed because some functions (e.g., gpg decryption) may need u
 (load! "git.el")
 (load! "timeblock.el")
 (load! "mu4e.el")
+(when my/is-main-pc (load! "mu4e.el"))
 ;; (load! "calendar.el")
 ;; (load! "ellama.el")
 (load! "debug.el")
@@ -57,10 +60,12 @@ The hook may be delayed because some functions (e.g., gpg decryption) may need u
   ;; (map! :leader "SPC" #'(lambda () (interactive) (projectile-find-file t))) ;; Having projectile cache issues
   )
 
-(defun ak/copy-full-path-dired () (interactive)
-       (kill-new (expand-file-name (dired-copy-filename-as-kill))))
-(defun ak/copy-full-path () (interactive)
-       (kill-new (expand-file-name (buffer-file-name))))
+(defun ak/copy-full-path-dired ()
+  (interactive)
+  (kill-new (expand-file-name (dired-copy-filename-as-kill))))
+(defun ak/copy-full-path ()
+  (interactive)
+  (kill-new (buffer-file-name (window-buffer (minibuffer-selected-window)))))
 
 (defun name-of-the-file ()
   "Gets the name of the file the current buffer is based on."
@@ -112,8 +117,9 @@ The hook may be delayed because some functions (e.g., gpg decryption) may need u
   (message "Running hooks...")
   (run-hooks 'my/config-loaded-hook)
   (message "Hooks complete."))
-(add-hook 'doom-first-buffer-hook
-          (defun my/config-loaded-hook-run-fn-delay () (run-at-time 0.5 nil #'my/config-loaded-hook-run-fn)))
+(defun my/config-loaded-hook-run-fn-delay ()
+  (run-at-time my/config-loaded-frame-delay nil #'my/config-loaded-hook-run-fn))
+(add-hook 'doom-first-buffer-hook #'my/config-loaded-hook-run-fn-delay)
 (map! :desc "Config loaded hooks" :leader "h r m" #'my/config-loaded-hook-run-fn)
 
 

@@ -18,7 +18,7 @@
 
 (defun my/todoist-load-config ()
   (setq org-todoist-api-token (getenv "TODOIST_TOKEN"))
-  (when (string= (s-trim (shell-command-to-string "hostname")) "dark")
+  (when my/is-main-pc
     (defvar ak/todoist-timer (run-at-time 30 900 #'org-todoist-background-sync))))
 (add-hook 'my/config-loaded-hook #'my/todoist-load-config)
 

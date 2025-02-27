@@ -1,7 +1,6 @@
 sudo pacman -Syu
 sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd ..
 yay --editmenu --save
-yay -S git-secret -y
 
 echo MAKEFLAGS="-j$(nproc)" >> /etc/makepkg.conf
 echo MAKEFLAGS="-j$(nproc)" | sudo tee -a /etc/environment
@@ -56,7 +55,10 @@ mamba init
 # micromamba activate ml
 # micromamba install numpy pandas matplotlib jupyterlab pyright debugpy
 
-install ttf-jetbrains-mono ttf-jetbrains-mono-nerd alacritty
+install ttf-jetbrains-mono ttf-jetbrains-mono-nerd
+install_native alacritty
+mkdir -p ~/.config/alacritty/themes
+git clone https://github.com/alacritty/alacritty-theme ~/.config/alacritty/themes
 
 install tree-sitter
 # git clone https://github.com/tree-sitter/tree-sitter.git
@@ -66,7 +68,7 @@ install tree-sitter
 # sudo ldconfig
 # cd ..
 
-cargo install tree-sitter-cli
+install tree-sitter-cli
 
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 install ripgrep findutils lazygit npm neovim yarn fd luarocks bottom gdu luajit-tiktoken-bin prettier
@@ -83,15 +85,6 @@ luarocks config variables.LUA_INCDIR /usr/include/luajit-2.1
 # sudo mv gdu_linux_amd64 /usr/local/bin/gdu
 echo EDITOR=nvim | sudo tee -a /etc/environment
 
-echo ".dotfiles" >> .gitignore
-git clone --bare https://github.com/Lillenne/dotfiles.git $HOME/.dotfiles
-alias cfg='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
-cfg reset --hard
-
-echo "source ~/.bash_additions" >> ~/.bashrc
-source ~/.bashrc
-git config --global init.defaultBranch main
-
 echo "LSP_USE_PLISTS=true" | sudo tee -a /etc/environment > /dev/null
 export LSP_USE_PLISTS=true
 echo "WEBKIT_DISABLE_DMABUF_RENDERER=1" | sudo tee -a /etc/environment
@@ -104,7 +97,7 @@ git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs
 cfg reset --hard
 doom sync --gc -j $(nproc)
 
-install isync mu
+# install isync mu
 # mu init --maildir ~/mail --my-address $EMAIL_ADDRESS
 # mu index
 
@@ -114,7 +107,7 @@ sudo sed -i s/EDITOR=.*/EDITOR=\"emacsclient\"/g /etc/environment
 
 install podman podman-docker podman-compose
 
-install cifs-utils nfs-utils
+# install cifs-utils nfs-utils
 # sudo mkdir /mnt
 # sudo mkdir /mnt/nfs
 # sudo mkdir /mnt/smb
@@ -135,7 +128,7 @@ install cifs-utils nfs-utils
   install syncthing
   systemctl enable --now syncthing@${user}.service
 
-install redshift
+install_native redshift
 cat <<EOF > tee ~/.config/autostart/redshift.conf
 [redshift]
 location-provider=manual
@@ -144,6 +137,9 @@ lon=23
 lat=44
 EOF
 
+
+if [ $IS_WSL -eq 1 ]; then
 redshift -P -O 4500
+fi
 
 install direnv

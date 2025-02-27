@@ -67,7 +67,11 @@
 (require 'org-crypt)
 (org-crypt-use-before-save-magic)
 (setq org-crypt-key "0x7C9F982201FF5847!") ;; use symmetric encryption
-;; (setq org-crypt-key nil) ;; use symmetric encryption
+(setq org-tags-exclude-from-inheritance '("crypt"))
+;; disable autosave globally
+;; (setq auto-save-default nil)
+;; disable autosave locally
+;; # -*- buffer-auto-save-file-name: nil; -*-
 
 (defun my/org-archive-all-done-in-file (ARG)
   (interactive "P")
@@ -961,6 +965,31 @@ e.g. Friday, February  9, 2024 | 7:29 AM "
 
 (map! :leader "i C" 'ak/complete-time)
 
+(map! :map org-mode-map
+      :localleader
+      ">" #'org-insert-subheading
+      "<" #'org-insert-heading)
+
+(after! org-noter
+  (org-noter-enable-org-roam-integration)
+  (setq org-noter-arrow-delay 0.05
+        org-noter-separate-notes-from-heading nil
+        org-noter-arrow-background-color "black")
+  (map! :map org-noter-doc-mode-map
+        "M-S-i" #'org-noter-insert-note
+        "C-M-i" #'org-noter-insert-precise-note
+        "C-q" #'org-noter-kill-session)
+  (map! :map org-noter-notes-mode-map
+        "M-S-i" #'org-noter-insert-note
+        "C-M-i" #'org-noter-insert-precise-note
+        "C-q" #'org-noter-kill-session)
+  (defun my/org-noter-enter-insert-mode (&rest args) (evil-insert 0))
+  (require 'org-noter)
+  (advice-add 'org-noter-insert-note :after #'my/org-noter-enter-insert-mode)
+  ;; (advice-add :before #'org-noter-kill-session)
+  ;; (toggle-window-dedicated)
+  )
+(map! :map org-mode-map :localleader "N" #'org-noter)
 
 ;; https://emacs.stackexchange.com/questions/58875/how-do-i-add-appointments-to-effort-sum
 (with-eval-after-load 'org-colview
@@ -1150,6 +1179,13 @@ e.g. Friday, February  9, 2024 | 7:29 AM "
 ;;         (forward-line)))))
 ;; (add-hook 'org-agenda-finalize-hook 'my/org-agenda-insert-efforts)
 
-
 (require 'org-auto-tangle)
 (add-hook 'org-mode-hook 'org-auto-tangle-mode)
+
+(defun my/org-capture-kill-terminal ()
+  (remove-hook 'org-capture-after-finalize-hook #'my/org-capture-kill-terminal)
+  (save-buffers-kill-terminal t))
+
+(defun my/org-terminal-capture ()
+  (add-hook 'org-capture-after-finalize-hook #'my/org-capture-kill-terminal)
+  (org-capture))

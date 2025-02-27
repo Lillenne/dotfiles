@@ -1,5 +1,5 @@
 #+title: Dotfiles
-#+PROPERTY: header-args :tangle setup.sh
+#+PROPERTY: header-args :tangle run_once_setup.sh
 #+auto_tangle: t
 
 * Setup yay AUR helper & base / git
@@ -7,7 +7,6 @@
 sudo pacman -Syu
 sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd ..
 yay --editmenu --save
-yay -S git-secret -y
 #+end_src
 * Setup Arch makeflags
 Speeds things up on multiprocessor systems
@@ -89,7 +88,8 @@ mamba init
 #+end_src
 * Terminal and fonts
 #+begin_src bash
-install ttf-jetbrains-mono ttf-jetbrains-mono-nerd alacritty
+install ttf-jetbrains-mono ttf-jetbrains-mono-nerd
+install_native alacritty
 #+end_src
 * Tree sitter
 ** Core
@@ -104,7 +104,7 @@ install tree-sitter
 #+end_src
 ** CLI
 #+begin_src bash
-cargo install tree-sitter-cli
+install tree-sitter-cli
 #+end_src
 * Neovim
 #+begin_src bash
@@ -122,17 +122,6 @@ luarocks config variables.LUA_INCDIR /usr/include/luajit-2.1
 # chmod +x gdu_linux_amd64
 # sudo mv gdu_linux_amd64 /usr/local/bin/gdu
 echo EDITOR=nvim | sudo tee -a /etc/environment
-#+end_src
-* Clone dotfiles
-#+begin_src bash
-echo ".dotfiles" >> .gitignore
-git clone --bare https://github.com/Lillenne/dotfiles.git $HOME/.dotfiles
-alias cfg='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
-cfg reset --hard
-
-echo "source ~/.bash_additions" >> ~/.bashrc
-source ~/.bashrc
-git config --global init.defaultBranch main
 #+end_src
 * Emacs
 ** Build emacs
@@ -164,7 +153,7 @@ doom sync --gc -j $(nproc)
 #+end_src
 ** Mail
 #+begin_src bash
-install isync mu
+# install isync mu
 # mu init --maildir ~/mail --my-address $EMAIL_ADDRESS
 # mu index
 #+end_src
@@ -193,7 +182,7 @@ fi
 * Local shares
 Reminder, needs the .smbcredentials file to be copied over
 #+begin_src bash
-install cifs-utils nfs-utils
+# install cifs-utils nfs-utils
 # sudo mkdir /mnt
 # sudo mkdir /mnt/nfs
 # sudo mkdir /mnt/smb
@@ -233,7 +222,7 @@ install cifs-utils nfs-utils
 
 * [[https://wiki.archlinux.org/title/Redshift][Redshift]]
 #+begin_src shell
-install redshift
+install_native redshift
 cat <<EOF > tee ~/.config/autostart/redshift.conf
 [redshift]
 location-provider=manual
@@ -242,7 +231,10 @@ lon=23
 lat=44
 EOF
 
+
+if [ $IS_WSL -eq 1 ]; then
 redshift -P -O 4500
+fi
 #+end_src
 
 https://bbs.archlinux.org/viewtopic.php?id=177473
