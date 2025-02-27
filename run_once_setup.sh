@@ -1,6 +1,6 @@
 #!/bin/bash
 sudo pacman -Syu
-sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd ..
+sudo pacman -S --needed git base-devel git-lfs && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd ..
 yay --editmenu --save
 
 echo MAKEFLAGS="-j$(nproc)" | sudo tee -a /etc/environment /etc/makepkg.conf
@@ -37,7 +37,7 @@ source /etc/profile.d/locale.sh
 
 install rust
 
-install dotnet-sdk aspnet-runtime
+install dotnet-sdk dotnet-sdk-8.0 aspnet-runtime
 dotnet tool install --global csharp-ls
 dotnet tool install --global dotnet-ef
 echo "DOTNET_CLI_TELEMETRY_OPTOUT=true" | sudo tee -a /etc/environment > /dev/null
