@@ -22,6 +22,7 @@ echo MAKEFLAGS="-j$(nproc)" | sudo tee -a /etc/environment /etc/makepkg.conf
 #+END_SRC
 * Install functions & WSL accommodations
 #+begin_src bash
+# TODO chezmoi templating
 if [ -f "/etc/wsl.conf" ]; then
     IS_WSL=1
 else
@@ -203,19 +204,21 @@ Reminder, needs the .smbcredentials file to be copied over
 #+end_src
 * Syncthing
 #+begin_src bash
-  sudo firewall-cmd --zone=home --add-port=22000/tcp
-  sudo firewall-cmd --zone=home --add-port=22000/udp
-  sudo firewall-cmd --zone=home --add-port=21027/udp
-  sudo firewall-cmd --runtime-to-permanent
-  install syncthing
-  systemctl enable --now syncthing@${user}.service
+sudo firewall-cmd --zone=home --add-port=22000/tcp
+sudo firewall-cmd --zone=home --add-port=22000/udp
+sudo firewall-cmd --zone=home --add-port=21027/udp
+sudo firewall-cmd --runtime-to-permanent
+install syncthing
+systemctl enable --now syncthing@${user}.service
 #+end_src
-  on android, need to go syncthing app -> web gui -> send & receive & advances -> ignore permissions
+
+On android, need to go syncthing app -> web gui -> send & receive & advances -> ignore permissions
 * What I need to do manually
 - Copy .smbcredentials file to /root/.smbcredentials
 - Ensure env vars are set prior
 - Add permission on folders on android syncthing app
 - Manually configure mu4e if needed
+- Syncthing config
 ** Git secret
 - When init cfg repo
   [[https://sobolevn.me/git-secret/][how to use git secret]]

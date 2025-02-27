@@ -5,6 +5,7 @@ yay --editmenu --save
 
 echo MAKEFLAGS="-j$(nproc)" | sudo tee -a /etc/environment /etc/makepkg.conf
 
+# TODO chezmoi templating
 if [ -f "/etc/wsl.conf" ]; then
     IS_WSL=1
 else
@@ -118,12 +119,12 @@ install podman podman-docker podman-compose
 # mount /mnt/nfs
 # mount /mnt/smb
 
-  sudo firewall-cmd --zone=home --add-port=22000/tcp
-  sudo firewall-cmd --zone=home --add-port=22000/udp
-  sudo firewall-cmd --zone=home --add-port=21027/udp
-  sudo firewall-cmd --runtime-to-permanent
-  install syncthing
-  systemctl enable --now syncthing@${user}.service
+sudo firewall-cmd --zone=home --add-port=22000/tcp
+sudo firewall-cmd --zone=home --add-port=22000/udp
+sudo firewall-cmd --zone=home --add-port=21027/udp
+sudo firewall-cmd --runtime-to-permanent
+install syncthing
+systemctl enable --now syncthing@${user}.service
 
 install_native redshift
 cat <<EOF > tee ~/.config/autostart/redshift.conf
