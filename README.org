@@ -68,10 +68,12 @@ chmod +x ~/git/ediff.sh
 install rust
 #+end_src
 ** dotnet
+[[*Git setup][Also install git credential manager via dotnet tool.]] Both csharp-ls and git-credential-manager require the .NET8.0 sdk.
 #+begin_src bash
 install dotnet-sdk dotnet-sdk-8.0 aspnet-runtime
 dotnet tool install --global csharp-ls
 dotnet tool install --global dotnet-ef
+dotnet tool install --global git-credential-manager
 echo "DOTNET_CLI_TELEMETRY_OPTOUT=true" | sudo tee -a /etc/environment > /dev/null
 #+end_src
 ** Python

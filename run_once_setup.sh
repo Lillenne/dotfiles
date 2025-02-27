@@ -43,6 +43,7 @@ install rust
 install dotnet-sdk dotnet-sdk-8.0 aspnet-runtime
 dotnet tool install --global csharp-ls
 dotnet tool install --global dotnet-ef
+dotnet tool install --global git-credential-manager
 echo "DOTNET_CLI_TELEMETRY_OPTOUT=true" | sudo tee -a /etc/environment > /dev/null
 
 curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
