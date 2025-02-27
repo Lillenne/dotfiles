@@ -1,0 +1,3 @@
+[system-distro-env]
+;disable GPU in system-distro
+LIBGL_ALWAYS_SOFTWARE=1
