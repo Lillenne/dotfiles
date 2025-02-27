@@ -72,6 +72,8 @@
 ;; (setq auto-save-default nil)
 ;; disable autosave locally
 ;; # -*- buffer-auto-save-file-name: nil; -*-
+(require 'epa)
+(setq epa-key "0x7C9F982201FF5847!")
 
 (defun my/org-archive-all-done-in-file (ARG)
   (interactive "P")

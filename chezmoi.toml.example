@@ -10,3 +10,13 @@ helper = "/mnt/c/Users/<user>/scoop/apps/git-credential-manager/current/git-cred
 
 [data.github]
 user = ""
+
+[diff]
+command = "~/git/ediff.sh"
+# args = ["$LOCAL", "$REMOTE", "$MERGED", "$BASE"]
+args = ["{{ .Target }}", "{{ .Destination }}"]
+
+[merge]
+command = "~/git/ediff.sh"
+# args = ["$LOCAL", "$REMOTE", "$MERGED", "$BASE"]
+args = ["{{ .Target }}", "{{ .Destination }}"]

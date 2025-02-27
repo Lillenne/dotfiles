@@ -26,3 +26,13 @@
 ;;                                         (side . bottom)
 ;;                                         (dedicated . t)
 ;;                                         (inhibit-same-window . t)))
+
+(defun my/magit-chezmoi ()
+  (interactive)
+  (magit-status (expand-file-name "~/.local/share/chezmoi/")))
+(map! :desc "Dotfiles" :leader "g d" #'my/magit-chezmoi)
+
+(defun my/find-chezmoi-file (&optional file)
+  (interactive (list (read-file-name "File: " (expand-file-name "~/.local/share/chezmoi/"))))
+  (find-file file))
+(map! :desc "Chezmoi files" :leader "f p" #'my/find-chezmoi-file)

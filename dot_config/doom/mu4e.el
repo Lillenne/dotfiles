@@ -7,7 +7,6 @@
   (require 'org)
   (require 's)
   (setq +org-capture-emails-file "todo.org"
-        mu4e-split-view 'vertical
         mu4e-headers-visible-columns 120
         mu4e-get-mail-command "mbsync -a"
         mu4e-change-filenames-when-moving t   ; needed for mbsync
