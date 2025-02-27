@@ -10,3 +10,4 @@ AppData/Roaming/alacritty/alacritty.toml
 {{ end }}
 
 .config/nvim/lazy-lock.json
+setup.sh

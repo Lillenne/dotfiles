@@ -7,7 +7,6 @@
       (insert (shell-command-to-string (concat "figlet " (when my/figlet-font (concat "-f " my/figlet-font " ")) text)))
       (when current-prefix-arg
         (evilnc-comment-operator start (point))))))
-(map! "C-c i" #'my/ascii-art)
 
 (defun my/ascii-art-to-clipboard (text)
   (interactive "sInsert ascii art of: ")
@@ -23,3 +22,8 @@
 ;; slant, shadow, script, mini, digital, banner
 ;; c center
 ;; cklnoprstvxDELNRSWX
+
+
+(map! "C-c i i" #'my/ascii-art)
+(map! "C-c i c" #'my/ascii-art-to-clipboard)
+(map! "C-c i f" #'my/ascii-art-set-font)

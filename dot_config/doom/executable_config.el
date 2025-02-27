@@ -41,6 +41,7 @@ The hook may be delayed because some functions (e.g., gpg decryption) may need u
 (load! "debug.el")
 (load! "company.el")
 (load! "evil.el")
+(load! "art.el")
 
 ;; (after! org
 ;;   :config (setq khoj-server-url "https://khoj.pixalyzer.com"

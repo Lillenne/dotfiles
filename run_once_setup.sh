@@ -1,9 +1,9 @@
+#!/bin/bash
 sudo pacman -Syu
 sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd ..
 yay --editmenu --save
 
-echo MAKEFLAGS="-j$(nproc)" >> /etc/makepkg.conf
-echo MAKEFLAGS="-j$(nproc)" | sudo tee -a /etc/environment
+echo MAKEFLAGS="-j$(nproc)" | sudo tee -a /etc/environment /etc/makepkg.conf
 
 if [ -f "/etc/wsl.conf" ]; then
     IS_WSL=1
@@ -12,13 +12,13 @@ else
 fi
 
 install() {
-    yay -S --needed $*
-    echo "Installed $($*)" >> ~/install.log
+    yay -S --noconfirm --needed $*
+    echo "Installed $*" >> ~/install.log
 }
 
 install_native() {
     if [ $IS_WSL -eq 1 ]; then
-       echo "Did not install $($*)" >> ~/install.log
+       echo "Did not install $*" >> ~/install.log
        return 0;
     fi
 
@@ -57,8 +57,6 @@ mamba init
 
 install ttf-jetbrains-mono ttf-jetbrains-mono-nerd
 install_native alacritty
-mkdir -p ~/.config/alacritty/themes
-git clone https://github.com/alacritty/alacritty-theme ~/.config/alacritty/themes
 
 install tree-sitter
 # git clone https://github.com/tree-sitter/tree-sitter.git
@@ -89,12 +87,11 @@ echo "LSP_USE_PLISTS=true" | sudo tee -a /etc/environment > /dev/null
 export LSP_USE_PLISTS=true
 echo "WEBKIT_DISABLE_DMABUF_RENDERER=1" | sudo tee -a /etc/environment
 export "WEBKIT_DISABLE_DMABUF_RENDERER=1"
-install libxpm libjpeg libpng libtiff giflib librsvg libxml2 gnutls gtk3 webkit2gtk imagemagick pandoc-bin cmake texlive-core texlive-bin texlive-science gnuplot jupyter texlive-latexextra emacs
+install libxpm libjpeg libpng libtiff giflib librsvg libxml2 gnutls gtk3 webkit2gtk imagemagick pandoc-bin cmake texlive-core texlive-bin texlive-science gnuplot jupyter texlive-latexextra emacs figlet
 mkdir ~/org
 
 git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs
 ~/.config/emacs/bin/doom install
-cfg reset --hard
 doom sync --gc -j $(nproc)
 
 # install isync mu

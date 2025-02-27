@@ -1,0 +1,12 @@
+[data]
+name = ""
+
+[data.git]
+email = ""
+signingKey = ""
+
+[data.git.credential]
+helper = "/mnt/c/Users/<user>/scoop/apps/git-credential-manager/current/git-credential-manager.exe"
+
+[data.github]
+user = ""

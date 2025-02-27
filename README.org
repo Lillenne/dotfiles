@@ -1,29 +1,16 @@
 #+title: Dotfiles
-#+PROPERTY: header-args :tangle run_once_setup.sh
+#+PROPERTY: header-args :tangle ~/.local/share/chezmoi/run_once_setup.sh
 #+auto_tangle: t
 
 Dotfiles in this repo are managed with [[https://www.chezmoi.io/][chezmoi]].
 
-* Chezmoi Config
-
-#+begin_src toml :tangle no
-[data]
-name = ""
-
-[data.git]
-email = ""
-signingKey = ""
-
-[data.git.credential]
-helper = "/mnt/c/Users/<user>/scoop/apps/git-credential-manager/current/git-credential-manager.exe"
-
-[data.github]
-user = ""
+#+begin_src shell :tangle no
+curl -fsSL https://raw.githubusercontent.com/Lillenne/dotfiles/refs/heads/main/archinstall.sh | sh
 #+end_src
-note: helper path for Git Credential Manager installed with Scoop to WSL.
 
 * Setup yay AUR helper & base / git
 #+begin_src bash
+#!/bin/bash
 sudo pacman -Syu
 sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd ..
 yay --editmenu --save
@@ -31,8 +18,7 @@ yay --editmenu --save
 * Setup Arch makeflags
 Speeds things up on multiprocessor systems
 #+BEGIN_SRC bash
-echo MAKEFLAGS="-j$(nproc)" >> /etc/makepkg.conf
-echo MAKEFLAGS="-j$(nproc)" | sudo tee -a /etc/environment
+echo MAKEFLAGS="-j$(nproc)" | sudo tee -a /etc/environment /etc/makepkg.conf
 #+END_SRC
 * Install functions & WSL accommodations
 #+begin_src bash
@@ -43,13 +29,13 @@ else
 fi
 
 install() {
-    yay -S --needed $*
-    echo "Installed $($*)" >> ~/install.log
+    yay -S --noconfirm --needed $*
+    echo "Installed $*" >> ~/install.log
 }
 
 install_native() {
     if [ $IS_WSL -eq 1 ]; then
-       echo "Did not install $($*)" >> ~/install.log
+       echo "Did not install $*" >> ~/install.log
        return 0;
     fi
 
@@ -152,7 +138,7 @@ echo "LSP_USE_PLISTS=true" | sudo tee -a /etc/environment > /dev/null
 export LSP_USE_PLISTS=true
 echo "WEBKIT_DISABLE_DMABUF_RENDERER=1" | sudo tee -a /etc/environment
 export "WEBKIT_DISABLE_DMABUF_RENDERER=1"
-install libxpm libjpeg libpng libtiff giflib librsvg libxml2 gnutls gtk3 webkit2gtk imagemagick pandoc-bin cmake texlive-core texlive-bin texlive-science gnuplot jupyter texlive-latexextra emacs
+install libxpm libjpeg libpng libtiff giflib librsvg libxml2 gnutls gtk3 webkit2gtk imagemagick pandoc-bin cmake texlive-core texlive-bin texlive-science gnuplot jupyter texlive-latexextra emacs figlet
 mkdir ~/org
 #+end_src
 
@@ -168,7 +154,6 @@ sudo make install
 #+begin_src bash
 git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs
 ~/.config/emacs/bin/doom install
-cfg reset --hard
 doom sync --gc -j $(nproc)
 #+end_src
 ** Mail
