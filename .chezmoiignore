@@ -1,0 +1,12 @@
+{{ if ne .chezmoi.os "windows" }}
+AppData/Roaming/alacritty/alacritty.toml
+{{ end }}
+{{ if ne .chezmoi.os "linux" }}
+{{   if (.chezmoi.kernel.osrelease | lower | contains "microsoft") }}
+# WSL-specific code
+{{ else }}
+.config/rofi/
+{{   end }}
+{{ end }}
+
+.config/nvim/lazy-lock.json

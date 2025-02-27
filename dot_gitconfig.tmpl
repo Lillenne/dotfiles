@@ -1,0 +1,22 @@
+[user]
+	name = {{ .git.name }}
+	email = {{ .git.email }}
+	signingKey = 0x2D2D642D944040F4!
+[credential]
+	helper = {{ .git.credential.helper }}
+[pull]
+	rebase = true
+[init]
+	defaultBranch = main
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[rebase]
+	autosquash = true
+	autostash = true
+[github]
+	user = {{ .github.user }}
+[commit]
+	gpgSign = true

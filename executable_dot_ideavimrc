@@ -1,0 +1,300 @@
+" https://github.com/JetBrains/ideavim/blob/master/doc/IdeaVim%20Plugins.md
+" dont forget zz zt zb cursor view
+" how to view register contents
+" shft-entr open in split
+" install ideavim-easymotion, ideaim-quickscope(?), which-key, sneak
+" typing # highlights all occ of current word
+" can paragraph nav via {}
+
+let mapleader=" "
+set easymotion
+
+" plugins
+" cx-motion (e.g., cxiw) on one spot, move to exchange target, cx-motion to exchange
+Plug 'tommcdo/vim-exchange'
+Plug 'justinmk/vim-sneak'
+Plug 'machakann/vim-highlightedyank'
+" gcc comment line, gc comment next motion
+Plug 'tpope/vim-commentary'
+" visual -> reg -> gr, deletes into void reg
+Plug 'vim-scripts/ReplaceWithRegister'
+Plug 'dbakker/vim-paragraph-motion'
+Plug 'vim-scripts/argextobj.vim'
+Plug 'kana/vim-textobj-entire'
+let g:argtextobj_pairs="(:),{:},[:],<:>"
+
+" set
+set NERDTree
+" https://github.com/JetBrains/ideavim/wiki/NERDTree-support
+set ignorecase
+set smartcase
+set incsearch
+set ideamarks
+set surround
+set ideajoin
+set number relativenumber
+set history=1000
+set undolevels 1000
+set hlsearch
+set showmode
+set sneak
+set quickscope
+set which-key
+set notimeout
+set clipboard+=unnamed
+
+
+map <leader>hrr :source ~/.ideavimrc<CR>
+
+" build
+map <leader>BB <Action>(BuildSolutionAction)
+map <leader>Bb <Action>(BuildCurrentProject)
+map <leader>BR <Action>(RebuildSolutionAction)
+map <leader>Br <Action>(RebuildCurrentProject)
+map <leader>BC <Action>(CleanSolutionAction)
+map <leader>Bc <Action>(CleanCurrentProject)
+
+" next/prev
+ActivateProblemsViewToolWindow
+nmap ]e <Action>(GotoNextError)
+nmap [e <Action>(GotoPreviousError)
+nmap [d <Action>(PreviousDiff)
+nmap ]d <Action>(NextDiff)
+nmap [b <Action>(PreviousTab)
+nmap ]b <Action>(NextTab)
+nmap [t <Action>(PreviousEditorTab)
+nmap ]t <Action>(NextEditorTab)
+nmap [o <Action>(PreviousOccurence)
+nmap ]o <Action>(NextOccurence)
+nmap [m <Action>(MethodUp)
+nmap ]m <Action>(MethodDown)
+nmap [c <Action>(JumpToLastChange)
+nmap ]c <Action>(JumpToNextChange)
+" nmap [p <Action>(PrevParameter)
+" nmap ]p <Action>(NextParameter)
+
+" buffer nav
+" map <leader>bp <Action>(SwitcherBackward)
+" map <leader>bn <Action>(SwitcherForward)
+map <leader>bp <Action>(Back)
+map <leader>bn <Action>(Forward)
+map <leader>bN <Action>(NewScratchFile)
+map <leader>ba <Action>(NewFile)
+
+" buffers
+map <leader>bd <Action>(CloseEditor)
+map <leader>c <Action>(CloseEditor)
+map <leader>ca <Action>(CloseAllEditors)
+map <leader>bD <Action>(CloseAllEditors)
+map <leader>bo <Action>(CloseAllEditorsButActive)
+map <leader>Co <Action>(CloseAllEditorsButActive)
+map U <Action>(ReopenClosedTab)
+map <leader>q <Action>(CloseAllEditorsButActive)
+map <leader>Q <Action>(CloseAllEditors)
+"map <leader>bu <Action>(CloseAllUnmodifiedEditors)
+"map <C-s> <Action>(SaveDocument)
+
+" terminal
+map <leader>wh <Action>(Terminal.SplitHorizontally)
+map <leader>wv <Action>(Terminal.SplitVertically)
+map <leader>ot <Action>(ActivateTerminalToolWindow)
+
+" expand/collapse
+map <leader>za <Action>(CollapseAllRegions)
+map <leader>zA <Action>(ExpandAllRegions)
+map <leader>zc <Action>(CollapseDocComments)
+map <leader>zC <Action>(ExpandDocComments)
+map <leader>zz <Action>(CollapseRegion)
+map <leader>zZ <Action>(ExpandRegion)
+map <leader>zb <Action>(CollapseBlock)
+map <leader>zB <Action>(ExpandBlock)
+
+" code/rename
+map <leader>R <Action>(RenameElement)
+map <leader>br <Action>(RenameFile)
+"map <C-/> <Action>(CommentByLineComment)
+"map <leader><C-/> <Action>(CommentByBlockComment)
+map <leader>ii <Action>(Generate)
+map <leader>iv <Action>(IntroduceVariable)
+map <leader>ie <Action>(ExtractMethod)
+map <leader>io <Action>(OverrideMethods)
+map <leader>il <Action>(Inline)
+map <leader>ip <Action>(IntroduceParameter)
+map <leader>iP <Action>(IntroduceParameterObject)
+map <leader>is <Action>(ChangeSignature)
+map <leader>im <Action>(ImplementMethods)
+map <leader>dd <Action>(SafeDelete)
+map <leader>Z <Action>(ToggleZenMode)
+
+map <leader>hra <Action>(RoslynRebootAction)
+
+" jupyter
+map <leader>nq <Action>(JupyterShutdownNotebookAction)
+map <leader>nQ <Action>(JupyterStopServerAction)
+map <leader>nci <Action>(JupyterNotebookInterruptKernelCommandModeAction)
+map <leader>nrr <Action>(JupyterRestartKernelAction)
+map <leader>nrc <Action>(JupyterRestartKernelClearOutputsAction)
+map <leader>nra <Action>(JupyterRestartKernelRunAllAction)
+map <leader>ngg <Action>(NotebookRunAllAction)
+map <leader>nga <Action>(NotebookRunAllAboveAction)
+map <leader>ngb <Action>(NotebookRunAllBelowAction)
+map <leader>nn <Action>(NotebookRunCellSelectBelowAction)
+
+
+map <leader>ns <Action>(NotebookSplitCellAction)
+map <leader>nm <Action>(NotebookSplitCellAction)
+map <leader>nma <Action>(NotebookMergeCellAboveAction)
+map <leader>nmb <Action>(NotebookMergeCellBelowAction)
+
+map <leader>np <Action>(NotebookPasteCellAction)
+map <leader>ny <Action>(NotebookPasteCellAction)
+map <leader>nc <Action>(NotebookCopyCellAction)
+map <leader>nx <Action>(NotebookCutCellAction)
+
+map <leader>nct <Action>(JupyterChangeCellType)
+map <leader>ncc <Action>(NotebookConvertToCodeCellAction)
+map <leader>ncm <Action>(NotebookConvertToMarkdownCellAction)
+map <leader>noc <Action>(NotebookOutputCollapseSingleInCellAction)
+map <leader>noC <Action>(NotebookOutputCollapseAllAction)
+
+"hide windows
+map <leader>hh <Action>(HideAllWindows)
+map <leader>hs <Action>(HideSideWindows)
+map <leader>ha <Action>(HideActiveWindow)
+
+" git
+"map <leader>gd <Action>(ShowDiff)
+map <leader>gg <Action>(Git.Menu)
+map <leader>GG <Action>(ActivateVersionControlToolWindow)
+" map <leader>Ga <Action>(Git.Add)
+" map <leader>Gcc <Action>(Git.Commit.Stage)
+map <leader>gcb <Action>(Git.Checkout.Branch)
+map <leader>gs <Action>(Git.Show.Stash)
+map <leader>gT <Action>(Git.Tag)
+" map <leader>Gpr <Action>(GitHub.View.PullRequest)
+"map <leader>gP <Action>(Git.PushUpToCommit)
+"map <leader>gP <Action>(Git.Push)
+map <leader>gp <Action>(Git.Pull)
+map <leader>gf <Action>(Git.Fetch)
+map <leader>gb <Action>(Git.Branches)
+map <leader>gbl <Action>(Git.Branches.List)
+" map <leader>gir <Action>(Git.Interactive.Rebase)
+map <leader>gr <Action>(Git.Reset)
+map <leader>gir <Action>(Git.Interactive.Rebase)
+
+nmap <leader>K <Action>(QuickPreview)
+nmap <leader>k <Action>(QuickActions)
+
+" run
+map <leader>rft <Action>(RerunFailedTests)
+map <leader>rr <Action>(Run)
+map <leader>rd <Action>(Debug)
+map <leader>rb <Action>(ToggleLineBreakpoint)
+map <leader>rt <Action>(RerunTests)
+map <leader>rs <Action>(Stop)
+map <leader>raw <Action>(Debugger.AddToWatch)
+map <leader>rca <Action>(Debugger.RemoveAllBreakpoints)
+
+"github
+"map <leader>gcp <Action>(GitHub.Create.Pull.Request)
+map <leader>gmm <Action>(GitHub.MainMenu)
+map <leader>gir <Action>(Git.Interactive.Rebase)MainMenu
+
+" find
+map <leader>fo <Action>(RecentFiles)
+map <leader>ff <Action>(GotoFile)
+map <leader>fw <Action>(TextSearchAction)
+map <leader>fW <Action>(FindInPath)
+map <leader>fs <Action>(GotoSymbol)
+map <leader>w <Action>(SaveDocument)
+map <leader>fa <Action>(GotoAction)
+map <leader>ft <Action>(GotoType)
+map <leader>fp <Action>(FindInPath)
+map <leader>tt <Action>(ActivateTODOToolWindow)
+map <leader>fl <Action>(RecentLocations)
+map <leader>op <Action>(OpenFile)
+map <leader>of <Action>(SelectInProjectView)
+map <leader>/ <Action>(SearchEverywhere)
+
+map <leader>CC <Action>(CodeCleanup)
+
+" goto
+map ga <Action>(GotoAction)
+map gm <Action>(GotoSuperMethod)
+map gC <Action>(GotoClass)
+map gf <Action>(GotoFile)
+map gt <Action>(GotoTest)
+map gd <Action>(GotoDeclaration)
+map gD <Action>(GotoTypeDeclaration)
+map gi <Action>(GotoImplementation)
+map gI <Action>(QuickImplementations)
+map gs <Action>(GotoSymbol)
+map gS <Action>(ActivateStructureToolWindow)
+map gu <Action>(FindUsages)
+map <leader>sa <Action>(SelectAllOccurences)
+
+" Scroll
+map <A-j> <C-d>
+map <A-k> <C-u>
+
+" window navigation
+map # <Action>(SplitVertically)
+map <C-v> <Action>(SplitHorizontally)
+map <C-h> <C-w>h
+map <C-l> <C-w>l
+map <C-j> <C-w>j
+map <C-k> <C-w>k
+map <leader>wq <Action>(Unsplit)
+map <leader>wQ <Action>(UnsplitAll)
+map <leader>k <Action>(Unsplit)
+map <leader>K <Action>(UnsplitAll)
+
+" Scroll
+map <A-j> <C-d>
+map <A-k> <C-u>
+
+" copilot
+map <leader>cp <Action>(copilot.openCopilot)
+map <leader>cr <Action>(copilot.requestCompletions)
+map <leader>cc <Action>(copilot.chat.show)
+
+"unit testing
+:map <leader>U <Action>(ActivateUnitTestsToolWindow)
+:map <leader>u <Action>(RiderUnitTestQuickListPopupAction)
+
+" tool windows
+map <leader>ot <Action>(ActivateTerminalToolWindow)
+map <leader>tt <Action>(ActivateTerminalToolWindow)
+map <leader>th <Action>(ActivateTerminalToolWindow)
+map <leader>th <Action>(ActivateTerminalToolWindow)
+map <leader>tpr <Action>(ActivatePullRequestsToolWindow)
+"map <leader>tpp <Action>(ActivateProblemsToolWindow)
+map <leader>tnu <Action>(ActivateNuGetToolWindow)
+"map <leader>tmo <Action>(ActivateMonitoringToolWindow)
+map <leader>tT <Action>(ActivatedotTraceProfilerToolWindow)
+map <leader>tt <Action>(ActivateTODOToolWindow)
+map <leader>tg <Action>(ActivateVersionControlToolWindow)
+map <leader>tc <Action>(ActivateCommitToolWindow)
+map <leader>tu <Action>(ActivateUnitTestsToolWindow)
+map <leader>td <Action>(ActivateDebugToolWindow)
+
+" yank
+map <leader>ya <Action>(CopyAbsolutePath)
+map <leader>yp <Action>(CopyFileName)
+
+"ShowBookmarks
+"ShowFilePath
+"ToggleBookmark
+"ToggleBookmark0
+" VimWindowSplitHorizontal
+" VimWindowSplitVertical
+" NextOccurence
+" NextParameter
+" OpenInBrowser
+" OptimizeImports
+" PrevParameter
+" QuickActions
+" ShowArchitectureDiagram
+" ShowArchitectureDiagramFromSolutionExplorerWindow
+" ShowRegistry
+" ShowBookmarks

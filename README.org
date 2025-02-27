@@ -1,0 +1,260 @@
+#+title: Dotfiles
+#+PROPERTY: header-args :tangle setup.sh
+#+auto_tangle: t
+
+* Setup yay AUR helper & base / git
+#+begin_src bash
+sudo pacman -Syu
+sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd ..
+yay --editmenu --save
+yay -S git-secret -y
+#+end_src
+* Setup Arch makeflags
+Speeds things up on multiprocessor systems
+#+BEGIN_SRC bash
+echo MAKEFLAGS="-j$(nproc)" >> /etc/makepkg.conf
+echo MAKEFLAGS="-j$(nproc)" | sudo tee -a /etc/environment
+#+END_SRC
+* Install functions & WSL accommodations
+#+begin_src bash
+if [ -f "/etc/wsl.conf" ]; then
+    IS_WSL=1
+else
+    IS_WSL=0
+fi
+
+install() {
+    yay -S --needed $*
+    echo "Installed $($*)" >> ~/install.log
+}
+
+install_native() {
+    if [ $IS_WSL -eq 1 ]; then
+       echo "Did not install $($*)" >> ~/install.log
+       return 0;
+    fi
+
+    install $*
+    return 0
+}
+
+if [ $IS_WSL -eq 1 ]; then
+    install xclip
+fi
+#+end_src
+
+if WSL, need to run:
+wsl --set-default Arch
+* Set locale
+#+begin_src bash
+localectl set-locale LANG=en_US.UTF-8
+unset LANG
+source /etc/profile.d/locale.sh
+#+end_src
+* Programming languages
+** Rust
+#+begin_src bash
+install rust
+#+end_src
+** dotnet
+#+begin_src bash
+install dotnet-sdk aspnet-runtime
+dotnet tool install --global csharp-ls
+dotnet tool install --global dotnet-ef
+echo "DOTNET_CLI_TELEMETRY_OPTOUT=true" | sudo tee -a /etc/environment > /dev/null
+#+end_src
+** Python
+using conda.el requires mamba executable under condabin/
+# install pyenv
+install mamba using shell script
+conda config --set auto_activate_base false
+note, this is not hands off
+#+begin_src shell
+curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
+bash Miniforge3-$(uname)-$(uname -m).sh
+mamba init
+# mamba create -n ml
+# mamba activate ml
+# mamba install numpy pandas matplotlib jupyterlab pyright debugpy
+# exec "$SHELL"
+#+end_src
+# sudo ln -s /usr/bin/micromamba /usr/bin/mamba
+# mkdir ~/micromamba/condabin
+#+begin_src bash
+# install micromamba-bin
+# micromamba shell init --shell bash --root-prefix=~/micromamba
+# micromamba create -n ml
+# micromamba activate ml
+# micromamba install numpy pandas matplotlib jupyterlab pyright debugpy
+#+end_src
+* Terminal and fonts
+#+begin_src bash
+install ttf-jetbrains-mono ttf-jetbrains-mono-nerd alacritty
+#+end_src
+* Tree sitter
+** Core
+#+begin_src bash
+install tree-sitter
+# git clone https://github.com/tree-sitter/tree-sitter.git
+# cd tree-sitter
+# make -j$(nproc)
+# sudo make install
+# sudo ldconfig
+# cd ..
+#+end_src
+** CLI
+#+begin_src bash
+cargo install tree-sitter-cli
+#+end_src
+* Neovim
+#+begin_src bash
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+install ripgrep findutils lazygit npm neovim yarn fd luarocks bottom gdu luajit-tiktoken-bin prettier
+sudo luarocks --lua-version=5.1 install magick
+#python3 -m pip install pynvim
+install python-pynvim
+sudo npm install -f neovim
+luarocks config lua_version 5.1
+luarocks config variables.LUA /usr/bin/luajit
+luarocks config variables.LUA_INCDIR /usr/include/luajit-2.1
+
+# curl -L https://github.com/dundee/gdu/releases/latest/download/gdu_linux_amd64.tgz | tar xz
+# chmod +x gdu_linux_amd64
+# sudo mv gdu_linux_amd64 /usr/local/bin/gdu
+echo EDITOR=nvim | sudo tee -a /etc/environment
+#+end_src
+* Clone dotfiles
+#+begin_src bash
+echo ".dotfiles" >> .gitignore
+git clone --bare https://github.com/Lillenne/dotfiles.git $HOME/.dotfiles
+alias cfg='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+cfg reset --hard
+
+echo "source ~/.bash_additions" >> ~/.bashrc
+source ~/.bashrc
+git config --global init.defaultBranch main
+#+end_src
+* Emacs
+** Build emacs
+Set lsp mode to use plists for optimal perf
+Disable webkit dmabuf renderer for now due to bug which breaks xwidgets
+#+begin_src bash
+echo "LSP_USE_PLISTS=true" | sudo tee -a /etc/environment > /dev/null
+export LSP_USE_PLISTS=true
+echo "WEBKIT_DISABLE_DMABUF_RENDERER=1" | sudo tee -a /etc/environment
+export "WEBKIT_DISABLE_DMABUF_RENDERER=1"
+install libxpm libjpeg libpng libtiff giflib librsvg libxml2 gnutls gtk3 webkit2gtk imagemagick pandoc-bin cmake texlive-core texlive-bin texlive-science gnuplot jupyter texlive-latexextra emacs
+mkdir ~/org
+#+end_src
+
+alternative:
+git clone -b emacs-29 git://git.sv.gnu.org/emacs.git --depth=1
+cd emacs
+./autogen.sh
+./configure --with-native-compilation=aot  --with-xwidgets --with-tree-sitter --with-json --with-imagemagick --with-mailutils CFLAGS="-O2 -pipe -march=native -fomit-frame-pointer"
+# note, CFLAGS not working on master 8/23/24
+make -j$(nproc)
+sudo make install
+** Doom
+#+begin_src bash
+git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs
+~/.config/emacs/bin/doom install
+cfg reset --hard
+doom sync --gc -j $(nproc)
+#+end_src
+** Mail
+#+begin_src bash
+install isync mu
+# mu init --maildir ~/mail --my-address $EMAIL_ADDRESS
+# mu index
+#+end_src
+** Autostart
+#+begin_src bash
+systemctl enable --user --now emacs
+install sed
+sudo sed -i s/EDITOR=.*/EDITOR=\"emacsclient\"/g /etc/environment
+#+end_src
+* OpenCV
+yay -S opencv-cuda
+* Docker registry
+#+begin_src bash
+install podman podman-docker podman-compose
+#+end_src
+* Ollama
+Pull and expose ollama
+curl https://ollama.ai/install.sh | sh
+if [ $IS_WSL -eq 0]; then
+    sudo firewall-cmd --zone=home --add-port=11434/tcp
+    sudo firewall-cmd --zone=home --add-source=192.168.200.0/24
+    sudo firewall-cmd --runtime-to-permanent
+    install nvidia-container-toolkit
+    docker run -d --network=host --gpus all -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:cuda
+fi
+* Local shares
+Reminder, needs the .smbcredentials file to be copied over
+#+begin_src bash
+install cifs-utils nfs-utils
+# sudo mkdir /mnt
+# sudo mkdir /mnt/nfs
+# sudo mkdir /mnt/smb
+# sudo chown nobody:nobody /mnt/nfs
+# sudo chown nobody:nobody /mnt/smb -R
+# sudo chmod 777 /mnt/nfs -R
+# sudo chmod 777 /mnt/smb -R
+# echo "$(NFS_SHARE_LOCATION):/mnt/wd/nfs /mnt/nfs nfs defaults 0 0" | sudo tee -a /etc/fstab > /dev/null
+# echo "//$(SMB_SHARE_LOCATION)/smb /mnt/smb cifs _netdev,nofail,credentials=/root/.smbcredentials 0 0" | sudo tee -a /etc/fstab > /dev/null
+# sudo systemctl daemon-reload
+# mount /mnt/nfs
+# mount /mnt/smb
+#+end_src
+* Syncthing
+#+begin_src bash
+  sudo firewall-cmd --zone=home --add-port=22000/tcp
+  sudo firewall-cmd --zone=home --add-port=22000/udp
+  sudo firewall-cmd --zone=home --add-port=21027/udp
+  sudo firewall-cmd --runtime-to-permanent
+  install syncthing
+  systemctl enable --now syncthing@${user}.service
+#+end_src
+  on android, need to go syncthing app -> web gui -> send & receive & advances -> ignore permissions
+* What I need to do manually
+- Copy .smbcredentials file to /root/.smbcredentials
+- Ensure env vars are set prior
+- Add permission on folders on android syncthing app
+- Manually configure mu4e if needed
+** Git secret
+- When init cfg repo
+  [[https://sobolevn.me/git-secret/][how to use git secret]]
+  cfg secret init
+  cfg secret tell -m
+  cfg secret add
+  cfg secret hide
+  cfg add .gitsecret
+
+* [[https://wiki.archlinux.org/title/Redshift][Redshift]]
+#+begin_src shell
+install redshift
+cat <<EOF > tee ~/.config/autostart/redshift.conf
+[redshift]
+location-provider=manual
+[manual]
+lon=23
+lat=44
+EOF
+
+redshift -P -O 4500
+#+end_src
+
+https://bbs.archlinux.org/viewtopic.php?id=177473
+* Direnv
+#+begin_src shell
+install direnv
+#+end_src
+
+Notes:
+run ~direnv allow~ in the dir
+[[https://direnv.net/man/direnv.toml.1.html#codeloaddotenvcode][uses .envrc files, or .env if configured in .config/direnv/direnv.toml]]
+* TODO other programs
+czkawka
+darktable
+vial
