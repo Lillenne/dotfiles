@@ -1,6 +1,6 @@
 #!/bin/bash
 sudo pacman -Syu
-sudo pacman -S --needed git base-devel git-lfs && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd ..
+sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd ..
 yay --editmenu --save
 
 echo MAKEFLAGS="-j$(nproc)" | sudo tee -a /etc/environment /etc/makepkg.conf
@@ -34,6 +34,9 @@ fi
 localectl set-locale LANG=en_US.UTF-8
 unset LANG
 source /etc/profile.d/locale.sh
+
+install git-lfs
+chmod +x ~/git/ediff.sh
 
 install rust
 
