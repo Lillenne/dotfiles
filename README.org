@@ -2,6 +2,26 @@
 #+PROPERTY: header-args :tangle run_once_setup.sh
 #+auto_tangle: t
 
+Dotfiles in this repo are managed with [[https://www.chezmoi.io/][chezmoi]].
+
+* Chezmoi Config
+
+#+begin_src toml :tangle no
+[data]
+name = ""
+
+[data.git]
+email = ""
+signingKey = ""
+
+[data.git.credential]
+helper = "/mnt/c/Users/<user>/scoop/apps/git-credential-manager/current/git-credential-manager.exe"
+
+[data.github]
+user = ""
+#+end_src
+note: helper path for Git Credential Manager installed with Scoop to WSL.
+
 * Setup yay AUR helper & base / git
 #+begin_src bash
 sudo pacman -Syu
