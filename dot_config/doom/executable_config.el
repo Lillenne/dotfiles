@@ -50,6 +50,10 @@ The hook may be delayed because some functions (e.g., gpg decryption) may need u
 (defun ak/is-minibuf () (minibuffer-window-active-p (current-buffer)))
 (defun ak/is-only-window () (equal (length (window-list-1)) 1))
 
+;; https://github.com/doomemacs/doomemacs/issues/5876
+;; (after! persp-mode
+;;   (setq persp-emacsclient-init-frame-behaviour-override "main"))
+
 (after! projectile
   (require 'f)
   (defun my-projectile-ignore-project (project-root)

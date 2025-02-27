@@ -33,16 +33,20 @@
 (map! :desc "Dotfiles" :leader "g d" #'my/magit-chezmoi)
 
 (defun my/chezmoi-edit (&optional file)
-  (call-process-shell-command (concat "chezmoi edit --apply " (expand-file-name file) "&")))
+  "Expects editor to be emacsclient [-r]."
+  (call-process-shell-command (concat "chezmoi edit --apply --force " (expand-file-name file) "&")))
+(defun my/find-chezmoi-only-file (&optional file)
+  (interactive (list (read-file-name "File: " (expand-file-name "~/.local/share/chezmoi/"))))
+  (find-file file))
 (defun my/find-chezmoi-file (&optional file)
   (interactive (list (read-file-name "File: " (expand-file-name "~/"))))
   (my/chezmoi-edit file)
-  (run-at-time 2 nil #'add-hook 'kill-buffer-hook #'server-edit nil t))
+  (run-at-time 4 nil #'add-hook 'kill-buffer-hook #'server-edit nil t))
 (defun my/find-chezmoi-doom-file (&optional file)
   (interactive (list (read-file-name "File: " (expand-file-name "~/.config/doom/"))))
   (my/chezmoi-edit file)
-  (run-at-time 2 nil #'add-hook 'kill-buffer-hook #'server-edit nil t)) ; few seconds to open the file
-(map! :desc "Chezmoi files" :leader "f z" #'my/find-chezmoi-file)
+  (run-at-time 4 nil #'add-hook 'kill-buffer-hook #'server-edit nil t)) ; few seconds to open the file
+(map! :desc "Chezmoi files" :leader "f Z" #'my/find-chezmoi-only-file)
 (map! :desc "Chezmoi files" :leader "f z" #'my/find-chezmoi-file)
 (map! :desc "Chezmoi files" :leader "f p" #'my/find-chezmoi-doom-file)
 
