@@ -109,3 +109,9 @@
            :repo "yilkalargaw/org-auto-tangle"
            :branch "master"
            :files ("org-auto-tangle.el")))
+
+(package! chezmoi
+  :recipe (:host github
+           :repo "Lillenne/chezmoi.el"
+           :branch "main"
+           :files (:defaults "*.el" "extensions/*.el")))
