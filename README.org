@@ -11,6 +11,7 @@ curl -fsSL https://raw.githubusercontent.com/Lillenne/dotfiles/refs/heads/main/a
 * Setup yay AUR helper & base / git
 #+begin_src bash
 #!/bin/bash
+sudo ln -s $(realpath ~/git/git-credential-netrc) /usr/local/bin/git-credential-netrc
 sudo pacman -Syu
 sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd ..
 yay --editmenu --save

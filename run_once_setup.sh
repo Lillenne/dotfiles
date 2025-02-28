@@ -1,4 +1,5 @@
 #!/bin/bash
+sudo ln -s $(realpath ~/git/git-credential-netrc) /usr/local/bin/git-credential-netrc
 sudo pacman -Syu
 sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd ..
 yay --editmenu --save
@@ -92,7 +93,7 @@ echo "LSP_USE_PLISTS=true" | sudo tee -a /etc/environment > /dev/null
 export LSP_USE_PLISTS=true
 echo "WEBKIT_DISABLE_DMABUF_RENDERER=1" | sudo tee -a /etc/environment
 export "WEBKIT_DISABLE_DMABUF_RENDERER=1"
-install libxpm libjpeg libpng libtiff giflib librsvg libxml2 gnutls gtk3 webkit2gtk imagemagick pandoc-bin cmake texlive-core texlive-bin texlive-science gnuplot jupyter texlive-latexextra emacs figlet
+install libxpm libjpeg libpng libtiff giflib librsvg libxml2 gnutls gtk3 webkit2gtk imagemagick pandoc-bin cmake texlive-core texlive-bin texlive-science gnuplot jupyter texlive-latexextra emacs figlet xdotool
 mkdir ~/org
 
 git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs

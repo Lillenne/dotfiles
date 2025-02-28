@@ -63,17 +63,28 @@
     (org-id-goto ID)
     (org-todo 'done)))
 
-;; org crypt
-(require 'org-crypt)
-(org-crypt-use-before-save-magic)
-(setq org-crypt-key "0x7C9F982201FF5847!") ;; use symmetric encryption
-(setq org-tags-exclude-from-inheritance '("crypt"))
+(after! org-crypt
+  (org-crypt-use-before-save-magic)
+  (setq org-crypt-key "0x7C9F982201FF5847!")
+  (setq org-tags-exclude-from-inheritance '("crypt")))
 ;; disable autosave globally
 ;; (setq auto-save-default nil)
 ;; disable autosave locally
 ;; # -*- buffer-auto-save-file-name: nil; -*-
-(require 'epa)
-(setq epa-key "0x7C9F982201FF5847!")
+(after! epa
+  (setq epa-key "0x7C9F982201FF5847!"
+        epa-file-select-keys nil
+        epa-file-encrypt-to '("E7C89EF0EC0001B35F8F50F5486E646AAC3803AF"))
+  (setq-default epa-file-encrypt-to
+                '("E7C89EF0EC0001B35F8F50F5486E646AAC3803AF"))
+  (advice-remove '+default--dont-prompt-for-keys-a #'epa-file-write-region)
+  (defun my/epa-write-advice (&rest _)
+    "Replace the logic of the Doom advice to ignore the anonymous recipient."
+    (unless (and (local-variable-p 'epa-file-encrypt-to)
+                 (not (equal epa-file-encrypt-to '("0000000000000000"))))
+      (setq-local epa-file-encrypt-to (default-value 'epa-file-encrypt-to))))
+  (advice-add #'epa-file-write-region :before #'my/epa-write-advice)
+  )
 
 (defun my/org-archive-all-done-in-file (ARG)
   (interactive "P")
