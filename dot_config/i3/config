@@ -257,7 +257,7 @@ bindsym $mod+Shift+a exec --no-startup-id /home/aus/.config/emacs/bin/org-captur
 
 # Quick suspend win / alt  / p
 bindsym $mod+Mod1+p exec systemctl suspend
-bindsym $mod+Mod1+Shift+p exec systemctl hibernate
+bindsym $mod+Mod1+Shift+p exec shutdown
 
 bindsym $mod+m exec --no-startup-id exec signal-desktop
 bindsym $mod+Shift+m exec --no-startup-id exec kdeconnect-sms
