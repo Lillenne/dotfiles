@@ -288,18 +288,23 @@ set $ws9 "9"
 # use workspaces on different displays:
 # where you have to replace VGA-0/HDMI-0 with the names for your displays
 # you can get from xrandr command
-#workspace $ws1 output VGA-0
-#workspace $ws2 output VGA-0
-#workspace $ws3 output HDMI-0
-#workspace $ws4 output HDMI-0
-#workspace $ws5 output HDMI-0
+workspace $ws1 output DP-2
+workspace $ws2 output DP-2
+workspace $ws3 output DP-2
+workspace $ws4 output DP-2
+workspace $ws5 output DP-2
+workspace $ws6 output DP-2
+workspace $ws7 output DP-2
+workspace $ws8 output DP-2
+workspace $ws9 output DP-0
+workspace $ws10 output DP-2
 
 # bind program to workspace and focus to them on startup:
 
 assign [class="Alacritty"] $ws10
 # assign [class="wezterm"] $ws10
-assign [class="Signal"] $ws1
-assign [class="kdeconnect-sms"] $ws1
+assign [class="Signal"] $ws9
+assign [class="kdeconnect-sms"] $ws9
 assign [class="(?i)firefox"] $ws2
 assign [class="(?i)brave"] $ws2
 assign [class="Thunar"] $ws6
@@ -375,7 +380,7 @@ exec --no-startup-id dex --autostart --environment i3
 
 # start a script to setup displays
 # uncomment the next line, use arandr to setup displays and save the file as monitor:
-exec --no-startup-id ~/.screenlayout/monitor.sh
+exec --no-startup-id ~/.screenlayout/secondary-left-landscape.sh
 
 # set wallpaper
 # exec --no-startup-id sleep 2 && nitrogen --restore
