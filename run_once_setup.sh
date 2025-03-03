@@ -146,3 +146,6 @@ redshift -P -O 4500
 fi
 
 install direnv
+
+chezmoi cd
+git config --local github.user Lillenne

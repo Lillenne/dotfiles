@@ -4,6 +4,14 @@
 	signingKey = {{ .git.signingKey }}
 [credential]
 	helper = {{ .git.credential.helper }}
+[credential "https://github.com/{{ .github.user }}/*"]
+    user = {{ .github.user }}
+[credential "https://github.com/{{ .git.workOrg }}/*"]
+    user = {{ .git.workUser }}
+[credential "https://github.com/{{ .github.workUser }}/*"]
+    user = {{ .github.workUser }}
+[credential "https://dev.azure.com"]
+    useHttpPath = true
 [pull]
 	rebase = true
 [init]
@@ -17,11 +25,9 @@
 	autosquash = true
 	autostash = true
 [github]
-	user = {{ .github.user }}
+	user = {{ .github.activeUser }}
 [commit]
 	gpgSign = true
-[credential "https://dev.azure.com"]
-	useHttpPath = true
 [diff]
     tool = ediff
     guitool = ediff

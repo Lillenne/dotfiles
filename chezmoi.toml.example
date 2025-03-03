@@ -11,6 +11,9 @@ helper = "netrc -f ~/.authinfo.gpg"
 
 [data.github]
 user = ""
+workUser = ""
+workOrg = ""
+activeUser = ""
 
 [diff]
 command = "~/git/ediff.sh"

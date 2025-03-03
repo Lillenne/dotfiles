@@ -262,6 +262,11 @@ install direnv
 Notes:
 run ~direnv allow~ in the dir
 [[https://direnv.net/man/direnv.toml.1.html#codeloaddotenvcode][uses .envrc files, or .env if configured in .config/direnv/direnv.toml]]
+* Chezmoi
+#+begin_src shell
+chezmoi cd
+git config --local github.user Lillenne
+#+end_src
 * TODO other programs
 czkawka
 darktable

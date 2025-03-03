@@ -857,6 +857,10 @@ See `org-capture-templates' for more information."
                                         ; add @ to prompt a note + others
 (setq org-roam-dailies-capture-templates '(("d" "default" entry "* %<%-I:%M %p>: %?" :target
                                             (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n"))))
+(defun my/org-roam-text-search ()
+  (interactive)
+  (consult-ripgrep org-roam-directory))
+(map! :desc "Roam ripgrep" :leader "n r /" #'my/org-roam-text-search)
 ;; )
 (defun ak/add-roam-tags ()
   "Iterates roam files without FILETAGS and asks for tags."
