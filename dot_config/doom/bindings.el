@@ -32,6 +32,8 @@
 ;; (map! :m "<M-down>" #'move-line-down)
 ;; (map! :m "<M-up>" #'move-line-up)
 
+(map! :desc "Print file name" :leader "b ," #'print-name-of-the-file)
+(map! :leader "s h" #'consult-outline)
 (map! :leader "f o" #'consult-recent-file)
 (map! :leader "f O" #'find-file-other-window)
 (map! :leader "f w" #'consult-ripgrep)

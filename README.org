@@ -177,6 +177,10 @@ systemctl enable --user --now emacs
 install sed
 sudo sed -i s/EDITOR=.*/EDITOR=\"emacsclient\"/g /etc/environment
 #+end_src
+** Dependencies
+#+begin_src shell
+install extra/jdk-openjdk languagetool aspell aspell-en
+#+end_src
 * OpenCV
 yay -S opencv-cuda
 * Docker registry

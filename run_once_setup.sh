@@ -108,6 +108,8 @@ systemctl enable --user --now emacs
 install sed
 sudo sed -i s/EDITOR=.*/EDITOR=\"emacsclient\"/g /etc/environment
 
+install extra/jdk-openjdk languagetool aspell aspell-en
+
 install podman podman-docker podman-compose
 
 # install cifs-utils nfs-utils

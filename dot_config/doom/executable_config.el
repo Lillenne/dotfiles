@@ -24,6 +24,18 @@ The hook may be delayed because some functions (e.g., gpg decryption) may need u
 (setq register-use-preview t)
 (kill-ring-deindent-mode)
 
+(after! spell-fu
+  (setq spell-fu-idle-delay 0.5)
+  (setf (alist-get 'markdown-mode +spell-excluded-faces-alist)
+        '(markdown-code-face
+          markdown-reference-face
+          markdown-link-face
+          markdown-url-face
+          markdown-markup-face
+          markdown-html-attr-value-face
+          markdown-html-attr-name-face
+          markdown-html-tag-name-face)))
+
 ;; Enable when gnu repo is down  https://www.reddit.com/r/DoomEmacs/comments/1dohgxv/gitsavannahgnuorg_is_down/
 ;;(defadvice! straight-use-recipes-ignore-nongnu-elpa-a (fn recipe)
 ;;  :around #'straight-use-recipes
