@@ -187,7 +187,7 @@ bar:
   opacity: 1.0
   background: "#101010c4"
   foreground: "#ffffff"
-  font_family: "JetBrains fmono"
+  font_family: "JetBrains Mono"
   font_size: "20px"
   padding: "4px 6px"
   offset_x: "10px"
@@ -289,6 +289,12 @@ keybindings:
   - commands: ["wm-exit"]
     bindings: ["alt+shift+e"]
 
+  - commands:
+      [
+        "shell-exec 'glazewm command wm-exit; glazewm start --config=''C:\\Users\\austin.kearns\\.config\\glazewm\\config.yml'''",
+      ]
+    bindings: ["alt+control+shift+e"]
+
   # Re-evaluate configuration file.
   - commands: ["wm-reload-config"]
     bindings: ["alt+shift+o"]
@@ -314,12 +320,10 @@ keybindings:
       ]
     bindings: ["alt+shift+a"]
 
-  - commands: [
     # gui
-        # 'shell-exec C:\\Windows\\System32\\cmd.exe /c start /min wsl bash -ic "emacsclient -c"',
+    # 'shell-exec C:\\Windows\\System32\\cmd.exe /c start /min wsl bash -emacsclient -c"',
     # terminal
-        'shell-exec wsl bash -ic ''emacsclient -a \"\" -nw''',
-      ]
+  - commands: ['shell-exec wsl bash -ic ''emacsclient -a \"\" -nw''']
     bindings: ["alt+e"]
 
   # - commands: [
@@ -329,7 +333,7 @@ keybindings:
   #   bindings: ["alt+shift+x"]
 
   - commands: ["shell-exec explorer shell:startup"]
-    bindings: ["alt+shift+e"]
+    bindings: ["alt+shift+x"]
 
   # Focus the next/previous active workspace defined in `workspaces` config.
   # - commands: ['focus --next-active-workspace']
