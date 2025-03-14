@@ -113,7 +113,7 @@
  org-clock-continuously nil ;; t to make clock start times the previous clock end times, nil to stop
  org-clock-idle-time '30
  org-priority-faces nil
- ;; org-id-link-to-org-use-id t ;; use ids for links. Sometimes creates them unnecessarily
+ org-id-link-to-org-use-id t ;; use ids for links. Sometimes creates them unnecessarily
  org-refile-allow-creating-parent-nodes 'confirm
  org-todo-keywords '((sequence "TODO(t)" "NEXT(n)"  "TRIAGE(r)" "INVESTIGATE(v/@)" "SOMEDAY(o)" "LEARN(l)" "IDEA(i)" "STARTED(s)" "BLOCKED(b@)" "|" "DONE(d)" "CANCELED(k@)")
                      (sequence "[ ](T)" "[-](S)" "[?](W)" "|" "[X](D)"))
@@ -987,9 +987,14 @@ e.g. Friday, February  9, 2024 | 7:29 AM "
       ">" #'org-insert-subheading
       "<" #'org-insert-heading)
 
+
+(setq lazy-highlight-cleanup nil
+      lazy-highlight-max-at-a-time nil
+      lazy-highlight-initial-delay 0) ; keep pdf searches highlighted
 (after! org-noter
   (org-noter-enable-org-roam-integration)
-  (setq org-noter-arrow-delay 0.05
+  (setq org-noter-always-create-frame nil
+        org-noter-arrow-delay 0.05
         org-noter-separate-notes-from-heading nil
         org-noter-arrow-background-color "black")
   (map! :map org-noter-doc-mode-map

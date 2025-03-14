@@ -151,3 +151,5 @@ install direnv
 
 chezmoi cd
 git config --local github.user Lillenne
+
+install_native proton-pass-bin

@@ -255,6 +255,9 @@ bindsym $mod+x exec --no-startup-id emacsclient -c
 bindsym $mod+Shift+x exec "alacritty --class 'emacs,emacs' -e systemctl restart --now --user emacs && emacsclient -c"
 bindsym $mod+Shift+a exec --no-startup-id /home/aus/.config/emacs/bin/org-capture
 
+# Display wake fix
+bindsym $mod+Shift+Mod1+r exec --no-startup-id ~/.screenlayout/secondary-left-landscape.sh
+
 # Quick suspend win / alt  / p
 bindsym $mod+Mod1+p exec systemctl suspend
 bindsym $mod+Mod1+Shift+p exec shutdown

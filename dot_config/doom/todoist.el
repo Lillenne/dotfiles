@@ -8,7 +8,7 @@
 (map! :leader "t q u" #'org-todoist-unassign-task)
 (map! :leader "t q @" #'org-todoist-tag-user)
 (setq org-todoist-show-n-levels -1
-      org-todoist-show-special 'todo-tree)
+      org-todoist-show-special nil)
 
 (nconc org-capture-templates
        `(("s" "Todoist")

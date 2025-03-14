@@ -271,6 +271,27 @@ run ~direnv allow~ in the dir
 chezmoi cd
 git config --local github.user Lillenne
 #+end_src
+* Ente
+:PROPERTIES:
+:ID:       0dccfabc-8e90-419c-bd90-2023335b45ef
+:END:
+Pass secret service provides lib.freedesktop.secrets for ente
+
+#+begin_src shell :eval no :tangle no
+install pass-secret-service-bin ente-auth-bin
+#+end_src
+* Linphone
+#+begin_src shell :eval no :tangle no
+install linphone-desktop-appimage
+#+end_src
+* Pp
+#+begin_src shell
+install_native proton-pass-bin
+#+end_src
+* Notes
+#+begin_src shell :eval no :tangle no
+install standardnotes-desktop
+#+end_src
 * TODO other programs
 czkawka
 darktable

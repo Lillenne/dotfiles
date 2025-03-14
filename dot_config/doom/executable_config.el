@@ -137,7 +137,11 @@ The hook may be delayed because some functions (e.g., gpg decryption) may need u
 (defun my/config-loaded-hook-run-fn-delay ()
   (run-at-time my/config-loaded-frame-delay nil #'my/config-loaded-hook-run-fn))
 (add-hook 'doom-first-buffer-hook #'my/config-loaded-hook-run-fn-delay)
-(map! :desc "Config loaded hooks" :leader "h r m" #'my/config-loaded-hook-run-fn)
+(defun my/config-reload ()
+  (interactive)
+  (setq my/config-loaded nil)
+  (my/config-loaded-hook-run-fn))
+(map! :desc "Config loaded hooks" :leader "h r m" #'my/config-reload)
 
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
