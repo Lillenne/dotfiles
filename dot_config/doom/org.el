@@ -13,7 +13,6 @@
       (push (ak/from-org-dir arg) collect))
     collect))
 
-(load! "quick-jump.el")
 (defun ak/to-sprint ()
   "Creates a new sprint heading"
   (interactive)
@@ -39,6 +38,7 @@
         (org-timestamp-up-day 14)))
     (end-of-line)))
 (map! :leader "j s" #'ak/to-sprint)
+(load! "quick-jump.el")
 
 ;; Org basics
 (setq org-directory "~/org/"
@@ -83,10 +83,19 @@
     (unless (and (local-variable-p 'epa-file-encrypt-to)
                  (not (equal epa-file-encrypt-to '("0000000000000000"))))
       (setq-local epa-file-encrypt-to (default-value 'epa-file-encrypt-to))))
-  (advice-add #'epa-file-write-region :before #'my/epa-write-advice)
-  )
+  (advice-add #'epa-file-write-region :before #'my/epa-write-advice))
+
+;; (add-to-list 'org-fold-show-context-detail '(org-occur . minimal))
+
+(defun my/org-show-important ()
+  (interactive)
+  (org-match-sparse-tree nil "-ARCHIVE-TODO=\"DONE\"-TODO=\"CANCELED\""))
 
 (defun my/org-archive-all-done-in-file (ARG)
+  "Archives all completed tasks in a file (respecting narrowing).
+Without prefix argument, use `org-archive-subtree-default'.
+With 1 prefix argument, use `org-archive-subtree'.
+With 2 prefix arguments, use `org-archive-set-tag'."
   (interactive "P")
   (require 'org-archive)
   (org-map-entries (lambda ()
@@ -269,7 +278,7 @@ Goals
    (org-batch-agenda \"l\")
  (org-batch-agenda \"y\")))
 ** Today \n
-%(save-window-excursion (org-batch-agenda \"D\"))"
+%(save-window-excursion (org-batch-agenda \"d\"))"
     :tree-type week
     :clock-in t
     :clock-keep t
@@ -594,225 +603,79 @@ See `org-capture-templates' for more information."
 ;; 	 ((org-agenda-files (file-expand-wildcards "~/archive/*.org"))))
 ;; 	;; ...other commands here
 ;; 	 ))
+(defvar my/org-super-agenda-groups '((:discard (:todo "TRIAGE"))
+                                     (:discard (:todo "NEXT"))
+                                     (:name "Overview" :time-grid t)
+                                     (:name "Habits" :habit t)
+                                     (:name "Blocked" :todo "BLOCKED")
+                                     (:name "Overdue" :deadline past)
+                                     (:name "Due today" :deadline today)
+                                     (:name "Scheduled earlier" :scheduled past)
+                                     (:name "Due soon" :deadline future)
+                                     (:name "Today" :scheduled today)
+                                     (:name "Important" :priority "A")
+                                     (:name "Quick Picks" :effort< "0:30")
+                                     (:name "Done today" :and (:regexp "State \"DONE\"" :log t))
+                                     (:name "Clocked today" :log t)))
+
+(defvar my/org-agenda-review-props '((org-agenda-start-with-archives-mode t)
+                                     (org-agenda-skip-archived-trees nil)
+                                     (org-export-with-archived-trees t)
+                                     (org-agenda-skip-deadline-if-done t)
+                                     (org-agenda-skip-scheduled-if-done t)
+                                     ;; (org-agenda-hide-tags-regexp ".*")
+                                     (org-agenda-start-on-weekday 1)
+                                     (org-agenda-use-time-grid nil)
+                                     (org-agenda-include-deadlines nil)
+                                     (org-agenda-archives-mode t)
+                                     (org-agenda-start-with-log-mode 'only)
+                                     (org-agenda-log-mode-items '(closed clock))))
+
 (setq org-agenda-custom-commands
-      '(
-        ("h" "Agenda" ((agenda "" ((org-super-agenda-groups
-                                    '(
-                                      (:name "Scheduled" :time-grid t :transformer (--> it (upcase it)))
-                                      (:discard (:tag "work"))
-                                      (:name "Habits" :habit t)
-                                      (:name "Triage" :todo "TRIAGE")
-                                      (:name "Next" :todo "NEXT")
-                                      (:name "Blocked" :todo "BLOCKED")
-                                      (:name "Overdue" :deadline past)
-                                      (:name "Due today" :deadline today)
-                                      (:name "Scheduled earlier" :scheduled past)
-                                      (:name "Due soon" :deadline future)
-                                      (:name "Today" :scheduled today)
-                                      (:name "Important" :priority "A")
-                                      (:name "Quick Picks" :effort< "0:30")
-                                      (:name "Done today" :and (:regexp "State \"DONE\"" :log t))
-                                      (:name "Clocked today" :log t)))
-                                   (org-agenda-span 4)
-                                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                                   ))))
-        ("w" "Work Agenda" ((agenda "" ((org-super-agenda-groups
-                                         '(
-                                           (:name "Scheduled" :time-grid t :transformer (--> it (upcase it)))
-                                           (:name "Habits" :habit t)
-                                           (:name "Triage" :todo "TRIAGE")
-                                           (:name "Next" :todo "NEXT")
-                                           (:name "Blocked" :todo "BLOCKED")
-                                           (:name "Overdue" :deadline past)
-                                           (:name "Due today" :deadline today)
-                                           (:name "Scheduled earlier" :scheduled past)
-                                           (:name "Due soon" :deadline future)
-                                           (:name "Today" :scheduled today)
-                                           (:name "Important" :priority "A")
-                                           (:name "Quick Picks" :effort< "0:30")
-                                           (:name "Done today" :and (:regexp "State \"DONE\"" :log t))
-                                           (:name "Clocked today" :log t)))
-                                        (org-agenda-span 4)
-                                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                                        ))))
-
-        ("b" "Blocked" ((todo "BLOCKED")))
-        ("c" "Simple agenda view"
-         (
-          ;; Todos I haven't finished writing
-          (todo "TRIAGE")
-
-          (todo "NEXT")
-          ;; This week
-          (agenda ""
-                  ((org-agenda-span 'week)
-                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                   (org-agenda-start-day "0d")))
-          ;; (agenda "" ((org-agenda-start-day "0d") (org-agenda-span 1)))
-          ;; (agenda "" ((org-agenda-start-day "+1d") (org-agenda-span 6)))
-          ;; (alltodo "")
-          ;; things I probably shouldn't forget about
-          (tags "PRIORITY=\"A\""
-                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                 (org-agenda-overriding-header "High-priority unfinished tasks:")))
-          (todo "BLOCKED")
-          (todo ""
-                ((org-agenda-overriding-header "\nUnscheduled TODO")
-                 (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp))))
-          ))
-        ("d" "Today"
-         ((todo "TRIAGE")
-          (agenda "" ((org-super-agenda-groups
-                       '(
-                         (:name "Done today" :and (:regexp "State \"DONE\"" :log t))
-                         ;; (:name "Habits" :habit t) ;; Not sure why this is causing an error
-                         (:name "Scheduled" :time-grid t)
-                         (:name "Clocked today" :log t)
-                         (:discard (:tag "work"))
-                         (:name "Overdue" :deadline past)
-                         (:name "Due today" :deadline today)
-                         (:name "Scheduled earlier" :scheduled past)
-                         (:name "Quick Picks" :effort< "0:30")
-                         (:name "Blocked" :todo "BLOCKED")
-                         (:name "Today" :scheduled today)
-                         ))
-                      (org-agenda-start-day "0d")
-                      (org-agenda-span 1)))
-          ;; (tags "PRIORITY=\"A\""
-          ;;       ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-          ;;        (org-agenda-overriding-header "High-priority unfinished tasks:")))
-          ;; (todo "BLOCKED")
-          ))
-        ;; ("D" "Today w/ work"
-        ;;  ((todo "TRIAGE")
-        ;;   (agenda "" ((org-super-agenda-groups
-        ;;                '((:name "Done today" :and (:regexp "State \"DONE\"" :log t))
-        ;;                  ;; (:name "Habits" :habit t) ;; Not sure why this is causing an error
-        ;;                  (:name "Scheduled" :time-grid t)
-        ;;                  (:name "Clocked today" :log t)
-        ;;                  (:name "Overdue" :deadline past)
-        ;;                  (:name "Due today" :deadline today)
-        ;;                  (:name "Scheduled earlier" :scheduled past)
-        ;;                  (:name "Quick Picks" :effort< "0:30")
-        ;;                  (:name "Blocked" :todo "BLOCKED")
-        ;;                  (:name "Today" :scheduled today)
-        ;;                  ))
-        ;;               (org-agenda-start-day "0d")
-        ;;               (org-agenda-span 1)))
-        ;;   ;; (tags "PRIORITY=\"A\""
-        ;;   ;;       ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-        ;;   ;;        (org-agenda-overriding-header "High-priority unfinished tasks:")))
-        ;;   ;; (todo "BLOCKED")
-        ;;   ))
+      `(
+        ("h" "Agenda NoW" ((todo "TRIAGE")
+                           (todo "NEXT")
+                           (agenda "" ((org-super-agenda-groups (quote ,(append '(:discard (:tag "work")) my/org-super-agenda-groups)))
+                                       (org-agenda-span 'day)))
+                           (agenda ""
+                                   ((org-agenda-span 'week)
+                                    (org-agenda-start-day "+1d")))))
+        ("c" "Agenda" ((todo "TRIAGE")
+                       (todo "NEXT")
+                       (agenda "" ((org-super-agenda-groups (quote ,my/org-super-agenda-groups))
+                                   (org-agenda-span 'day)))
+                       (agenda ""
+                               ((org-agenda-span 'week)
+                                (org-agenda-start-day "+1d")))))
+        ("b" "Blocked and Unscheduled" ((todo "BLOCKED")
+                                        (todo "" ((org-agenda-overriding-header "\nUnscheduled TODO")
+                                                  (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled 'deadline 'timestamp 'todo '("BLOCKED")))))))
         ("y" "Yesterday review"
-         agenda ""
-         ((org-agenda-start-day "-1d")
-          (org-agenda-span 2)
-          (org-agenda-start-with-archives-mode t)
-          (org-agenda-archives-mode t)
-          (org-agenda-skip-archived-trees nil)
-          (org-agenda-skip-deadline-if-done t)
-          (org-agenda-skip-scheduled-if-done t)
-          (org-agenda-use-time-grid nil)
-          (org-agenda-hide-tags-regexp ".*")
-          (org-agenda-start-with-log-mode 'only)
-          (org-agenda-log-mode-items '(closed clock))))
-        ;; (org-agenda-start-with-log-mode '(closed clock))))
+         agenda "" ,(append '((org-agenda-start-day "-1d")
+                              (org-agenda-span 2))
+                            my/org-agenda-review-props))
         ("Y" "Yesterday review completed"
+         agenda "" ,(append '((org-agenda-start-day "-1d")
+                              (org-agenda-span 2)
+                              (org-agenda-skip-function #'org-agenda-not-done))
+                            my/org-agenda-review-props))
+        ("d" "Daily review"
          agenda ""
-         ((org-agenda-start-day "-1d")
-          (org-agenda-span 1)
-          (org-agenda-start-with-archives-mode t)
-          (org-agenda-archives-mode t)
-          (org-agenda-skip-archived-trees nil)
-          (org-agenda-skip-deadline-if-done t)
-          (org-agenda-skip-scheduled-if-done t)
-          (org-agenda-hide-tags-regexp ".*")
-          (org-agenda-use-time-grid nil)
-          (org-agenda-start-with-log-mode 'only)
-          (org-agenda-log-mode-items '(closed clock))
-          ;; (org-agenda-start-with-log-mode '(closed clock))
-          (org-agenda-skip-function #'org-agenda-not-done)))
-        ("D" "Daily review"
-         agenda ""
-         ((org-agenda-start-day "0d")
-          (org-agenda-span 1)
-          (org-agenda-start-with-archives-mode t)
-          (org-agenda-archives-mode 'files)
-          (org-agenda-skip-archived-trees nil)
-          (org-agenda-skip-deadline-if-done t)
-          (org-agenda-hide-tags-regexp ".*")
-          (org-agenda-skip-scheduled-if-done t)
-          (org-agenda-use-time-grid nil)
-          (org-agenda-start-with-log-mode 'only)
-          (org-agenda-log-mode-items '(closed clock))
-          ;; (org-agenda-start-with-log-mode '(closed clock))
-          ;; (org-agenda-skip-function #'org-agenda-not-done)
-          ))
-        ;; ("w" "Weekly plan"
-        ;;  agenda ""
-        ;;  ((org-agenda-span 'week)
-        ;;   (org-agenda-start-day "0d")))
-        ("W" "Weekly review"
-         agenda ""
-         (
-          ;; (org-agenda-start-day "-6d")
-          (org-agenda-span 7)
-          (org-agenda-start-with-archives-mode t)
-          ;; (org-agenda-span 'week)
-          (org-agenda-skip-archived-trees nil)
-          (org-export-with-archived-trees t)
-          (org-agenda-skip-deadline-if-done t)
-          (org-agenda-skip-scheduled-if-done t)
-          (org-agenda-hide-tags-regexp ".*")
-          (org-agenda-start-on-weekday 1)
-          (org-agenda-use-time-grid nil)
-          (org-agenda-include-deadlines nil)
-          (org-agenda-archives-mode t)
-          ;; (org-agenda-start-with-log-mode '(closed clock))
-          (org-agenda-start-with-log-mode 'only)
-          (org-agenda-log-mode-items '(closed clock))
-          (org-agenda-skip-function #'org-agenda-not-done)))
+         ,(append '((org-agenda-start-day "0d")
+                    (org-agenda-span 1))
+                  my/org-agenda-review-props))
+        ("w" "Weekly review"
+         agenda "" ,(append '((org-agenda-span 'week)
+                              (org-agenda-skip-function #'org-agenda-not-done))
+                            my/org-agenda-review-props))
         ("l" "Last week review" ;; supposed to be called on Monday
-         agenda ""
-         (
-          (org-agenda-start-day "-1d")
-          ;; (org-agenda-span 8)
-          (org-agenda-span 'week)
-          (org-agenda-start-with-archives-mode t)
-          (org-agenda-skip-archived-trees nil)
-          (org-export-with-archived-trees t)
-          (org-agenda-skip-deadline-if-done t)
-          (org-agenda-skip-scheduled-if-done t)
-          (org-agenda-hide-tags-regexp ".*")
-          (org-agenda-start-on-weekday 1)
-          (org-agenda-use-time-grid nil)
-          (org-agenda-include-deadlines nil)
-          (org-agenda-archives-mode t)
-          ;; (org-agenda-start-with-log-mode '(closed clock))
-          (org-agenda-start-with-log-mode 'only)
-          (org-agenda-log-mode-items '(closed clock))
-          (org-agenda-skip-function #'org-agenda-not-done)))
-        ("f" "Fortnite review"
-         agenda ""
-         ((org-agenda-start-day "-7d") ; don't go more than 2 weeks back
-          (org-agenda-span 'fortnight)
-          (org-agenda-start-with-archives-mode t)
-          (org-agenda-archives-mode t)
-          (org-agenda-skip-archived-trees nil)
-          (org-agenda-skip-deadline-if-done t)
-          (org-agenda-skip-scheduled-if-done t)
-          (org-agenda-use-time-grid nil)
-          ;; (with-files t)
-          ;; (org-agenda-span 21)
-          (org-agenda-start-on-weekday 1) ; start on monday
-          ;; (org-agenda-start-on-weekday nil)
-          (org-export-with-archived-trees t)
-          ;; (org-agenda-start-with-log-mode '(closed clock))
-          (org-agenda-start-with-log-mode 'only)
-          (org-agenda-log-mode-items '(closed clock))
-          ;; (org-agenda-skip-function #'org-agenda-not-done)
-          ))
+         agenda "" ,(append '((org-agenda-start-day "-7d")
+                              (org-agenda-span 'week))
+                            my/org-agenda-review-props))
+        ("f" "Fortnight review"
+         agenda "" ,(append '((org-agenda-start-day "-7d")
+                              (org-agenda-span 'fortnight))
+                            my/org-agenda-review-props))
         ;; https://emacs.stackexchange.com/questions/58875/how-do-i-add-appointments-to-effort-sum
         ("j" "Planning Table"
          agenda ""

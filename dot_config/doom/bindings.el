@@ -51,14 +51,15 @@
 (map! :map 'override "C-S-l" #'+evil/window-move-right)
 (map! :map 'override "C-S-k" #'+evil/window-move-up)
 (map! :map 'override "C-S-j" #'+evil/window-move-down)
-(map! :m "C-h" #'evil-window-left)
-(map! :m "C-l" #'evil-window-right)
-(map! :m "C-k" #'evil-window-up)
-(map! :m "C-j" #'evil-window-down)
 ;; (map! :map 'override "C-h" #'evil-window-left)
 ;; (map! :map 'override "C-l" #'evil-window-right)
 ;; (map! :map 'override "C-k" #'evil-window-up)
 ;; (map! :map 'override "C-j" #'evil-window-down)
+
+;; unbind `cdlatex-math-symbol'
+(map! :map cdlatex-mode-map "`" nil)
+(map! :map org-cdlatex-mode-map "`" nil)
+
 (map! :map 'org-mode-map "C-<right>" #'org-down-element)
 (map! :map 'org-mode-map "C-<left>" #'org-up-element)
 (map! :map 'org-mode-map "C-<down>" #'org-forward-element)

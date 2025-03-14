@@ -17,7 +17,7 @@
 (ak/goto "gifts" "g")
 (ak/goto "journal" "j")
 (ak/goto "learn" "l")
-(ak/goto "stories" "w")
+(ak/goto "work" "w")
 (ak/goto "todoist" "q")
 (ak/goto "todo" "t")
 (ak/goto "reading-list" "r")

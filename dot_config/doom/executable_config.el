@@ -25,7 +25,8 @@ The hook may be delayed because some functions (e.g., gpg decryption) may need u
 (kill-ring-deindent-mode)
 
 (after! spell-fu
-  (setq spell-fu-idle-delay 0.5)
+  (setq spell-fu-idle-delay 0.5
+        ispell-personal-dictionary "~/.config/ispell/.pws")
   (setf (alist-get 'markdown-mode +spell-excluded-faces-alist)
         '(markdown-code-face
           markdown-reference-face

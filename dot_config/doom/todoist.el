@@ -24,9 +24,9 @@
 (add-hook 'my/config-loaded-hook #'my/todoist-load-config)
 
 (defvar my/todo-only-files
-  (append `(,(org-todoist-file)) (ak/from-org-dir-all "todo" "devenv" "learn"))
+  (append `(,(org-todoist-file)) (ak/from-org-dir-all "todo" "devenv" "learn" "todoist"))
   "Org files to open with `org-show-todo-tree' active.")
 (defun my/todo-only ()
   (when (member (buffer-file-name) my/todo-only-files)
-    (org-show-todo-tree nil)))
+    (my/org-show-important)))
 (add-hook 'org-mode-hook #'my/todo-only 99)
